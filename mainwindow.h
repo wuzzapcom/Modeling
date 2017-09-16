@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QActionGroup>
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,18 @@ private:
     Ui::MainWindow *ui;
     QToolBar *figuresToolbar;
 
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *helpMenu;
+
+    QActionGroup *alignmedGroup;
+
+    QAction *saveAction;
+    QAction *copyAction;
+    QAction *pasteAction;
+    QAction *helpAction;
+    QAction *openAction;
+
 
     void createStatusBar();
     void createCentralWidget();
@@ -26,6 +39,15 @@ private:
     void createMenus();
     void createPlayPause();
     void createPropertiesWidget();
+    void createActions();
+
+private slots:
+
+    void save();
+    void copy();
+    void paste();
+    void help();
+    void open();
 
 };
 
