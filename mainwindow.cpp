@@ -23,6 +23,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+
+#ifndef QT_NO_CONTEXTMENU
+void MainWindow::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu menu(this);
+    menu.addAction(copyAction);
+    menu.addAction(pasteAction);
+
+    menu.exec(QCursor::pos());
+}
+#endif // QT_NO_CONTEXTMENU
+
+
 void MainWindow::createStatusBar()
 {
 
