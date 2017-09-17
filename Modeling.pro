@@ -8,6 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QT += opengl
+
 TARGET = Modeling
 TEMPLATE = app
 
@@ -26,11 +28,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    modelingmodel.cpp
+    modelingmodel.cpp \
+    openglwidget.cpp
 
 HEADERS += \
         mainwindow.h \
-    modelingmodel.h
+    modelingmodel.h \
+    openglwidget.h
 
 FORMS += \
         mainwindow.ui

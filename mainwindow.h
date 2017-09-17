@@ -10,6 +10,7 @@
 #include <QContextMenuEvent>
 #include <QVBoxLayout>
 #include "modelingmodel.h"
+#include "openglwidget.h"
 
 namespace Ui {
 class MainWindow;

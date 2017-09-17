@@ -9,6 +9,8 @@ public:
 
     void setPlaying(bool playing);
     bool getIsPlaying();
+    void addMaterialPoint();
+    void addSpring();
 
 private:
     bool isPlaying;
