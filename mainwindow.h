@@ -3,6 +3,13 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+#include <QDockWidget>
+#include <QSpinBox>
+#include <QLabel>
+#include <QOpenGLWidget>
+#include <QContextMenuEvent>
+#include <QVBoxLayout>
+//#include "modelingmodel.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,8 +30,16 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+
+//    ModelingModel *model;
+
+    QStatusBar *statusBar;
+
     QToolBar *figuresToolbar;
 
+    QMenuBar *menuBar;
+
+    QMenu *menuModeling;
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *helpMenu;
@@ -45,6 +60,8 @@ private:
     void createPlayPause();
     void createPropertiesWidget();
     void createActions();
+    void createRightDock();
+    void createBottomDock();
 
 private slots:
 
@@ -53,6 +70,11 @@ private slots:
     void paste();
     void help();
     void open();
+
+    void addMatPoint();
+    void addSpring();
+
+    void changePlayPauseState();
 
 };
 
