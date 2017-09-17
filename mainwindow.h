@@ -9,7 +9,7 @@
 #include <QOpenGLWidget>
 #include <QContextMenuEvent>
 #include <QVBoxLayout>
-//#include "modelingmodel.h"
+#include "modelingmodel.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,7 +31,7 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-//    ModelingModel *model;
+    ModelingModel *model;
 
     QStatusBar *statusBar;
 
@@ -51,6 +51,7 @@ private:
     QAction *pasteAction;
     QAction *helpAction;
     QAction *openAction;
+    QAction *playPauseAction;
 
 
     void createStatusBar();

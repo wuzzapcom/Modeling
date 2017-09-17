@@ -4,7 +4,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    model(new ModelingModel)
 {
 
     this->resize(600, 600);
@@ -52,16 +53,23 @@ void MainWindow::createToolbar()
     addMatPointAction->setIcon(QIcon(":/matPoint.png"));
     connect(addMatPointAction, &QAction::triggered, this, &MainWindow::addMatPoint);
 
-    QAction *addSpringAction = new QAction(tr("String"), this);
+    QAction *addSpringAction = new QAction(tr("Spring"), this);
     addSpringAction->setShortcut(QKeySequence::Open);
     addSpringAction->setStatusTip("Add spring");
     addSpringAction->setIcon(QIcon(":/spring.png"));
     connect(addSpringAction, &QAction::triggered, this, &MainWindow::addSpring);
 
+    playPauseAction = new QAction(tr("Play/Pause"), this);
+    playPauseAction->setShortcut(QKeySequence::Open);
+    playPauseAction->setStatusTip("Start moving");
+    playPauseAction->setIcon(QIcon(":/play.png"));
+    connect(playPauseAction, &QAction::triggered, this, &MainWindow::changePlayPauseState);
+
     figuresToolbar = new QToolBar(this);
     figuresToolbar->setObjectName(QStringLiteral("testToolbar"));
     figuresToolbar->addAction(addMatPointAction);
     figuresToolbar->addAction(addSpringAction);
+    figuresToolbar->addAction(playPauseAction);
     figuresToolbar->setMovable(false);
     this->addToolBar(Qt::LeftToolBarArea, figuresToolbar);
 
@@ -189,6 +197,21 @@ void MainWindow::paste(){}
 void MainWindow::addMatPoint(){}
 
 void MainWindow::addSpring(){}
+
+void MainWindow::changePlayPauseState(){
+
+    if (model->getIsPlaying()){
+        model->setPlaying(false);
+        playPauseAction->setIcon(QIcon(":/pause.png"));
+        playPauseAction->setStatusTip("Stop moving");
+    }
+    else{
+        model->setPlaying(true);
+        playPauseAction->setIcon(QIcon(":/play.png"));
+        playPauseAction->setStatusTip("Start moving");
+    }
+
+}
 
 MainWindow::~MainWindow()
 {

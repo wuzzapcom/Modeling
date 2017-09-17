@@ -8,6 +8,7 @@ public:
     ModelingModel();
 
     void setPlaying(bool playing);
+    bool getIsPlaying();
 
 private:
     bool isPlaying;
