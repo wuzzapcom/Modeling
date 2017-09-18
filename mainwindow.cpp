@@ -77,7 +77,7 @@ void MainWindow::createToolbar()
 
 void MainWindow::createCentralWidget(){
 
-    QWidget *centralWidget = new OpenGLWidget(this);
+    QWidget *centralWidget = new OpenGLWidget(this, model);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
     setCentralWidget(centralWidget);
 

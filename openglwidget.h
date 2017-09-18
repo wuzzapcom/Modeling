@@ -8,7 +8,7 @@ class OpenGLWidget: public QGLWidget
 {
 public:
 
-    OpenGLWidget(QWidget *parent/*, ModelingModel *m*/);
+    OpenGLWidget(QWidget *parent, ModelingModel *m);
 
     void initializeGL();
     void resizeGL(int w, int h);

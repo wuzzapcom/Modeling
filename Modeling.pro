@@ -29,12 +29,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     modelingmodel.cpp \
-    openglwidget.cpp
+    openglwidget.cpp \
+    drawableobject.cpp \
+    materialpoint.cpp
 
 HEADERS += \
         mainwindow.h \
     modelingmodel.h \
-    openglwidget.h
+    openglwidget.h \
+    drawableobject.h \
+    materialpoint.h
 
 FORMS += \
         mainwindow.ui

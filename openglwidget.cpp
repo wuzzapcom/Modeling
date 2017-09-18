@@ -1,8 +1,8 @@
 #include "openglwidget.h"
 
-OpenGLWidget::OpenGLWidget(QWidget *parent/*, ModelingModel *m*/)
+OpenGLWidget::OpenGLWidget(QWidget *parent, ModelingModel *m)
     :QGLWidget(parent)
-    , model(0)
+    , model(m)
 {
 }
 
