@@ -4,6 +4,9 @@ OpenGLWidget::OpenGLWidget(QWidget *parent, ModelingModel *m)
     :QGLWidget(parent)
     , model(m)
 {
+
+    model->addMaterialPoint();
+
 }
 
 void OpenGLWidget::initializeGL()
@@ -33,12 +36,26 @@ void OpenGLWidget::paintGL()
 
     QColor halfGreen(0, 128, 0, 255); // устанавливаем цвет квадрата
     qglColor(halfGreen); // задаем цвет
-    glBegin(GL_QUADS); // говорим, что рисовать будем прямоугольник
-    // задаем вершины многоугольника
-    glVertex3f(0.5, 0.5, 0.5);
-    glVertex3f(-0.5, 0.5, 0.5);
-    glVertex3f(-0.5, -0.5, 0.5);
-    glVertex3f(0.5, -0.5, 0.5);
-    glEnd();
+
+    DrawableObject *object = model->draw();
+    QVector<Point*> points;
+    qInfo("paintGL");
+    if (object == nullptr) qInfo("object is null");
+    if (model == nullptr) qInfo("model is null");
+
+//    while (object != nullptr){
+        glBegin(GL_LINE_STRIP);
+
+        points = object->draw();
+
+        for (int i = 0; i < points.length(); i++){
+
+            glVertex2f(points[i]->x, points[i]->y);
+
+        }
+
+
+        glEnd();
+//    }
 
 }
