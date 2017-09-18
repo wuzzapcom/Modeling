@@ -31,14 +31,16 @@ SOURCES += \
     modelingmodel.cpp \
     openglwidget.cpp \
     drawableobject.cpp \
-    materialpoint.cpp
+    materialpoint.cpp \
+    spring.cpp
 
 HEADERS += \
         mainwindow.h \
     modelingmodel.h \
     openglwidget.h \
     drawableobject.h \
-    materialpoint.h
+    materialpoint.h \
+    spring.h
 
 FORMS += \
         mainwindow.ui

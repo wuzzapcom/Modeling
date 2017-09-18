@@ -31,10 +31,10 @@ QVector<Point*> MaterialPoint::draw()
     return points;
 }
 
-void MaterialPoint::move(Point *point)
+void MaterialPoint::move(Point point)
 {
 
-    this->center.x += point->x;
-    this->center.y += point->y;
+    this->center.x += point.x;
+    this->center.y += point.y;
 
 }

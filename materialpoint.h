@@ -8,7 +8,7 @@ class MaterialPoint: public DrawableObject
 public:
     MaterialPoint(Point c, float r);
     QVector<Point*> draw();
-    void move(Point *point);
+    void move(Point point);
 
 private:
     Point center;
