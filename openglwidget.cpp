@@ -6,6 +6,7 @@ OpenGLWidget::OpenGLWidget(QWidget *parent, ModelingModel *m)
 {
 
     model->addMaterialPoint();
+    model->addSpring();
 
 }
 
@@ -43,7 +44,7 @@ void OpenGLWidget::paintGL()
     if (object == nullptr) qInfo("object is null");
     if (model == nullptr) qInfo("model is null");
 
-//    while (object != nullptr){
+    while (object != nullptr){
         glBegin(GL_LINE_STRIP);
 
         points = object->draw();
@@ -56,6 +57,8 @@ void OpenGLWidget::paintGL()
 
 
         glEnd();
-//    }
+
+        object = object->next;
+    }
 
 }

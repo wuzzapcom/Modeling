@@ -4,6 +4,7 @@ ModelingModel::ModelingModel()
 {
 
     entryObject = nullptr;
+    isPlaying = false;
 
 }
 
@@ -19,12 +20,40 @@ void ModelingModel::addMaterialPoint()
 {
     qInfo("addMaterialPoint()");
 
-    DrawableObject *lastPointer = this->entryObject;
+    DrawableObject **lastPointer = getLastObject();
 
-//    while (lastPointer != nullptr)
-//        lastPointer = lastPointer->next;
+    *lastPointer = new MaterialPoint(Point(0.0f, 0.0f), 0.5f);
 
-    this->entryObject = new MaterialPoint(Point(0.0f, 0.0f), 0.5f);
+}
+
+void ModelingModel::addSpring()
+{
+    qInfo("addSpring()");
+
+    DrawableObject **lastPointer = getLastObject();
+
+    *lastPointer = new Spring(Rectangle(Point(), 0.5f, 0.5f));
+
+}
+
+DrawableObject **ModelingModel::getLastObject()
+{
+
+    DrawableObject **lastPointer = &(this->entryObject);
+
+    if (*lastPointer != nullptr){
+
+        while ((*lastPointer)->next != nullptr)
+            *lastPointer = (*lastPointer)->next;
+
+        return &((*lastPointer)->next);
+        //(*lastPointer)->next = new MaterialPoint(Point(0.0f, 0.0f), 0.5f);
+    }
+    else{
+        return lastPointer;
+//        *lastPointer = new MaterialPoint(Point(0.0f, 0.0f), 0.5f);
+
+    }
 
 }
 

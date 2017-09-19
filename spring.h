@@ -2,7 +2,7 @@
 #define SPRING_H
 #include "drawableobject.h"
 
-class Spring:DrawableObject
+class Spring: public DrawableObject
 {
 public:
     Spring(Rectangle rect);
