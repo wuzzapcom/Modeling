@@ -12,7 +12,7 @@ OpenGLWidget::OpenGLWidget(QWidget *parent, ModelingModel *m)
 
 void OpenGLWidget::initializeGL()
 {
-    qglClearColor(Qt::black); // заполняем экран белым цветом
+    qglClearColor(Qt::white); // заполняем экран белым цветом
     glEnable(GL_DEPTH_TEST); // задаем глубину проверки пикселей
     glShadeModel(GL_FLAT); // убираем режим сглаживания цветов
     glEnable(GL_CULL_FACE); // говорим, что будем строить только внешние поверхности
@@ -35,7 +35,7 @@ void OpenGLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW); // задаем модельно-видовую матрицу
     glLoadIdentity();           // загрузка единичную матрицу
 
-    QColor halfGreen(0, 128, 0, 255); // устанавливаем цвет квадрата
+    QColor halfGreen(0, 0, 0, 255); // устанавливаем цвет квадрата
     qglColor(halfGreen); // задаем цвет
 
     DrawableObject *object = model->draw();

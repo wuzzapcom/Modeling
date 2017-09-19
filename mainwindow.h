@@ -11,6 +11,7 @@
 #include <QVBoxLayout>
 #include "modelingmodel.h"
 #include "openglwidget.h"
+#include <QtDebug>
 
 namespace Ui {
 class MainWindow;
@@ -64,6 +65,8 @@ private:
     void createActions();
     void createRightDock();
     void createBottomDock();
+
+    void mousePressEvent(QMouseEvent *event);
 
 private slots:
 

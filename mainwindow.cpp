@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     model(new ModelingModel)
 {
 
-    this->resize(600, 600);
+    this->resize(700, 600);
 
     createCentralWidget();
     createStatusBar();
@@ -79,6 +79,7 @@ void MainWindow::createCentralWidget(){
 
     QWidget *centralWidget = new OpenGLWidget(this, model);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
+    centralWidget->setMouseTracking(true);//qwidget::mapfromglobal
     setCentralWidget(centralWidget);
 
 }
@@ -181,6 +182,17 @@ void MainWindow::createRightDock(){
     propertiesDock->setWidget(multiWidget);
 
     this->addDockWidget(Qt::RightDockWidgetArea, propertiesDock);
+
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event){
+
+    if (event->button() == Qt::LeftButton){
+        qInfo("left button pressed");
+        QPoint p = event->globalPos();
+        p = centralWidget()->mapFromGlobal(p);
+        qDebug() << p.x() << p.y();
+    }
 
 }
 
