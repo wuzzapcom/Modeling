@@ -6,7 +6,7 @@ OpenGLWidget::OpenGLWidget(QWidget *parent, ModelingModel *m)
 {
 
     model->addMaterialPoint();
-    model->addSpring();
+    //model->addSpring();
 
 }
 
@@ -31,34 +31,40 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // очистка экрана
-    glMatrixMode(GL_MODELVIEW); // задаем модельно-видовую матрицу
-    glLoadIdentity();           // загрузка единичную матрицу
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
-    QColor halfGreen(0, 0, 0, 255); // устанавливаем цвет квадрата
-    qglColor(halfGreen); // задаем цвет
+    QColor blackColor(0, 0, 0, 255);
+    QColor blueColor(0, 0, 255, 255);
+    qglColor(blackColor);
 
-    DrawableObject *object = model->draw();
-    QVector<Point*> points;
-    qInfo("paintGL");
-    if (object == nullptr) qInfo("object is null");
-    if (model == nullptr) qInfo("model is null");
+    QVector<MaterialPoint*> drawableObjects = model->getMaterialPoints();
+   // drawableObjects = model->getSprings();
 
-    while (object != nullptr){
+    for(int i = 0; i < drawableObjects.length(); i++){
+
+        if (model->getSelectedObject() == drawableObjects[i]){
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            qglColor(blueColor);
+        }
+
+        QVector<Point*> points = drawableObjects[i]->draw();
+
         glBegin(GL_LINE_STRIP);
 
-        points = object->draw();
+        for(int j = 0; j < points.length(); j++){
 
-        for (int i = 0; i < points.length(); i++){
-
-            glVertex2f(points[i]->x, points[i]->y);
+            glVertex2f(points[j]->x, points[j]->y);
 
         }
 
-
         glEnd();
 
-        object = object->next;
+        if (model->getSelectedObject() == drawableObjects[i])
+            qglColor(blackColor);
+
     }
+
 
 }

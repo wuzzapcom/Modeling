@@ -3,8 +3,6 @@
 DrawableObject::DrawableObject()
 {
 
-    this->next = nullptr;
-
 }
 
 Point::Point(float new_x, float new_y)

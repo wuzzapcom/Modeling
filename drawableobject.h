@@ -1,6 +1,7 @@
 #ifndef DRAWABLEOBJECT_H
 #define DRAWABLEOBJECT_H
 #include <QVector>
+#include <QPoint>
 
 struct Point{
 
@@ -31,8 +32,14 @@ public:
     DrawableObject();
     virtual QVector<Point*> draw() = 0;
     virtual void move(Point point) = 0;
+    virtual bool checkCursorInObject(Point point) = 0;
 
-    DrawableObject *next;
+    void setSelected(bool selected){isSelected = selected;}
+    bool getSelected(){return isSelected;}
+
+private:
+
+    bool isSelected = false;
 };
 
 #endif // DRAWABLEOBJECT_H

@@ -13,13 +13,23 @@ public:
     bool getIsPlaying();
     void addMaterialPoint();
     void addSpring();
-    DrawableObject* draw();
+//    DrawableObject* draw();
+    QVector<MaterialPoint*> getMaterialPoints();
+    QVector<Spring*> getSprings();
+
+    void setSelectedObject(DrawableObject *obj){selectedObject = obj;}
+    DrawableObject *getSelectedObject(){return selectedObject;}
 
 private:
     bool isPlaying;
-    DrawableObject *entryObject;
 
-    DrawableObject **getLastObject();
+    QVector<MaterialPoint*> matPoints;
+    QVector<Spring*> springs;
+
+    DrawableObject* selectedObject;
+
+//    DrawableObject *entryObject;
+//    DrawableObject **getLastObject();
 };
 
 #endif // MODELINGMODEL_H

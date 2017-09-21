@@ -1,12 +1,11 @@
 #include "modelingmodel.h"
 
 ModelingModel::ModelingModel()
-{
-
-    entryObject = nullptr;
-    isPlaying = false;
-
-}
+    :isPlaying(false),
+      matPoints(QVector<MaterialPoint*>()),
+      springs(QVector<Spring*>()),
+      selectedObject(nullptr)
+{}
 
 void ModelingModel::setPlaying(bool playing){
      isPlaying = playing;
@@ -20,9 +19,7 @@ void ModelingModel::addMaterialPoint()
 {
     qInfo("addMaterialPoint()");
 
-    DrawableObject **lastPointer = getLastObject();
-
-    *lastPointer = new MaterialPoint(Point(0.0f, 0.0f), 0.5f);
+    matPoints.append(new MaterialPoint(Point(0.0f, 0.0f), 0.5f));
 
 }
 
@@ -30,36 +27,18 @@ void ModelingModel::addSpring()
 {
     qInfo("addSpring()");
 
-    DrawableObject **lastPointer = getLastObject();
-
-    *lastPointer = new Spring(Rectangle(Point(), 0.5f, 0.5f));
+    springs.append(new Spring(Rectangle(Point(), 0.5f, 0.5f)));
 
 }
 
-DrawableObject **ModelingModel::getLastObject()
-{
+QVector<MaterialPoint*> ModelingModel::getMaterialPoints(){
 
-    DrawableObject **lastPointer = &(this->entryObject);
-
-    if (*lastPointer != nullptr){
-
-        while ((*lastPointer)->next != nullptr)
-            *lastPointer = (*lastPointer)->next;
-
-        return &((*lastPointer)->next);
-        //(*lastPointer)->next = new MaterialPoint(Point(0.0f, 0.0f), 0.5f);
-    }
-    else{
-        return lastPointer;
-//        *lastPointer = new MaterialPoint(Point(0.0f, 0.0f), 0.5f);
-
-    }
+    return matPoints;
 
 }
 
-DrawableObject *ModelingModel::draw()
-{
+QVector<Spring*> ModelingModel::getSprings(){
 
-    return entryObject;
+    return springs;
 
 }

@@ -192,6 +192,32 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         QPoint p = event->globalPos();
         p = centralWidget()->mapFromGlobal(p);
         qDebug() << p.x() << p.y();
+        Point point = Point((((float)p.x()) / centralWidget()->contentsRect().width() - 0.5) * 2,
+                   (0.5 - ((float)p.y()) / centralWidget()->contentsRect().height()) * 2);
+        qDebug() << centralWidget()->contentsRect().width() << centralWidget()->contentsRect().height();
+        qDebug() << point.x << point.y;
+
+        QVector<MaterialPoint*> drawableObjects = this->model->getMaterialPoints();
+        //drawableObjects = this->model->getSprings();
+        bool isCursorInObject = false;
+
+        for(int i = 0; i < drawableObjects.length(); i++){
+
+            if (drawableObjects[i]->checkCursorInObject(point)){
+
+                qInfo("Found cursor in object");
+                this->model->setSelectedObject(drawableObjects[i]);
+                this->centralWidget()->update();
+                isCursorInObject = true;
+                break;
+
+            }
+        }
+
+        if (!isCursorInObject){
+            this->model->setSelectedObject(nullptr);
+            this->centralWidget()->update();
+        }
     }
 
 }

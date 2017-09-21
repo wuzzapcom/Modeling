@@ -8,10 +8,13 @@ public:
     Spring(Rectangle rect);
     QVector<Point*> draw();
     void move(Point point);
+    bool checkCursorInObject(Point point);
 
 private:
 
     Rectangle rectangle;
+    // add new abstract type springable, matPoint and anchoredPoint are subclasses of it
+    // add Springable* first; Springalbe* second;
 
 };
 

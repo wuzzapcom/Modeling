@@ -3,11 +3,12 @@
 MaterialPoint::MaterialPoint(Point c, float r)
     :DrawableObject(),
       center(c),
-      radius(r){}
+      radius(r),
+      connectedSprings(QVector<Spring*>()){}
 
 QVector<Point*> MaterialPoint::draw()
 {
-    qInfo("draw()");
+    qInfo("MaterialPoint::draw()");
     QVector<Point*> points = QVector<Point*>(this->precision + 1);
     Point *point;
     float angle = 0.0f;
@@ -36,5 +37,24 @@ void MaterialPoint::move(Point point)
 
     this->center.x += point.x;
     this->center.y += point.y;
+
+}
+
+void MaterialPoint::addConnectedSpring(Spring *spring){
+
+    this->connectedSprings.append(spring);
+
+}
+
+QVector<Spring*> MaterialPoint::getConnectedSprings(){
+
+    return this->connectedSprings;
+
+}
+
+bool MaterialPoint::checkCursorInObject(Point point){
+
+    return (point.x - center.x) * (point.x - center.x) +
+            (point.y - center.y) * (point.y - center.y) < radius * radius;
 
 }
