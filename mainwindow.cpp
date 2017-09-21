@@ -145,7 +145,7 @@ void MainWindow::createActions(){
 
 void MainWindow::createRightDock(){
 
-    QDockWidget *propertiesDock = new QDockWidget(tr("Properties"), this);
+    propertiesDock = new QDockWidget(tr("Properties"), this);
 
     propertiesDock->setAllowedAreas(Qt::RightDockWidgetArea);
     propertiesDock->setTitleBarWidget(new QWidget());
@@ -153,17 +153,20 @@ void MainWindow::createRightDock(){
 
     QWidget *multiWidget = new QWidget();
 
-    QSpinBox *spin1 = new QSpinBox;
-    QLabel *label1 = new QLabel;
+    spin1 = new QSpinBox;
+    label1 = new QLabel;
     label1->setText(tr("label1"));
-    QSpinBox *spin2 = new QSpinBox;
-    QLabel *label2 = new QLabel;
+
+    spin2 = new QSpinBox;
+    label2 = new QLabel;
     label2->setText(tr("label2"));
-    QSpinBox *spin3 = new QSpinBox;
-    QLabel *label3 = new QLabel;
+
+    spin3 = new QSpinBox;
+    label3 = new QLabel;
     label3->setText(tr("label3"));
-    QSpinBox *spin4 = new QSpinBox;
-    QLabel *label4 = new QLabel;
+
+    spin4 = new QSpinBox;
+    label4 = new QLabel;
     label4->setText(tr("label4"));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -183,6 +186,8 @@ void MainWindow::createRightDock(){
 
     this->addDockWidget(Qt::RightDockWidgetArea, propertiesDock);
 
+    propertiesDock->setVisible(false);
+
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
@@ -197,39 +202,60 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         qDebug() << centralWidget()->contentsRect().width() << centralWidget()->contentsRect().height();
         qDebug() << point.x << point.y;
 
-        if (this->model->isObjectSelected()){
+        QVector<MaterialPoint*> drawableObjects = this->model->getMaterialPoints();
+        //drawableObjects = this->model->getSprings();
+        bool isCursorInObject = false;
 
-            this->model->getSelectedObject()->moveTo(point);
-            this->model->setSelectedObject(nullptr);
-            this->centralWidget()->update();
+        for(int i = 0; i < drawableObjects.length(); i++){
 
-        }
-        else{
+            if (drawableObjects[i]->checkCursorInObject(point)){
 
-            QVector<MaterialPoint*> drawableObjects = this->model->getMaterialPoints();
-            //drawableObjects = this->model->getSprings();
-            bool isCursorInObject = false;
-
-            for(int i = 0; i < drawableObjects.length(); i++){
-
-                if (drawableObjects[i]->checkCursorInObject(point)){
-
-                    qInfo("Found cursor in object");
-                    this->model->setSelectedObject(drawableObjects[i]);
-                    this->centralWidget()->update();
-                    isCursorInObject = true;
-                    break;
-
-                }
-            }
-
-            if (!isCursorInObject){
-                this->model->setSelectedObject(nullptr);
+                qInfo("Found cursor in object");
+                this->model->setSelectedObject(drawableObjects[i]);
                 this->centralWidget()->update();
-            }
+                isCursorInObject = true;
+                break;
 
+            }
         }
+
+        if (!isCursorInObject){
+            this->model->setSelectedObject(nullptr);
+            this->propertiesDock->setVisible(false);
+            this->centralWidget()->update();
+        }
+
     }
+
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+
+    qInfo("MainWindow::mouseMoveEvent()");
+
+    QPoint p = event->globalPos();
+    p = centralWidget()->mapFromGlobal(p);
+    qDebug() << p.x() << p.y();
+    Point point = Point((((float)p.x()) / centralWidget()->contentsRect().width() - 0.5) * 2,
+        (0.5 - ((float)p.y()) / centralWidget()->contentsRect().height()) * 2);
+    qDebug() << point.x << point.y;
+
+    if(this->model->getSelectedObject() == nullptr)
+        return;
+
+    this->model->getSelectedObject()->moveTo(point);
+    this->centralWidget()->update();
+
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+
+    qInfo("MainWindow::mouseReleaseEvent");
+
+//    this->model->setSelectedObject(nullptr);
+    this->centralWidget()->update();
 
 }
 
@@ -243,7 +269,16 @@ void MainWindow::copy(){}
 
 void MainWindow::paste(){}
 
-void MainWindow::addMatPoint(){}
+void MainWindow::addMatPoint(){
+
+    qInfo("MainWindow::addMatPoint");
+
+    this->model->addMaterialPoint();
+    this->centralWidget()->update();
+
+    addMatPointPropertiesToRightDock();
+
+}
 
 void MainWindow::addSpring(){}
 
@@ -259,6 +294,46 @@ void MainWindow::changePlayPauseState(){
         playPauseAction->setIcon(QIcon(":/play.png"));
         playPauseAction->setStatusTip("Start moving");
     }
+
+}
+
+void MainWindow::addMatPointPropertiesToRightDock()
+{
+    propertiesDock->setVisible(true);
+    propertiesDock->setFixedSize(80, 120);
+
+    spin1->setValue(5);
+    label1->setText("Radius");
+    connect(spin1, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        [=](int i){
+        if (i > 5) spin1->setValue(5);
+        else if (i < 1) spin1->setValue(1);
+        else{
+            ((MaterialPoint*)this->model->getSelectedObject())->setRadius(((float)i) / 10);
+            this->centralWidget()->update();
+        }
+
+    });
+
+    spin2->setValue(5);
+    label2->setText("Weight");
+    connect(spin2, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+        [=](int i){
+        if (i > 10) spin1->setValue(10);
+        else if (i < 1) spin1->setValue(1);
+        else{
+            ((MaterialPoint*)this->model->getSelectedObject())->setWeight(i);
+            this->centralWidget()->update();
+        }
+
+    });
+
+    spin3->setVisible(false);
+    label3->setVisible(false);
+
+    spin4->setVisible(false);
+    label4->setVisible(false);
+
 
 }
 

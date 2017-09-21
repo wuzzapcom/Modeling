@@ -15,12 +15,15 @@ public:
     bool checkCursorInObject(Point point);
     void addConnectedSpring(Spring *spring);
     QVector<Spring*> getConnectedSprings();
+    void setRadius(float r){radius = r;}
+    void setWeight(int w){weight = w;}
 
 private:
     Point center;
     float radius;
     int speedX;
     int speedY;
+    int weight;
 
     QVector<Spring*> connectedSprings; //add to constructor
 

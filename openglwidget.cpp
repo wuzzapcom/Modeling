@@ -5,8 +5,8 @@ OpenGLWidget::OpenGLWidget(QWidget *parent, ModelingModel *m)
     , model(m)
 {
 
-    model->addMaterialPoint();
-    //model->addSpring();
+//    model->addMaterialPoint();
+//    model->addSpring();
 
 }
 
@@ -45,7 +45,6 @@ void OpenGLWidget::paintGL()
     for(int i = 0; i < drawableObjects.length(); i++){
 
         if (model->getSelectedObject() == drawableObjects[i]){
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             qglColor(blueColor);
         }
 

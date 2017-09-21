@@ -35,12 +35,15 @@ private:
 
     ModelingModel *model;
 
+    //Bars
     QStatusBar *statusBar;
-
     QToolBar *figuresToolbar;
-
     QMenuBar *menuBar;
 
+    //Docks
+    QDockWidget *propertiesDock;
+
+    //Menus
     QMenu *menuModeling;
     QMenu *fileMenu;
     QMenu *editMenu;
@@ -48,6 +51,7 @@ private:
 
     QActionGroup *alignmedGroup;
 
+    //Actions
     QAction *saveAction;
     QAction *copyAction;
     QAction *pasteAction;
@@ -55,7 +59,17 @@ private:
     QAction *openAction;
     QAction *playPauseAction;
 
+    //Right dock widgets
+    QSpinBox *spin1;
+    QLabel *label1;
+    QSpinBox *spin2;
+    QLabel *label2;
+    QSpinBox *spin3;
+    QLabel *label3;
+    QSpinBox *spin4;
+    QLabel *label4;
 
+    //Basic interface creators
     void createStatusBar();
     void createCentralWidget();
     void createToolbar();
@@ -66,7 +80,13 @@ private:
     void createRightDock();
     void createBottomDock();
 
+    //Mouse events
     void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+
+    //Configuring right dock
+    void addMatPointPropertiesToRightDock();
 
 private slots:
 
@@ -80,6 +100,7 @@ private slots:
     void addSpring();
 
     void changePlayPauseState();
+
 
 };
 
