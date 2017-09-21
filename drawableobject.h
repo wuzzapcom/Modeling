@@ -23,6 +23,7 @@ struct Rectangle{
     Rectangle();
 
     void move(Point point);
+    void moveTo(Point point);
 
 };
 
@@ -32,6 +33,7 @@ public:
     DrawableObject();
     virtual QVector<Point*> draw() = 0;
     virtual void move(Point point) = 0;
+    virtual void moveTo(Point point) = 0;
     virtual bool checkCursorInObject(Point point) = 0;
 
     void setSelected(bool selected){isSelected = selected;}

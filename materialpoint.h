@@ -11,6 +11,7 @@ public:
     MaterialPoint(Point c, float r);
     QVector<Point*> draw();
     void move(Point point);
+    void moveTo(Point point);
     bool checkCursorInObject(Point point);
     void addConnectedSpring(Spring *spring);
     QVector<Spring*> getConnectedSprings();

@@ -8,6 +8,7 @@ public:
     Spring(Rectangle rect);
     QVector<Point*> draw();
     void move(Point point);
+    void moveTo(Point point);
     bool checkCursorInObject(Point point);
 
 private:

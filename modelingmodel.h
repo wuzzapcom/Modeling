@@ -20,6 +20,8 @@ public:
     void setSelectedObject(DrawableObject *obj){selectedObject = obj;}
     DrawableObject *getSelectedObject(){return selectedObject;}
 
+    bool isObjectSelected(){return selectedObject != nullptr;}
+
 private:
     bool isPlaying;
 

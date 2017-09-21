@@ -197,26 +197,37 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         qDebug() << centralWidget()->contentsRect().width() << centralWidget()->contentsRect().height();
         qDebug() << point.x << point.y;
 
-        QVector<MaterialPoint*> drawableObjects = this->model->getMaterialPoints();
-        //drawableObjects = this->model->getSprings();
-        bool isCursorInObject = false;
+        if (this->model->isObjectSelected()){
 
-        for(int i = 0; i < drawableObjects.length(); i++){
-
-            if (drawableObjects[i]->checkCursorInObject(point)){
-
-                qInfo("Found cursor in object");
-                this->model->setSelectedObject(drawableObjects[i]);
-                this->centralWidget()->update();
-                isCursorInObject = true;
-                break;
-
-            }
-        }
-
-        if (!isCursorInObject){
+            this->model->getSelectedObject()->moveTo(point);
             this->model->setSelectedObject(nullptr);
             this->centralWidget()->update();
+
+        }
+        else{
+
+            QVector<MaterialPoint*> drawableObjects = this->model->getMaterialPoints();
+            //drawableObjects = this->model->getSprings();
+            bool isCursorInObject = false;
+
+            for(int i = 0; i < drawableObjects.length(); i++){
+
+                if (drawableObjects[i]->checkCursorInObject(point)){
+
+                    qInfo("Found cursor in object");
+                    this->model->setSelectedObject(drawableObjects[i]);
+                    this->centralWidget()->update();
+                    isCursorInObject = true;
+                    break;
+
+                }
+            }
+
+            if (!isCursorInObject){
+                this->model->setSelectedObject(nullptr);
+                this->centralWidget()->update();
+            }
+
         }
     }
 

@@ -44,3 +44,11 @@ void Rectangle::move(Point point)
     this->leftTopPoint.y += point.y;
 
 }
+
+void Rectangle::moveTo(Point point)
+{
+
+    this->leftTopPoint.x = point.x;
+    this->leftTopPoint.y = point.y;
+
+}

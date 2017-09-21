@@ -40,6 +40,13 @@ void MaterialPoint::move(Point point)
 
 }
 
+void MaterialPoint::moveTo(Point point){
+
+    this->center.x = point.x;
+    this->center.y = point.y;
+
+}
+
 void MaterialPoint::addConnectedSpring(Spring *spring){
 
     this->connectedSprings.append(spring);
