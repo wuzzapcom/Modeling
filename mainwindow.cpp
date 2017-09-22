@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     model(new ModelingModel)
 {
 
-    this->resize(700, 600);
+    this->resize(620, 600);
 
     createCentralWidget();
     createStatusBar();
@@ -220,9 +220,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         }
 
         if (!isCursorInObject){
+            if (this->propertiesDock->isVisible())
+                this->resize(this->size().width() - 80, this->size().height());
+
             this->model->setSelectedObject(nullptr);
             this->propertiesDock->setVisible(false);
-            this->resize(620, 600);
+//            this->resize(620, 600);
+//            this->resize(this->size().width() - 80, this->size().height());
+
+//            this->resize(this->size().width() - 80, this->size().height());
             this->centralWidget()->update();
         }
 
@@ -302,9 +308,11 @@ void MainWindow::changePlayPauseState(){
 //TODO add handling error when getSelectedObject returns nullptr
 void MainWindow::addMatPointPropertiesToRightDock()
 {
+    if (!propertiesDock->isVisible())
+        this->resize(this->size().width() + 80, this->size().height());
     propertiesDock->setVisible(true);
     propertiesDock->setFixedSize(80, 120);
-    this->resize(700, 600);
+//    this->resize(700, 600);
 
     spin1->disconnect();
     spin1->setValue(5);
