@@ -88,6 +88,9 @@ private:
     //Configuring right dock
     void addMatPointPropertiesToRightDock();
 
+    void hideRightDock();
+    void showRightDock();
+
 private slots:
 
     void save();

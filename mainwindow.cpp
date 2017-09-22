@@ -214,21 +214,19 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                 this->model->setSelectedObject(drawableObjects[i]);
                 this->centralWidget()->update();
                 isCursorInObject = true;
+                this->hideRightDock();
+                this->showRightDock();
+
                 break;
 
             }
         }
 
         if (!isCursorInObject){
-            if (this->propertiesDock->isVisible())
-                this->resize(this->size().width() - 80, this->size().height());
+            this->hideRightDock();
 
             this->model->setSelectedObject(nullptr);
-            this->propertiesDock->setVisible(false);
-//            this->resize(620, 600);
-//            this->resize(this->size().width() - 80, this->size().height());
 
-//            this->resize(this->size().width() - 80, this->size().height());
             this->centralWidget()->update();
         }
 
@@ -308,11 +306,8 @@ void MainWindow::changePlayPauseState(){
 //TODO add handling error when getSelectedObject returns nullptr
 void MainWindow::addMatPointPropertiesToRightDock()
 {
-    if (!propertiesDock->isVisible())
-        this->resize(this->size().width() + 80, this->size().height());
-    propertiesDock->setVisible(true);
+    this->showRightDock();
     propertiesDock->setFixedSize(80, 120);
-//    this->resize(700, 600);
 
     spin1->disconnect();
     spin1->setValue(5);
@@ -348,6 +343,25 @@ void MainWindow::addMatPointPropertiesToRightDock()
     spin4->setVisible(false);
     label4->setVisible(false);
 
+}
+
+void MainWindow::hideRightDock(){
+
+    if(!this->propertiesDock->isVisible())
+        return;
+
+    this->propertiesDock->setVisible(false);
+    this->resize(this->size().width() - 80, this->size().height());
+
+}
+
+void MainWindow::showRightDock(){
+
+    if(this->propertiesDock->isVisible())
+        return;
+
+    this->resize(this->size().width() + 80, this->size().height());
+    this->propertiesDock->setVisible(true);
 
 }
 
