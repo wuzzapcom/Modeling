@@ -222,6 +222,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         if (!isCursorInObject){
             this->model->setSelectedObject(nullptr);
             this->propertiesDock->setVisible(false);
+            this->resize(620, 600);
             this->centralWidget()->update();
         }
 
@@ -297,11 +298,15 @@ void MainWindow::changePlayPauseState(){
 
 }
 
+
+//TODO add handling error when getSelectedObject returns nullptr
 void MainWindow::addMatPointPropertiesToRightDock()
 {
     propertiesDock->setVisible(true);
     propertiesDock->setFixedSize(80, 120);
+    this->resize(700, 600);
 
+    spin1->disconnect();
     spin1->setValue(5);
     label1->setText("Radius");
     connect(spin1, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -315,6 +320,7 @@ void MainWindow::addMatPointPropertiesToRightDock()
 
     });
 
+    spin2->disconnect();
     spin2->setValue(5);
     label2->setText("Weight");
     connect(spin2, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
