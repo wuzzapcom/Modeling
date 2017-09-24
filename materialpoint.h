@@ -4,8 +4,9 @@
 #include <math.h>
 #include "spring.h"
 #include <QDebug>
+#include "springableobject.h"
 
-class MaterialPoint: public DrawableObject
+class MaterialPoint: public DrawableObject, public SpringableObject
 {
 public:
     MaterialPoint(Point c, float r);
@@ -13,10 +14,13 @@ public:
     void move(Point point);
     void moveTo(Point point);
     bool checkCursorInObject(Point point);
+    float getAngle();
+    Point getContactPoint();
     void addConnectedSpring(Spring *spring);
     QVector<Spring*> getConnectedSprings();
     void setRadius(float r){radius = r;}
     void setWeight(int w){weight = w;}
+    bool isModelIncompleted(){return false;}
 
 private:
     Point center;

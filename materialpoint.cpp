@@ -4,7 +4,11 @@ MaterialPoint::MaterialPoint(Point c, float r)
     :DrawableObject(),
       center(c),
       radius(r),
-      connectedSprings(QVector<Spring*>()){}
+      connectedSprings(QVector<Spring*>()){
+
+    this->type = MATERIAL_POINT;
+
+}
 
 QVector<Point*> MaterialPoint::draw()
 {
@@ -40,28 +44,49 @@ void MaterialPoint::move(Point point)
 
 }
 
-void MaterialPoint::moveTo(Point point){
+void MaterialPoint::moveTo(Point point)
+{
 
     this->center.x = point.x;
     this->center.y = point.y;
 
 }
 
-void MaterialPoint::addConnectedSpring(Spring *spring){
+void MaterialPoint::addConnectedSpring(Spring *spring)
+{
 
     this->connectedSprings.append(spring);
 
 }
 
-QVector<Spring*> MaterialPoint::getConnectedSprings(){
+QVector<Spring*> MaterialPoint::getConnectedSprings()
+{
 
     return this->connectedSprings;
 
 }
 
-bool MaterialPoint::checkCursorInObject(Point point){
+bool MaterialPoint::checkCursorInObject(Point point)
+{
 
     return (point.x - center.x) * (point.x - center.x) +
             (point.y - center.y) * (point.y - center.y) < radius * radius;
+
+}
+
+
+Point MaterialPoint::getContactPoint()
+{
+
+    return Point(
+                this->center.x,
+                this->center.y - this->radius
+                );
+
+}
+
+float MaterialPoint::getAngle(){
+
+    return 0.0;
 
 }

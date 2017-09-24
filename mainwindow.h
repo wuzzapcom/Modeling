@@ -12,6 +12,7 @@
 #include "modelingmodel.h"
 #include "openglwidget.h"
 #include <QtDebug>
+#include "springableobject.h"
 
 namespace Ui {
 class MainWindow;

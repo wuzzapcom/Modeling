@@ -2,10 +2,17 @@
 
 Spring::Spring(Rectangle rect)
     :DrawableObject(),
-      rectangle(rect)
+      rectangle(rect),
+      rotateAngle(45.0),
+      first(nullptr),
+      second(nullptr)
 {
+
+    this->type = SPRING;
+
 }
 
+// make translation by matrixes
 QVector<Point*> Spring::draw()
 {
 
@@ -50,7 +57,8 @@ QVector<Point*> Spring::draw()
                 this->rectangle.leftTopPoint.y - this->rectangle.height
                 );
 
-    return points;
+    //return points;
+    return rotate(points);
 
 }
 
@@ -68,11 +76,64 @@ void Spring::moveTo(Point point)
 
 }
 
-bool Spring::checkCursorInObject(Point point){
+bool Spring::checkCursorInObject(Point point)
+{
 
-    return point.x > this->rectangle.leftTopPoint.x &&
-            point.x < this->rectangle.leftTopPoint.x + this->rectangle.width &&
-            point.y > this->rectangle.leftTopPoint.y &&
-            point.y < this->rectangle.leftTopPoint.y + this->rectangle.height;
+    return (point.x > this->rectangle.leftTopPoint.x) &&
+            (point.x < (this->rectangle.leftTopPoint.x + this->rectangle.width)) &&
+            (point.y < this->rectangle.leftTopPoint.y) &&
+            (point.y > (this->rectangle.leftTopPoint.y - this->rectangle.height));
 
 }
+
+QVector<Point*> Spring::rotate(QVector<Point*> points)
+{
+
+    this->rotateAngle += 10;
+
+    qDebug() << "Start points";
+    for(int i = 0; i < points.length(); i++){
+        qDebug() << "x = " << points[i]->x << " y = " << points[i]->y;
+    }
+
+    Point center = this->rectangle.getCenter();
+
+    QMatrix4x4 transformationMatrix;
+    QVector3D radiusVector = QVector3D(center.x, center.y, 0.0);
+
+    transformationMatrix.rotate(this->rotateAngle, 0.0, 0.0, 1.0);
+
+    for (int i = 0; i < points.length(); i++){
+
+        QVector3D point = QVector3D(points[i]->x, points[i]->y, 0.0);
+
+        point -= radiusVector;
+        point = point * transformationMatrix;
+        point += radiusVector;
+
+        points[i]->x = point.x();
+        points[i]->y = point.y();
+
+    }
+
+    qDebug() << "Changed points";
+    for(int i = 0; i < points.length(); i++){
+        qDebug() << "x = " << points[i]->x << " y = " << points[i]->y;
+    }
+
+    return points;
+
+}
+
+bool Spring::isModelIncompleted(){
+
+    if (this->first == nullptr)
+        return true;
+
+//    if(this->second == nullptr)
+//        return true;
+
+    return false;
+
+}
+

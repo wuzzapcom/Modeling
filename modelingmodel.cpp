@@ -4,7 +4,8 @@ ModelingModel::ModelingModel()
     :isPlaying(false),
       matPoints(QVector<MaterialPoint*>()),
       springs(QVector<Spring*>()),
-      selectedObject(nullptr)
+      selectedObject(nullptr),
+      incompletedObject(nullptr)
 {}
 
 void ModelingModel::setPlaying(bool playing){
@@ -40,5 +41,16 @@ QVector<MaterialPoint*> ModelingModel::getMaterialPoints(){
 QVector<Spring*> ModelingModel::getSprings(){
 
     return springs;
+
+}
+
+void ModelingModel::completeModel(){
+
+    for (int i = 0; i < springs.length(); i++){
+
+        if (springs[i]->isModelIncompleted())
+            this->incompletedObject = springs[i];
+
+    }
 
 }

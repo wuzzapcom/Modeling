@@ -31,21 +31,40 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
 
+    this->model->completeModel();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
     QColor blackColor(0, 0, 0, 255);
     QColor blueColor(0, 0, 255, 255);
+    QColor redColor(255, 0, 0, 255);
     qglColor(blackColor);
 
-    QVector<MaterialPoint*> drawableObjects = model->getMaterialPoints();
-   // drawableObjects = model->getSprings();
+    QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
+    QVector<Spring*> springs = this->model->getSprings();
+
+    QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
+    for(int i = 0; i < matPoints.length(); i++)
+        drawableObjects.append((DrawableObject*) matPoints[i]);
+
+    for(int i = 0; i < springs.length(); i++)
+        drawableObjects.append((DrawableObject*) springs[i]);
 
     for(int i = 0; i < drawableObjects.length(); i++){
 
-        if (model->getSelectedObject() == drawableObjects[i]){
-            qglColor(blueColor);
+        if (drawableObjects[i]->isModelIncompleted()){
+
+            qglColor(redColor);
+
+        }
+        else{
+
+            if (model->getSelectedObject() == drawableObjects[i]){
+
+                    qglColor(blueColor);
+                }
         }
 
         QVector<Point*> points = drawableObjects[i]->draw();
@@ -60,7 +79,7 @@ void OpenGLWidget::paintGL()
 
         glEnd();
 
-        if (model->getSelectedObject() == drawableObjects[i])
+//        if (model->getSelectedObject() == drawableObjects[i])
             qglColor(blackColor);
 
     }

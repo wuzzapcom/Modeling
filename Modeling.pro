@@ -32,7 +32,8 @@ SOURCES += \
     openglwidget.cpp \
     drawableobject.cpp \
     materialpoint.cpp \
-    spring.cpp
+    spring.cpp \
+    springableobject.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,7 +41,8 @@ HEADERS += \
     openglwidget.h \
     drawableobject.h \
     materialpoint.h \
-    spring.h
+    spring.h \
+    springableobject.h
 
 FORMS += \
         mainwindow.ui

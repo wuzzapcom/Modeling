@@ -13,7 +13,9 @@ public:
     bool getIsPlaying();
     void addMaterialPoint();
     void addSpring();
-//    DrawableObject* draw();
+
+    void completeModel();
+
     QVector<MaterialPoint*> getMaterialPoints();
     QVector<Spring*> getSprings();
 
@@ -22,6 +24,9 @@ public:
 
     bool isObjectSelected(){return selectedObject != nullptr;}
 
+    void setIncompletedObjecT(DrawableObject *obj){incompletedObject = obj;}
+    DrawableObject *getIncompletedObject(){return incompletedObject;}
+
 private:
     bool isPlaying;
 
@@ -29,9 +34,8 @@ private:
     QVector<Spring*> springs;
 
     DrawableObject* selectedObject;
+    DrawableObject* incompletedObject;
 
-//    DrawableObject *entryObject;
-//    DrawableObject **getLastObject();
 };
 
 #endif // MODELINGMODEL_H

@@ -202,8 +202,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         qDebug() << centralWidget()->contentsRect().width() << centralWidget()->contentsRect().height();
         qDebug() << point.x << point.y;
 
-        QVector<MaterialPoint*> drawableObjects = this->model->getMaterialPoints();
-        //drawableObjects = this->model->getSprings();
+        QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
+        QVector<Spring*> springs = this->model->getSprings();
+
+        QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
+        for(int i = 0; i < matPoints.length(); i++)
+            drawableObjects.append((DrawableObject*) matPoints[i]);
+
+        for(int i = 0; i < springs.length(); i++)
+            drawableObjects.append((DrawableObject*) springs[i]);
+
         bool isCursorInObject = false;
 
         for(int i = 0; i < drawableObjects.length(); i++){
@@ -211,6 +219,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
             if (drawableObjects[i]->checkCursorInObject(point)){
 
                 qInfo("Found cursor in object");
+
+                if(this->model->getIncompletedObject() != nullptr){
+
+                    DrawableObject::connectObjects(
+                                drawableObjects[i],
+                                this->model->getIncompletedObject()
+                                );
+
+                }
+
                 this->model->setSelectedObject(drawableObjects[i]);
                 this->centralWidget()->update();
                 isCursorInObject = true;
@@ -223,6 +241,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         }
 
         if (!isCursorInObject){
+
             this->hideRightDock();
 
             this->model->setSelectedObject(nullptr);
@@ -285,7 +304,14 @@ void MainWindow::addMatPoint(){
 
 }
 
-void MainWindow::addSpring(){}
+void MainWindow::addSpring(){
+
+    qInfo("MainWindow::addSpring");
+
+    this->model->addSpring();
+    this->centralWidget()->update();
+
+}
 
 void MainWindow::changePlayPauseState(){
 
