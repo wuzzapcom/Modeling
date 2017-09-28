@@ -1,0 +1,29 @@
+digraph "source tree" {
+    overlap=scale;
+    size="8,10";
+    ratio="fill";
+    fontsize="16";
+    fontname="Helvetica";
+	clusterrank="local";
+	"materialpoint.h" -> "spring.h"
+	"mainwindow.h" -> "openglwidget.h"
+	"mainwindow.h" -> "modelingmodel.h"
+	"springableobject.h" -> "rectangle.h"
+	"materialpoint.cpp" -> "materialpoint.h"
+	"mainwindow.cpp" -> "mainwindow.h"
+	"spring.h" -> "springableobject.h"
+	"modelingmodel.cpp" -> "modelingmodel.h"
+	"modelingmodel.h" -> "materialpoint.h"
+	"drawableobject.cpp" -> "drawableobject.h"
+	"spring.cpp" -> "spring.h"
+	"drawableobject.h" -> "rectangle.h"
+	"materialpoint.h" -> "drawableobject.h"
+	"openglwidget.cpp" -> "openglwidget.h"
+	"point.cpp" -> "point.h"
+	"rectangle.h" -> "point.h"
+	"springableobject.cpp" -> "springableobject.h"
+	"openglwidget.h" -> "modelingmodel.h"
+	"rectangle.cpp" -> "rectangle.h"
+	"main.cpp" -> "mainwindow.h"
+	"spring.h" -> "drawableobject.h"
+}

@@ -2,34 +2,9 @@
 #define DRAWABLEOBJECT_H
 #include <QVector>
 #include <QPoint>
-#include "spring.h"
-#include "materialpoint.h"
-
-struct Point{
-
-    float x;
-    float y;
-
-    Point(float new_x, float new_y);
-    Point();
-
-};
-
-struct Rectangle{
-
-    Point leftTopPoint;
-    float width;
-    float height;
-    int angle;
-
-    Rectangle(Point leftTop, float width, float height);
-    Rectangle();
-
-    void move(Point point);
-    void moveTo(Point point);
-    Point getCenter();
-
-};
+//#include "spring.h"
+//#include "materialpoint.h"
+#include "rectangle.h"
 
 enum DrawableType{
     MATERIAL_POINT,

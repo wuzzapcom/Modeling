@@ -33,7 +33,9 @@ SOURCES += \
     drawableobject.cpp \
     materialpoint.cpp \
     spring.cpp \
-    springableobject.cpp
+    springableobject.cpp \
+    point.cpp \
+    rectangle.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -42,7 +44,9 @@ HEADERS += \
     drawableobject.h \
     materialpoint.h \
     spring.h \
-    springableobject.h
+    springableobject.h \
+    point.h \
+    rectangle.h
 
 FORMS += \
         mainwindow.ui

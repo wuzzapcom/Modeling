@@ -1,8 +1,9 @@
 #ifndef MODELINGMODEL_H
 #define MODELINGMODEL_H
-#include "drawableobject.h"
+//#include "drawableobject.h"
 #include "materialpoint.h"
-#include "spring.h"
+//#include "rectangle.h"
+//#include "spring.h"
 
 class ModelingModel
 {

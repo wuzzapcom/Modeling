@@ -4,7 +4,7 @@
 #include <math.h>
 #include "spring.h"
 #include <QDebug>
-#include "springableobject.h"
+//#include "springableobject.h"
 
 class MaterialPoint: public DrawableObject, public SpringableObject
 {

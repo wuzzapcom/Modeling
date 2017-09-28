@@ -1,7 +1,8 @@
 #ifndef SPRINGABLEOBJECT_H
 #define SPRINGABLEOBJECT_H
 
-#include "drawableobject.h"
+//#include "drawableobject.h"
+#include "rectangle.h"
 
 class SpringableObject
 {
