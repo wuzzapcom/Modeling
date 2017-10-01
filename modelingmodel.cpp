@@ -54,3 +54,44 @@ void ModelingModel::completeModel(){
     }
 
 }
+
+void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second)
+{
+
+    Spring *incompletedSpring;
+    MaterialPoint *materialPoint;
+
+    if (first->isModelIncompleted()){
+
+        if (first->getType() == SPRING){
+
+            incompletedSpring = (Spring*) first;
+
+        }
+
+        if (second->getType() == MATERIAL_POINT){
+
+            materialPoint = (MaterialPoint*) second;
+
+        }
+
+    }
+    else{
+
+        if (second->getType() == SPRING){
+
+            incompletedSpring = (Spring*) second;
+
+        }
+
+        if (first->getType() == MATERIAL_POINT){
+
+            materialPoint = (MaterialPoint*) first;
+
+        }
+
+    }
+
+    incompletedSpring->splitWith(materialPoint);
+
+}

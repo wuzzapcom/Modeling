@@ -9,7 +9,7 @@
 #include <QOpenGLWidget>
 #include <QContextMenuEvent>
 #include <QVBoxLayout>
-#include "modelingmodel.h"
+//#include "modelingmodel.h"
 #include "openglwidget.h"
 #include <QtDebug>
 //#include "springableobject.h"
@@ -91,6 +91,10 @@ private:
 
     void hideRightDock();
     void showRightDock();
+
+    //helpers functions
+    Point getPointInOpenGLCoordinateFromMouseEvent(QMouseEvent *event);
+    QVector<DrawableObject*> assembleDrawableObjectVector();
 
 private slots:
 

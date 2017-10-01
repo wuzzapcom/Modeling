@@ -8,6 +8,9 @@
 #include <QVector3D>
 #include <springableobject.h>
 
+class MaterialPoint;
+class DrawableObject;
+
 class Spring: public DrawableObject
 {
 public:
@@ -20,6 +23,7 @@ public:
     SpringableObject *getFirstSpringable(){return first;}
     SpringableObject *getSecongSpringable(){return second;}
     bool isModelIncompleted();
+    void splitWith(MaterialPoint *materialPoint);
 
 private:
 

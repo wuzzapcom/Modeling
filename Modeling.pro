@@ -46,7 +46,8 @@ HEADERS += \
     spring.h \
     springableobject.h \
     point.h \
-    rectangle.h
+    rectangle.h \
+    common.h
 
 FORMS += \
         mainwindow.ui

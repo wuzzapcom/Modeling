@@ -28,6 +28,8 @@ public:
     void setIncompletedObjecT(DrawableObject *obj){incompletedObject = obj;}
     DrawableObject *getIncompletedObject(){return incompletedObject;}
 
+    void connectObjects(DrawableObject *first, DrawableObject *second);
+
 private:
     bool isPlaying;
 

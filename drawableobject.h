@@ -28,10 +28,6 @@ public:
     void setType(DrawableType t){type = t;}
     DrawableType getType(){return type;}
 
-    static bool connectObjects(DrawableObject *first, DrawableObject *second);
-
-
-
 private:
     bool isSelected = false;
 

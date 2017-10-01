@@ -194,25 +194,14 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
 
     if (event->button() == Qt::LeftButton){
         qInfo("left button pressed");
-        QPoint p = event->globalPos();
-        p = centralWidget()->mapFromGlobal(p);
-        qDebug() << p.x() << p.y();
-        Point point = Point((((float)p.x()) / centralWidget()->contentsRect().width() - 0.5) * 2,
-                   (0.5 - ((float)p.y()) / centralWidget()->contentsRect().height()) * 2);
-        qDebug() << centralWidget()->contentsRect().width() << centralWidget()->contentsRect().height();
-        qDebug() << point.x << point.y;
 
-        QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
-        QVector<Spring*> springs = this->model->getSprings();
+        Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
 
-        QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
-        for(int i = 0; i < matPoints.length(); i++)
-            drawableObjects.append((DrawableObject*) matPoints[i]);
-
-        for(int i = 0; i < springs.length(); i++)
-            drawableObjects.append((DrawableObject*) springs[i]);
+        QVector<DrawableObject*> drawableObjects = assembleDrawableObjectVector();
 
         bool isCursorInObject = false;
+
+        this->model->completeModel();
 
         for(int i = 0; i < drawableObjects.length(); i++){
 
@@ -220,9 +209,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
 
                 qInfo("Found cursor in object");
 
-                if(this->model->getIncompletedObject() != nullptr){
+                if(this->model->getIncompletedObject() != nullptr
+                        && drawableObjects[i] != this->model->getIncompletedObject()){
 
-                    DrawableObject::connectObjects(
+                    model->connectObjects(
                                 drawableObjects[i],
                                 this->model->getIncompletedObject()
                                 );
@@ -258,18 +248,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
     qInfo("MainWindow::mouseMoveEvent()");
 
-    QPoint p = event->globalPos();
-    p = centralWidget()->mapFromGlobal(p);
-    qDebug() << p.x() << p.y();
-    Point point = Point((((float)p.x()) / centralWidget()->contentsRect().width() - 0.5) * 2,
-        (0.5 - ((float)p.y()) / centralWidget()->contentsRect().height()) * 2);
-    qDebug() << point.x << point.y;
+    Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
 
-    if(this->model->getSelectedObject() == nullptr)
-        return;
+    if(this->model->getSelectedObject() != nullptr){
 
-    this->model->getSelectedObject()->moveTo(point);
-    this->centralWidget()->update();
+        this->model->getSelectedObject()->moveTo(point);
+        this->centralWidget()->update();
+
+    }
 
 }
 
@@ -278,7 +264,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
     qInfo("MainWindow::mouseReleaseEvent");
 
-//    this->model->setSelectedObject(nullptr);
     this->centralWidget()->update();
 
 }
@@ -388,6 +373,35 @@ void MainWindow::showRightDock(){
 
     this->resize(this->size().width() + 80, this->size().height());
     this->propertiesDock->setVisible(true);
+
+}
+
+Point MainWindow::getPointInOpenGLCoordinateFromMouseEvent(QMouseEvent *event)
+{
+
+    QPoint p = event->globalPos();
+
+    p = centralWidget()->mapFromGlobal(p);
+
+    return Point((((float)p.x()) / centralWidget()->contentsRect().width() - 0.5) * 2,
+        (0.5 - ((float)p.y()) / centralWidget()->contentsRect().height()) * 2);
+
+}
+
+QVector<DrawableObject*> MainWindow::assembleDrawableObjectVector()
+{
+
+    QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
+    QVector<Spring*> springs = this->model->getSprings();
+
+    QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
+    for(int i = 0; i < matPoints.length(); i++)
+        drawableObjects.append((DrawableObject*) matPoints[i]);
+
+    for(int i = 0; i < springs.length(); i++)
+        drawableObjects.append((DrawableObject*) springs[i]);
+
+    return drawableObjects;
 
 }
 

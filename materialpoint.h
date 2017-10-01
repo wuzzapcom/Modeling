@@ -1,6 +1,6 @@
 #ifndef MATERIALPOINT_H
 #define MATERIALPOINT_H
-#include "drawableobject.h"
+//#include "drawableobject.h"
 #include <math.h>
 #include "spring.h"
 #include <QDebug>
@@ -14,13 +14,15 @@ public:
     void move(Point point);
     void moveTo(Point point);
     bool checkCursorInObject(Point point);
-    float getAngle();
-    Point getContactPoint();
     void addConnectedSpring(Spring *spring);
     QVector<Spring*> getConnectedSprings();
     void setRadius(float r){radius = r;}
     void setWeight(int w){weight = w;}
     bool isModelIncompleted(){return false;}
+
+    float getAngle();
+    Point getContactPoint();
+
 
 private:
     Point center;

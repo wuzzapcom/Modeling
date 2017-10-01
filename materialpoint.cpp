@@ -1,4 +1,5 @@
-#include "materialpoint.h"
+#include "common.h"
+//#include "materialpoint.h"
 
 MaterialPoint::MaterialPoint(Point c, float r)
     :DrawableObject(),

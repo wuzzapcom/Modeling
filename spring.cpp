@@ -1,4 +1,5 @@
-#include "spring.h"
+#include "common.h"
+//#include "spring.h"
 
 Spring::Spring(Rectangle rect)
     :DrawableObject(),
@@ -89,7 +90,7 @@ bool Spring::checkCursorInObject(Point point)
 QVector<Point*> Spring::rotate(QVector<Point*> points)
 {
 
-    this->rotateAngle += 10;
+//    this->rotateAngle += 10;
 
     qDebug() << "Start points";
     for(int i = 0; i < points.length(); i++){
@@ -134,6 +135,20 @@ bool Spring::isModelIncompleted(){
 //        return true;
 
     return false;
+
+}
+
+void Spring::splitWith(MaterialPoint *materialPoint)
+{
+
+    this->rotateAngle = materialPoint->getAngle();
+    Point contactPoint = materialPoint->getContactPoint();
+
+    this->moveTo(
+                Point(
+                    contactPoint.x,// - this->rectangle.width / 2,
+                    contactPoint.y - this->rectangle.height / 2)
+                );
 
 }
 
