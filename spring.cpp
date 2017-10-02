@@ -70,10 +70,17 @@ void Spring::move(Point point)
 
 }
 
-void Spring::moveTo(Point point)
+void Spring::moveTo(Point point, void *caller)
 {
 
     this->rectangle.moveTo(point);
+
+//    if (first != nullptr && caller == nullptr && (caller != ((void*) first)))
+//        first->moveContactPoint(Point(
+//                                    this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
+//                                    this->rectangle.leftTopPoint.y
+//                                    ), this);
+
 
 }
 
@@ -147,8 +154,7 @@ void Spring::splitWith(MaterialPoint *materialPoint)
     this->moveTo(
                 Point(
                     contactPoint.x,// - this->rectangle.width / 2,
-                    contactPoint.y - this->rectangle.height / 2)
-                );
+                    contactPoint.y - this->rectangle.height / 2), materialPoint);
 
 }
 

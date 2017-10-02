@@ -17,13 +17,15 @@ public:
     Spring(Rectangle rect);
     QVector<Point*> draw();
     void move(Point point);
-    void moveTo(Point point);
+    void moveTo(Point point, void *caller);
     bool checkCursorInObject(Point point);
     QVector<Point*> rotate(QVector<Point*> points);
     SpringableObject *getFirstSpringable(){return first;}
     SpringableObject *getSecongSpringable(){return second;}
     bool isModelIncompleted();
     void splitWith(MaterialPoint *materialPoint);
+    void setFirstObject(SpringableObject *f){first = f;}
+    void setSecondObject(SpringableObject *s){second = s;}
 
 private:
 
@@ -31,8 +33,6 @@ private:
     float rotateAngle;
     SpringableObject *first;
     SpringableObject *second;
-    // add new abstract type springable, matPoint and anchoredPoint are subclasses of it
-    // add Springable* first; Springalbe* second;
 
 };
 

@@ -3,5 +3,6 @@
 
 #include "materialpoint.h"
 #include "spring.h"
+#include "stationarypoint.h"
 
 #endif // COMMON_H

@@ -4,5 +4,7 @@
         <file>matPoint.png</file>
         <file>spring.png</file>
         <file>pause.png</file>
+        <file>pendulum.png</file>
+        <file>stationaryPoint.png</file>
     </qresource>
 </RCC>

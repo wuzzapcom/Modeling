@@ -11,6 +11,7 @@ public:
 
     virtual float getAngle() = 0;
     virtual Point getContactPoint() = 0;
+    virtual void moveContactPoint(Point point, void *caller) = 0;
 
 };
 

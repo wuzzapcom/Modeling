@@ -35,7 +35,8 @@ SOURCES += \
     spring.cpp \
     springableobject.cpp \
     point.cpp \
-    rectangle.cpp
+    rectangle.cpp \
+    stationarypoint.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,7 +48,8 @@ HEADERS += \
     springableobject.h \
     point.h \
     rectangle.h \
-    common.h
+    common.h \
+    stationarypoint.h
 
 FORMS += \
         mainwindow.ui

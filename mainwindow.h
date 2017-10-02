@@ -94,7 +94,7 @@ private:
 
     //helpers functions
     Point getPointInOpenGLCoordinateFromMouseEvent(QMouseEvent *event);
-    QVector<DrawableObject*> assembleDrawableObjectVector();
+//    QVector<DrawableObject*> assembleDrawableObjectVector();
 
 private slots:
 
@@ -106,6 +106,8 @@ private slots:
 
     void addMatPoint();
     void addSpring();
+    void addPendulum();
+    void addStationaryPoint();
 
     void changePlayPauseState();
 

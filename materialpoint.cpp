@@ -45,11 +45,34 @@ void MaterialPoint::move(Point point)
 
 }
 
-void MaterialPoint::moveTo(Point point)
+void MaterialPoint::moveTo(Point point, void *caller)
 {
 
     this->center.x = point.x;
     this->center.y = point.y;
+
+//    for(int i = 0; i < connectedSprings.length(); i++){
+
+//        if(caller != ((void*)connectedSprings[i])){
+
+//            connectedSprings[i]->splitWith(this);
+
+//        }
+
+//    }
+
+
+}
+
+void MaterialPoint::moveContactPoint(Point point, void *caller)
+{
+
+    Point oldContactPoint = getContactPoint();
+
+    this->moveTo(Point(
+                     point.x - oldContactPoint.x,
+                     point.y - oldContactPoint.y
+                     ), caller);
 
 }
 

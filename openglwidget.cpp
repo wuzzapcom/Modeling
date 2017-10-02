@@ -42,15 +42,8 @@ void OpenGLWidget::paintGL()
     QColor redColor(255, 0, 0, 255);
     qglColor(blackColor);
 
-    QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
-    QVector<Spring*> springs = this->model->getSprings();
+    QVector<DrawableObject*> drawableObjects = model->getDrawableObjects();
 
-    QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
-    for(int i = 0; i < matPoints.length(); i++)
-        drawableObjects.append((DrawableObject*) matPoints[i]);
-
-    for(int i = 0; i < springs.length(); i++)
-        drawableObjects.append((DrawableObject*) springs[i]);
 
     for(int i = 0; i < drawableObjects.length(); i++){
 

@@ -4,6 +4,7 @@ ModelingModel::ModelingModel()
     :isPlaying(false),
       matPoints(QVector<MaterialPoint*>()),
       springs(QVector<Spring*>()),
+      statPoints(QVector<StationaryPoint*>()),
       selectedObject(nullptr),
       incompletedObject(nullptr)
 {}
@@ -32,6 +33,15 @@ void ModelingModel::addSpring()
 
 }
 
+void ModelingModel::addStationalPoint()
+{
+
+    qInfo("addStationalPoint()");
+
+    statPoints.append(new StationaryPoint(Rectangle(Point(), 0.2f, 0.2f)));
+
+}
+
 QVector<MaterialPoint*> ModelingModel::getMaterialPoints(){
 
     return matPoints;
@@ -41,6 +51,30 @@ QVector<MaterialPoint*> ModelingModel::getMaterialPoints(){
 QVector<Spring*> ModelingModel::getSprings(){
 
     return springs;
+
+}
+
+QVector<StationaryPoint*> ModelingModel::getStatPoints(){
+
+    return statPoints;
+
+}
+
+QVector<DrawableObject*> ModelingModel::getDrawableObjects()
+{
+
+    QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
+
+    for(int i = 0; i < this->matPoints.length(); i++)
+        drawableObjects.append((DrawableObject*) this->matPoints[i]);
+
+    for(int i = 0; i < this->springs.length(); i++)
+        drawableObjects.append((DrawableObject*) this->springs[i]);
+
+    for(int i = 0; i < this->statPoints.length(); i++)
+        drawableObjects.append((DrawableObject*) this->statPoints[i]);
+
+    return drawableObjects;
 
 }
 
@@ -63,35 +97,51 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
     if (first->isModelIncompleted()){
 
-        if (first->getType() == SPRING){
-
+        switch (first->getType()) {
+        case SPRING:
             incompletedSpring = (Spring*) first;
-
+            break;
+        default:
+            return;
+            break;
         }
 
-        if (second->getType() == MATERIAL_POINT){
-
+        switch (second->getType()) {
+        case MATERIAL_POINT:
             materialPoint = (MaterialPoint*) second;
-
+            break;
+        default:
+            return;
+            break;
         }
 
     }
     else{
 
-        if (second->getType() == SPRING){
-
-            incompletedSpring = (Spring*) second;
-
+        switch (first->getType()) {
+        case MATERIAL_POINT:
+            materialPoint = (MaterialPoint*) first;
+            break;
+        default:
+            return;
+            break;
         }
 
-        if (first->getType() == MATERIAL_POINT){
-
-            materialPoint = (MaterialPoint*) first;
-
+        switch (second->getType()) {
+        case SPRING:
+            incompletedSpring = (Spring*) second;
+            break;
+        default:
+            return;
+            break;
         }
 
     }
 
     incompletedSpring->splitWith(materialPoint);
+
+    incompletedSpring->setFirstObject(materialPoint);
+    materialPoint->addConnectedSpring(incompletedSpring);
+
 
 }

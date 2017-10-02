@@ -3,4 +3,6 @@
 DrawableObject::DrawableObject()
 {
 
+    this->type = NONE;
+
 }

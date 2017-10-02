@@ -23,8 +23,8 @@ Rectangle::Rectangle()
 void Rectangle::move(Point point)
 {
 
-    this->leftTopPoint.x += point.x - this->width / 2;
-    this->leftTopPoint.y += point.y + this->height / 2;
+    this->leftTopPoint.x += point.x;// - this->width / 2;
+    this->leftTopPoint.y += point.y;// + this->height / 2;
 
 }
 

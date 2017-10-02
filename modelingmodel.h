@@ -14,11 +14,15 @@ public:
     bool getIsPlaying();
     void addMaterialPoint();
     void addSpring();
+    void addStationalPoint();
 
     void completeModel();
 
     QVector<MaterialPoint*> getMaterialPoints();
     QVector<Spring*> getSprings();
+    QVector<StationaryPoint*> getStatPoints();
+
+    QVector<DrawableObject*> getDrawableObjects();
 
     void setSelectedObject(DrawableObject *obj){selectedObject = obj;}
     DrawableObject *getSelectedObject(){return selectedObject;}
@@ -35,6 +39,7 @@ private:
 
     QVector<MaterialPoint*> matPoints;
     QVector<Spring*> springs;
+    QVector<StationaryPoint*> statPoints;
 
     DrawableObject* selectedObject;
     DrawableObject* incompletedObject;

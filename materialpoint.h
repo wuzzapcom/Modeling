@@ -2,7 +2,8 @@
 #define MATERIALPOINT_H
 //#include "drawableobject.h"
 #include <math.h>
-#include "spring.h"
+//#include "spring.h"
+#include "stationarypoint.h"
 #include <QDebug>
 //#include "springableobject.h"
 
@@ -12,8 +13,9 @@ public:
     MaterialPoint(Point c, float r);
     QVector<Point*> draw();
     void move(Point point);
-    void moveTo(Point point);
+    void moveTo(Point point, void *caller);
     bool checkCursorInObject(Point point);
+    void moveContactPoint(Point point, void *caller);
     void addConnectedSpring(Spring *spring);
     QVector<Spring*> getConnectedSprings();
     void setRadius(float r){radius = r;}
@@ -23,7 +25,6 @@ public:
     float getAngle();
     Point getContactPoint();
 
-
 private:
     Point center;
     float radius;
@@ -31,7 +32,7 @@ private:
     int speedY;
     int weight;
 
-    QVector<Spring*> connectedSprings; //add to constructor
+    QVector<Spring*> connectedSprings;
 
     int precision = 30;
 };

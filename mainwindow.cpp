@@ -59,6 +59,18 @@ void MainWindow::createToolbar()
     addSpringAction->setIcon(QIcon(":/spring.png"));
     connect(addSpringAction, &QAction::triggered, this, &MainWindow::addSpring);
 
+    QAction *addPendulum = new QAction(tr("Pendulum"), this);
+    addPendulum->setShortcut(QKeySequence::Open);
+    addPendulum->setStatusTip("Add math pendulum");
+    addPendulum->setIcon(QIcon(":pendulum.png"));
+    connect(addPendulum, &QAction::triggered, this, &MainWindow::addPendulum);
+
+    QAction *addStationaryPoint = new QAction(tr("Stationary point"), this);
+    addStationaryPoint->setShortcut(QKeySequence::Open);
+    addStationaryPoint->setStatusTip("Add stationary point");
+    addStationaryPoint->setIcon(QIcon(":stationaryPoint"));
+    connect(addStationaryPoint, &QAction::triggered, this, &MainWindow::addStationaryPoint);
+
     playPauseAction = new QAction(tr("Play/Pause"), this);
     playPauseAction->setShortcut(QKeySequence::Open);
     playPauseAction->setStatusTip("Start moving");
@@ -69,6 +81,8 @@ void MainWindow::createToolbar()
     figuresToolbar->setObjectName(QStringLiteral("testToolbar"));
     figuresToolbar->addAction(addMatPointAction);
     figuresToolbar->addAction(addSpringAction);
+    figuresToolbar->addAction(addPendulum);
+    figuresToolbar->addAction(addStationaryPoint);
     figuresToolbar->addAction(playPauseAction);
     figuresToolbar->setMovable(false);
     this->addToolBar(Qt::LeftToolBarArea, figuresToolbar);
@@ -197,7 +211,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
 
         Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
 
-        QVector<DrawableObject*> drawableObjects = assembleDrawableObjectVector();
+        QVector<DrawableObject*> drawableObjects = this->model->getDrawableObjects();//assembleDrawableObjectVector();
 
         bool isCursorInObject = false;
 
@@ -252,7 +266,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
     if(this->model->getSelectedObject() != nullptr){
 
-        this->model->getSelectedObject()->moveTo(point);
+        this->model->getSelectedObject()->moveTo(point, nullptr);
         this->centralWidget()->update();
 
     }
@@ -278,7 +292,8 @@ void MainWindow::copy(){}
 
 void MainWindow::paste(){}
 
-void MainWindow::addMatPoint(){
+void MainWindow::addMatPoint()
+{
 
     qInfo("MainWindow::addMatPoint");
 
@@ -289,11 +304,27 @@ void MainWindow::addMatPoint(){
 
 }
 
-void MainWindow::addSpring(){
+void MainWindow::addSpring()
+{
 
     qInfo("MainWindow::addSpring");
 
     this->model->addSpring();
+    this->centralWidget()->update();
+
+}
+
+void MainWindow::addPendulum()
+{
+
+}
+
+void MainWindow::addStationaryPoint()
+{
+
+    qInfo("MainWindow::addStationaryPoint");
+
+    this->model->addStationalPoint();
     this->centralWidget()->update();
 
 }
@@ -388,22 +419,22 @@ Point MainWindow::getPointInOpenGLCoordinateFromMouseEvent(QMouseEvent *event)
 
 }
 
-QVector<DrawableObject*> MainWindow::assembleDrawableObjectVector()
-{
+//QVector<DrawableObject*> MainWindow::assembleDrawableObjectVector()
+//{
 
-    QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
-    QVector<Spring*> springs = this->model->getSprings();
+//    QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
+//    QVector<Spring*> springs = this->model->getSprings();
 
-    QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
-    for(int i = 0; i < matPoints.length(); i++)
-        drawableObjects.append((DrawableObject*) matPoints[i]);
+//    QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
+//    for(int i = 0; i < matPoints.length(); i++)
+//        drawableObjects.append((DrawableObject*) matPoints[i]);
 
-    for(int i = 0; i < springs.length(); i++)
-        drawableObjects.append((DrawableObject*) springs[i]);
+//    for(int i = 0; i < springs.length(); i++)
+//        drawableObjects.append((DrawableObject*) springs[i]);
 
-    return drawableObjects;
+//    return drawableObjects;
 
-}
+//}
 
 MainWindow::~MainWindow()
 {
