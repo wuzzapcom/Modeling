@@ -74,6 +74,9 @@ QVector<DrawableObject*> ModelingModel::getDrawableObjects()
     for(int i = 0; i < this->statPoints.length(); i++)
         drawableObjects.append((DrawableObject*) this->statPoints[i]);
 
+    for(int i = 0; i < this->pendulums.length(); i++)
+        drawableObjects.append((DrawableObject*) this->pendulums[i]);
+
     return drawableObjects;
 
 }

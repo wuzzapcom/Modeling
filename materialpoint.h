@@ -3,7 +3,7 @@
 //#include "drawableobject.h"
 #include <math.h>
 //#include "spring.h"
-#include "stationarypoint.h"
+#include "pendulum.h"
 #include <QDebug>
 //#include "springableobject.h"
 

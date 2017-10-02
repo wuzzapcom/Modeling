@@ -40,6 +40,7 @@ private:
     QVector<MaterialPoint*> matPoints;
     QVector<Spring*> springs;
     QVector<StationaryPoint*> statPoints;
+    QVector<Pendulum*> pendulums;
 
     DrawableObject* selectedObject;
     DrawableObject* incompletedObject;

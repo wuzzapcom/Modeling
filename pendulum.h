@@ -6,7 +6,7 @@
 class Pendulum: public DrawableObject
 {
 public:
-    Pendulum();
+    Pendulum(Rectangle rect);
 
     //DrawableObject methods
     QVector<Point*> draw();
@@ -15,9 +15,13 @@ public:
     bool checkCursorInObject(Point point);
     bool isModelIncompleted();
 
+    void setSpringableObject(SpringableObject *springable);
+
 private:
 
     StationaryPoint statPoint;
+
+    SpringableObject *springableObject;
 
 };
 

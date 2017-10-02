@@ -10,6 +10,7 @@ enum DrawableType{
     MATERIAL_POINT,
     SPRING,
     STATIONARY_POINT,
+    PENDULUM,
     NONE
 };
 
