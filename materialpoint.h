@@ -11,19 +11,25 @@ class MaterialPoint: public DrawableObject, public SpringableObject
 {
 public:
     MaterialPoint(Point c, float r);
+
+    //DrawableObject methods
     QVector<Point*> draw();
     void move(Point point);
     void moveTo(Point point, void *caller);
     bool checkCursorInObject(Point point);
+    bool isModelIncompleted(){return false;}
+
+    //SpringableObject methods
     void moveContactPoint(Point point, void *caller);
+    float getAngle();
+    Point getContactPoint();
+
     void addConnectedSpring(Spring *spring);
     QVector<Spring*> getConnectedSprings();
     void setRadius(float r){radius = r;}
-    void setWeight(int w){weight = w;}
-    bool isModelIncompleted(){return false;}
+    void setWeight(int w){weight = w;
 
-    float getAngle();
-    Point getContactPoint();
+
 
 private:
     Point center;

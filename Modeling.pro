@@ -36,7 +36,8 @@ SOURCES += \
     springableobject.cpp \
     point.cpp \
     rectangle.cpp \
-    stationarypoint.cpp
+    stationarypoint.cpp \
+    pendulum.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS += \
     point.h \
     rectangle.h \
     common.h \
-    stationarypoint.h
+    stationarypoint.h \
+    pendulum.h
 
 FORMS += \
         mainwindow.ui
