@@ -27,7 +27,7 @@ public:
     void addConnectedSpring(Spring *spring);
     QVector<Spring*> getConnectedSprings();
     void setRadius(float r){radius = r;}
-    void setWeight(int w){weight = w;
+    void setWeight(int w){weight = w;}
 
 
 
