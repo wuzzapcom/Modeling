@@ -2,7 +2,7 @@
 //#include "materialpoint.h"
 
 MaterialPoint::MaterialPoint(Point c, float r)
-    :DrawableObject(),
+    :ConnectableObject(),
       center(c),
       radius(r),
       connectedSprings(QVector<Spring*>()){

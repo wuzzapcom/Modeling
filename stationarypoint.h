@@ -3,7 +3,7 @@
 
 #include "spring.h"
 
-class StationaryPoint: public DrawableObject
+class StationaryPoint: public ConnectableObject
 {
 public:
     StationaryPoint(Rectangle rect);

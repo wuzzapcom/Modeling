@@ -1,7 +1,7 @@
 //#include "stationarypoint.h"
 #include "common.h"
 StationaryPoint::StationaryPoint(Rectangle rect)
-    :DrawableObject(),
+    :ConnectableObject(),
       rectangle(rect)
 {
 

@@ -5,6 +5,7 @@ ModelingModel::ModelingModel()
       matPoints(QVector<MaterialPoint*>()),
       springs(QVector<Spring*>()),
       statPoints(QVector<StationaryPoint*>()),
+      rods(QVector<Rod*>()),
       selectedObject(nullptr),
       incompletedObject(nullptr)
 {}
@@ -74,8 +75,8 @@ QVector<DrawableObject*> ModelingModel::getDrawableObjects()
     for(int i = 0; i < this->statPoints.length(); i++)
         drawableObjects.append((DrawableObject*) this->statPoints[i]);
 
-    for(int i = 0; i < this->pendulums.length(); i++)
-        drawableObjects.append((DrawableObject*) this->pendulums[i]);
+    for(int i = 0; i < this->rods.length(); i++)
+        drawableObjects.append((DrawableObject*) this->rods[i]);
 
     return drawableObjects;
 

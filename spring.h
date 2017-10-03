@@ -1,17 +1,16 @@
 #ifndef SPRING_H
 #define SPRING_H
-#include "drawableobject.h"
+//#include "drawableobject.h"
 #include <QMatrix>
 #include <QMatrix4x4>
 #include <math.h>
 #include <QDebug>
 #include <QVector3D>
-#include <springableobject.h>
+#include "drawableinheritor.h"
 
 class MaterialPoint;
-class DrawableObject;
 
-class Spring: public DrawableObject
+class Spring: public PointableObject
 {
 public:
     Spring(Rectangle rect);
@@ -20,19 +19,19 @@ public:
     void moveTo(Point point, void *caller);
     bool checkCursorInObject(Point point);
     QVector<Point*> rotate(QVector<Point*> points);
-    SpringableObject *getFirstSpringable(){return first;}
-    SpringableObject *getSecongSpringable(){return second;}
+    ConnectableObject *getFirstSpringable(){return first;}
+    ConnectableObject *getSecongSpringable(){return second;}
     bool isModelIncompleted();
     void splitWith(MaterialPoint *materialPoint);
-    void setFirstObject(SpringableObject *f){first = f;}
-    void setSecondObject(SpringableObject *s){second = s;}
+    void setFirstObject(ConnectableObject *f){first = f;}
+    void setSecondObject(ConnectableObject *s){second = s;}
 
 private:
 
     Rectangle rectangle;
     float rotateAngle;
-    SpringableObject *first;
-    SpringableObject *second;
+    ConnectableObject *first;
+    ConnectableObject *second;
 
 };
 

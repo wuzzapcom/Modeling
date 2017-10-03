@@ -2,7 +2,7 @@
 //#include "spring.h"
 
 Spring::Spring(Rectangle rect)
-    :DrawableObject(),
+    :PointableObject(),
       rectangle(rect),
       rotateAngle(45.0),
       first(nullptr),

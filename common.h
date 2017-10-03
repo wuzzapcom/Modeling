@@ -4,6 +4,6 @@
 #include "materialpoint.h"
 #include "spring.h"
 #include "stationarypoint.h"
-#include "pendulum.h"
+#include "rod.h"
 
 #endif // COMMON_H

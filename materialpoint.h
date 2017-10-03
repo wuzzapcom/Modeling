@@ -3,11 +3,12 @@
 //#include "drawableobject.h"
 #include <math.h>
 //#include "spring.h"
-#include "pendulum.h"
+#include "rod.h"
 #include <QDebug>
 //#include "springableobject.h"
+#include "rod.h"
 
-class MaterialPoint: public DrawableObject, public SpringableObject
+class MaterialPoint: public ConnectableObject
 {
 public:
     MaterialPoint(Point c, float r);

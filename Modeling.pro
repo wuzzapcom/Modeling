@@ -33,11 +33,12 @@ SOURCES += \
     drawableobject.cpp \
     materialpoint.cpp \
     spring.cpp \
-    springableobject.cpp \
     point.cpp \
     rectangle.cpp \
     stationarypoint.cpp \
-    pendulum.cpp
+    connectableobject.cpp \
+    pointableobject.cpp \
+    rod.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -46,12 +47,14 @@ HEADERS += \
     drawableobject.h \
     materialpoint.h \
     spring.h \
-    springableobject.h \
     point.h \
     rectangle.h \
     common.h \
     stationarypoint.h \
-    pendulum.h
+    connectableobject.h \
+    pointableobject.h \
+    rod.h \
+    drawableinheritor.h
 
 FORMS += \
         mainwindow.ui
