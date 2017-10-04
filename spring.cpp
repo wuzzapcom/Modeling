@@ -2,11 +2,7 @@
 //#include "spring.h"
 
 Spring::Spring(Rectangle rect)
-    :PointableObject(),
-      rectangle(rect),
-      rotateAngle(45.0),
-      first(nullptr),
-      second(nullptr)
+    :PointableObject(rect)
 {
 
     this->type = SPRING;
@@ -94,45 +90,6 @@ bool Spring::checkCursorInObject(Point point)
 
 }
 
-QVector<Point*> Spring::rotate(QVector<Point*> points)
-{
-
-//    this->rotateAngle += 10;
-
-    qDebug() << "Start points";
-    for(int i = 0; i < points.length(); i++){
-        qDebug() << "x = " << points[i]->x << " y = " << points[i]->y;
-    }
-
-    Point center = this->rectangle.getCenter();
-
-    QMatrix4x4 transformationMatrix;
-    QVector3D radiusVector = QVector3D(center.x, center.y, 0.0);
-
-    transformationMatrix.rotate(this->rotateAngle, 0.0, 0.0, 1.0);
-
-    for (int i = 0; i < points.length(); i++){
-
-        QVector3D point = QVector3D(points[i]->x, points[i]->y, 0.0);
-
-        point -= radiusVector;
-        point = point * transformationMatrix;
-        point += radiusVector;
-
-        points[i]->x = point.x();
-        points[i]->y = point.y();
-
-    }
-
-    qDebug() << "Changed points";
-    for(int i = 0; i < points.length(); i++){
-        qDebug() << "x = " << points[i]->x << " y = " << points[i]->y;
-    }
-
-    return points;
-
-}
-
 bool Spring::isModelIncompleted(){
 
     if (this->first == nullptr)
@@ -148,9 +105,11 @@ bool Spring::isModelIncompleted(){
 void Spring::splitWith(MaterialPoint *materialPoint)
 {
 
-    this->rotateAngle = materialPoint->getAngle();
-    Point contactPoint = materialPoint->getContactPoint();
+    MaterialPoint *mp = new MaterialPoint(Point(0.0f, 0.0f), 0.3f);
 
+
+    Point contactPoint = materialPoint->getContactPoint(mp);
+    qDebug() << "Contact point : x = " << contactPoint.x << ", y = " << contactPoint.y;
     this->moveTo(
                 Point(
                     contactPoint.x,// - this->rectangle.width / 2,

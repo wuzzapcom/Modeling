@@ -4,8 +4,8 @@
 MaterialPoint::MaterialPoint(Point c, float r)
     :ConnectableObject(),
       center(c),
-      radius(r),
-      connectedSprings(QVector<Spring*>()){
+      radius(r)
+{
 
     this->type = MATERIAL_POINT;
 
@@ -64,32 +64,6 @@ void MaterialPoint::moveTo(Point point, void *caller)
 
 }
 
-void MaterialPoint::moveContactPoint(Point point, void *caller)
-{
-
-    Point oldContactPoint = getContactPoint();
-
-    this->moveTo(Point(
-                     point.x - oldContactPoint.x,
-                     point.y - oldContactPoint.y
-                     ), caller);
-
-}
-
-void MaterialPoint::addConnectedSpring(Spring *spring)
-{
-
-    this->connectedSprings.append(spring);
-
-}
-
-QVector<Spring*> MaterialPoint::getConnectedSprings()
-{
-
-    return this->connectedSprings;
-
-}
-
 bool MaterialPoint::checkCursorInObject(Point point)
 {
 
@@ -99,18 +73,71 @@ bool MaterialPoint::checkCursorInObject(Point point)
 }
 
 
-Point MaterialPoint::getContactPoint()
+Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
 {
 
-    return Point(
-                this->center.x,
-                this->center.y - this->radius
-                );
+    Point connCenter = connectable->getCenter();
+
+    if(fabs(connCenter.x - this->center.x) < std::numeric_limits<float>::epsilon())
+    {
+
+        if (connCenter.y > this->center.y)
+        {
+            return Point(
+                        this->center.x,
+                        this->center.y + this->radius
+                        );
+        }else
+        {
+            return Point(
+                        this->center.x,
+                        this->center.y - this->radius
+                        );
+        }
+
+    }else if (fabs(connCenter.y - this->center.x) < std::numeric_limits<float>::epsilon())
+    {
+
+        if (connCenter.x > this->center.x)
+        {
+            return Point(
+                        this->center.x + this->radius,
+                        this->center.y
+                        );
+        }else
+        {
+            return Point(
+                        this->center.x - this->radius,
+                        this->center.y
+                        );
+        }
+
+    }else
+    {
+
+        float hypo = hypotf(
+                    connCenter.x - this->center.x,
+                    connCenter.y - this->center.y
+                    );
+
+        return Point(
+                    this->center.x + this->radius * (connCenter.x - this->center.x) / hypo,
+                    this->center.y + this->radius * (connCenter.y - this->center.y) / hypo
+                    );
+    }
 
 }
 
-float MaterialPoint::getAngle(){
+Point MaterialPoint::getCenter()
+{
 
-    return 0.0;
+    return this->center;
 
 }
+
+
+
+
+
+
+

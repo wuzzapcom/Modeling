@@ -1,6 +1,7 @@
 #include "common.h"
 
-Rod::Rod()
+Rod::Rod(Rectangle rect):
+    PointableObject(rect)
 {
 
 }

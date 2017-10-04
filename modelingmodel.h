@@ -2,6 +2,7 @@
 #define MODELINGMODEL_H
 //#include "drawableobject.h"
 #include "materialpoint.h"
+#include <QDebug>
 //#include "rectangle.h"
 //#include "spring.h"
 

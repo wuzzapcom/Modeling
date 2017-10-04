@@ -26,7 +26,7 @@ public:
      * getContactPoint() - should return connection point of this connectable
      * and and PointableObject.
      * */
-    virtual Point getContactPoint() = 0;
+    virtual Point getContactPoint(ConnectableObject *connectable) = 0;
 
 
     /*

@@ -6,7 +6,7 @@
 class Rod: public PointableObject
 {
 public:
-    Rod();
+    Rod(Rectangle rect);
 };
 
 #endif // ROD_H

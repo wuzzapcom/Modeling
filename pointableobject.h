@@ -2,6 +2,8 @@
 #define POINTABLEOBJECT_H
 #include "drawableobject.h"
 #include <math.h>
+#include <QMatrix4x4>
+#include <QVector3D>
 
 class ConnectableObject;
 
@@ -41,8 +43,19 @@ public:
      * */
     void updateLength();
 
+    /*
+     * Getters
+     * */
+    ConnectableObject *getFirstConnectable(){return first;}
+    ConnectableObject *getSecondConnectable(){return second;}
 
-private:
+    /*
+     * Setters
+     * */
+    void setFirstConnectable(ConnectableObject *f){first = f;}
+    void setSecondConnectable(ConnectableObject *s){second = s;}
+
+protected:
 
     ConnectableObject *first;
     ConnectableObject *second;

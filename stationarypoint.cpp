@@ -61,3 +61,19 @@ bool StationaryPoint::isModelIncompleted()
     return false;
 
 }
+
+Point StationaryPoint::getCenter()
+{
+    return Point(
+            this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
+            this->rectangle.leftTopPoint.y - this->rectangle.height
+            );
+}
+
+Point StationaryPoint::getContactPoint(ConnectableObject *connectable)
+{
+    return Point(
+            this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
+            this->rectangle.leftTopPoint.y - this->rectangle.height
+            );
+}

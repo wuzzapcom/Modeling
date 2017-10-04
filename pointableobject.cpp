@@ -47,11 +47,11 @@ QVector<Point*> PointableObject::rotate(QVector<Point *> points)
 void PointableObject::updateLength()
 {
 
-    if (this->first == nullptr || this-second == nullptr)
+    if (this->first == nullptr || this->second == nullptr)
         return;
 
-    Point firstContactPoint = this->first->getContactPoint();
-    Point secondContactPoint = this->second->getContactPoint();
+    Point firstContactPoint = this->first->getContactPoint(this->second);
+    Point secondContactPoint = this->second->getContactPoint(this->first);
 
     float hypotenuse = sqrtf(
                pow(firstContactPoint.x - secondContactPoint.x, 2.0) +

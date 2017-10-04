@@ -20,26 +20,21 @@ public:
     bool checkCursorInObject(Point point);
     bool isModelIncompleted(){return false;}
 
-    //SpringableObject methods
-    void moveContactPoint(Point point, void *caller);
-    float getAngle();
-    Point getContactPoint();
+    //ConnactableObject methods
+    Point getCenter();
+    Point getContactPoint(ConnectableObject *connectable);
 
-    void addConnectedSpring(Spring *spring);
-    QVector<Spring*> getConnectedSprings();
     void setRadius(float r){radius = r;}
     void setWeight(int w){weight = w;}
 
 
 
 private:
+
     Point center;
     float radius;
-    int speedX;
-    int speedY;
     int weight;
 
-    QVector<Spring*> connectedSprings;
 
     int precision = 30;
 };

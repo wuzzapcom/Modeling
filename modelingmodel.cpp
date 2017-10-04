@@ -24,6 +24,12 @@ void ModelingModel::addMaterialPoint()
 
     matPoints.append(new MaterialPoint(Point(0.0f, 0.0f), 0.5f));
 
+    MaterialPoint *mp = new MaterialPoint(Point(0.0f, 0.5f), 0.3f);
+
+    Point p = matPoints[matPoints.length() - 1]->getContactPoint(mp);
+
+    qDebug() << "Contact point : x = " << p.x << ", y = " << p.y;
+
 }
 
 void ModelingModel::addSpring()
@@ -144,8 +150,8 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
     incompletedSpring->splitWith(materialPoint);
 
-    incompletedSpring->setFirstObject(materialPoint);
-    materialPoint->addConnectedSpring(incompletedSpring);
+    incompletedSpring->setFirstConnectable(materialPoint);
+    materialPoint->addPointable(incompletedSpring);
 
 
 }
