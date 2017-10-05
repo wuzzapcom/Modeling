@@ -13,7 +13,7 @@ Spring::Spring(Rectangle rect)
 QVector<Point*> Spring::draw()
 {
 
-    qInfo("Spring::draw()");
+    //qInfo("Spring::draw()");
 
     QVector<Point*> points = QVector<Point*>(10);
 
@@ -71,13 +71,6 @@ void Spring::moveTo(Point point, void *caller)
 
     this->rectangle.moveTo(point);
 
-//    if (first != nullptr && caller == nullptr && (caller != ((void*) first)))
-//        first->moveContactPoint(Point(
-//                                    this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
-//                                    this->rectangle.leftTopPoint.y
-//                                    ), this);
-
-
 }
 
 bool Spring::checkCursorInObject(Point point)
@@ -106,14 +99,43 @@ void Spring::splitWith(MaterialPoint *materialPoint)
 {
 
     MaterialPoint *mp = new MaterialPoint(Point(0.0f, 0.0f), 0.3f);
-
+    this->second = mp;
 
     Point contactPoint = materialPoint->getContactPoint(mp);
-    qDebug() << "Contact point : x = " << contactPoint.x << ", y = " << contactPoint.y;
+    this->updateAngle();
+
+    qDebug() << "Angle =" << this->angle << "sin(x) =" << sinf(this->angle) << "cos(x) =" << cosf(this->angle);
+
+    qDebug() << "Contact point : x =" << contactPoint.x << "y =" << contactPoint.y;
+
+    float sinus = fabs(sinf(180-this->angle));
+    float cosinus = fabs(cosf(180-this->angle));
+
+    if (this->angle > 270 && this->angle < 360)
+    {
+        sinus *= -1;
+    }
+    else if (this->angle > 90 && this->angle < 180)
+    {
+        cosinus *= -1;
+    }
+    else if (this->angle > 180 && this->angle < 270)
+    {
+        sinus *= -1;
+        cosinus *= -1;
+    }
+
     this->moveTo(
                 Point(
-                    contactPoint.x,// - this->rectangle.width / 2,
-                    contactPoint.y - this->rectangle.height / 2), materialPoint);
+                    -(this->rectangle.width * sinus - 2 * contactPoint.x) / 2,
+                    -(this->rectangle.width * cosinus - 2 * contactPoint.y) / 2
+                    //contactPoint.x, //+ cosf(this->angle) * this->rectangle.width / 2,
+                    //contactPoint.y - this->rectangle.height / 2
+                    ),
+                materialPoint
+                );
+
+    this->second = nullptr;
 
 }
 

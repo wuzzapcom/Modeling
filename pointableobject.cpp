@@ -13,7 +13,69 @@ PointableObject::PointableObject(Rectangle rect)
 void PointableObject::updateAngle()
 {
 
-    this->angle = 0.0f;
+    //this->angle = 0.0f;
+//    MaterialPoint *mp = new MaterialPoint(Point(0.0f, 0.0f), 0.3f);
+//    second = mp;
+
+    Point p1 = first->getCenter();//first->getContactPoint(second);
+    Point p2 = second->getCenter();//second->getContactPoint(first);
+
+    if(fabs(p1.x - p2.x) < std::numeric_limits<float>::epsilon())
+    {
+        if (p1.y > p2.y)
+        {
+            this->angle = 0.0f;
+            return;
+        }else
+        {
+            this->angle = M_PI;
+            return;
+        }
+    }else if(fabs(p1.y - p2.y) < std::numeric_limits<float>::epsilon())
+    {
+        if (p1.x > p2.x)
+        {
+            this->angle = 3 * M_PI / 2;
+            return;
+        }else{
+            this->angle = M_PI / 2;
+            return;
+        }
+    }else
+    {
+        float hypo = hypotf(
+                    p1.x - p2.x,
+                    p1.y - p2.y
+                    );
+
+        //First quarter
+        if (p1.x > p2.x && p1.y > p2.y)
+        {
+            this->angle = 90.0f - acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+            return;
+        }
+        //Second quarter
+        if (p1.x < p2.x && p1.y > p2.y)
+        {
+            this->angle = 270.0f + acosf((p2.x - p1.x) / hypo) / M_PI * 180;
+            return;
+        }
+        //Third quarter
+        if(p1.x < p2.x && p1.y < p2.y)
+        {
+            this->angle = 180.0f + acosf((p2.x - p1.y) / hypo) / M_PI * 180;
+            return;
+        }
+        //Fourth quarter
+        if (p1.x > p2.y && p1.y < p2.y)
+        {
+            this->angle = 90.0f + acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+            return;
+        }
+    }
+
+
+
 
 }
 

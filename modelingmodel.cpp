@@ -148,9 +148,9 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
     }
 
+    incompletedSpring->setFirstConnectable(materialPoint);
     incompletedSpring->splitWith(materialPoint);
 
-    incompletedSpring->setFirstConnectable(materialPoint);
     materialPoint->addPointable(incompletedSpring);
 
 

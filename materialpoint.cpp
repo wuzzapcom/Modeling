@@ -13,7 +13,7 @@ MaterialPoint::MaterialPoint(Point c, float r)
 
 QVector<Point*> MaterialPoint::draw()
 {
-    qInfo("MaterialPoint::draw()");
+    //qInfo("MaterialPoint::draw()");
     QVector<Point*> points = QVector<Point*>(this->precision + 1);
     Point *point;
     float angle = 0.0f;
@@ -95,7 +95,7 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
                         );
         }
 
-    }else if (fabs(connCenter.y - this->center.x) < std::numeric_limits<float>::epsilon())
+    }else if (fabs(connCenter.y - this->center.y) < std::numeric_limits<float>::epsilon())
     {
 
         if (connCenter.x > this->center.x)
