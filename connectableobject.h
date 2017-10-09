@@ -28,13 +28,12 @@ public:
      * */
     virtual Point getContactPoint(ConnectableObject *connectable) = 0;
 
-
     /*
      * Common methods for every inheritor
      * */
     void addPointable(PointableObject *p);
 
-private:
+protected:
 
     QVector<PointableObject*> pointableObjects;
 

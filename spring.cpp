@@ -2,18 +2,22 @@
 //#include "spring.h"
 
 Spring::Spring(Rectangle rect)
-    :PointableObject(rect)
+    :PointableObject(rect),
+      rigidity(0.0f)
 {
-
     this->type = SPRING;
+}
 
+Spring::Spring()
+    :PointableObject(Rectangle()),
+      rigidity(0.0f)
+{
+    this->type = SPRING;
 }
 
 // make translation by matrixes
 QVector<Point*> Spring::draw()
 {
-
-    //qInfo("Spring::draw()");
 
     QVector<Point*> points = QVector<Point*>(10);
 
@@ -66,7 +70,7 @@ void Spring::move(Point point)
 
 }
 
-void Spring::moveTo(Point point, void *caller)
+void Spring::moveTo(Point point)
 {
 
     this->rectangle.moveTo(point);
@@ -95,47 +99,48 @@ bool Spring::isModelIncompleted(){
 
 }
 
-void Spring::splitWith(MaterialPoint *materialPoint)
+void Spring::write(QJsonObject &json)
 {
+    json["hash"] = QString::number(hash);
+    json["x"] = rectangle.leftTopPoint.x;
+    json["y"] = rectangle.leftTopPoint.y;
+    json["width"] = rectangle.width;
+    json["height"] = rectangle.height;
+    json["angle"] = angle;
+    json["rigidiny"] = rigidity;
+    json["first"] = QString::number(first->getHash());
+    json["second"] = QString::number(second->getHash());
+}
 
-    MaterialPoint *mp = new MaterialPoint(Point(0.0f, 0.0f), 0.3f);
-    this->second = mp;
+void Spring::readHash(const QJsonObject &json)
+{
+    bool ok;
+    hash = json["hash"].toString().toLong(&ok);
+}
 
-    Point contactPoint = materialPoint->getContactPoint(mp);
-    this->updateAngle();
+void Spring::read(const QJsonObject &json, QVector<DrawableObject *> objects)
+{
+    rectangle.leftTopPoint.x = json["x"].toDouble();
+    rectangle.leftTopPoint.y = json["y"].toDouble();
+    rectangle.width = json["width"].toDouble();
+    rectangle.height = json["height"].toDouble();
+    angle = json["angle"].toDouble();
+    rigidity = json["rigidity"].toDouble();
 
-    qDebug() << "Angle =" << this->angle << "sin(x) =" << sinf(this->angle) << "cos(x) =" << cosf(this->angle);
+    bool ok;
+    long firstHash = json["first"].toString().toLong(&ok);
+    long secondHash = json["second"].toString().toLong(&ok);
 
-    qDebug() << "Contact point : x =" << contactPoint.x << "y =" << contactPoint.y;
-
-    float sinus = fabs(sinf(180-this->angle));
-    float cosinus = fabs(cosf(180-this->angle));
-
-    if (this->angle > 270 && this->angle < 360)
+    for (int i = 0; i < objects.size(); i++)
     {
-        sinus *= -1;
+        if (firstHash == objects[i]->getHash())
+        {
+            first = (ConnectableObject*) objects[i];
+        }
+        if (secondHash == objects[i]->getHash())
+        {
+            second = (ConnectableObject*)objects[i];
+        }
     }
-    else if (this->angle > 90 && this->angle < 180)
-    {
-        cosinus *= -1;
-    }
-    else if (this->angle > 180 && this->angle < 270)
-    {
-        sinus *= -1;
-        cosinus *= -1;
-    }
-
-    this->moveTo(
-                Point(
-                    -(this->rectangle.width * sinus - 2 * contactPoint.x) / 2,
-                    -(this->rectangle.width * cosinus - 2 * contactPoint.y) / 2
-                    //contactPoint.x, //+ cosf(this->angle) * this->rectangle.width / 2,
-                    //contactPoint.y - this->rectangle.height / 2
-                    ),
-                materialPoint
-                );
-
-    this->second = nullptr;
-
 }
 

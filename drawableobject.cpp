@@ -4,5 +4,6 @@ DrawableObject::DrawableObject()
 {
 
     this->type = NONE;
+    this->hash = (long) this;
 
 }

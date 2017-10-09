@@ -11,6 +11,14 @@ MaterialPoint::MaterialPoint(Point c, float r)
 
 }
 
+MaterialPoint::MaterialPoint()
+    :ConnectableObject(),
+      center(Point(0.0f, 0.0f)),
+             radius(0.0f)
+{
+    this->type = MATERIAL_POINT;
+}
+
 QVector<Point*> MaterialPoint::draw()
 {
     //qInfo("MaterialPoint::draw()");
@@ -45,23 +53,10 @@ void MaterialPoint::move(Point point)
 
 }
 
-void MaterialPoint::moveTo(Point point, void *caller)
+void MaterialPoint::moveTo(Point point)
 {
-
     this->center.x = point.x;
     this->center.y = point.y;
-
-//    for(int i = 0; i < connectedSprings.length(); i++){
-
-//        if(caller != ((void*)connectedSprings[i])){
-
-//            connectedSprings[i]->splitWith(this);
-
-//        }
-
-//    }
-
-
 }
 
 bool MaterialPoint::checkCursorInObject(Point point)
@@ -132,6 +127,56 @@ Point MaterialPoint::getCenter()
 {
 
     return this->center;
+
+}
+
+void MaterialPoint::write(QJsonObject &json)
+{
+    json["hash"] = QString::number(hash);//QJsonValue(hash);
+    json["x"] = QJsonValue(center.x);
+    json["y"] = center.y;
+    json["radius"] = radius;
+    json["weight"] = weight;
+
+    QJsonArray pointables;
+
+    for(int i = 0; i < pointableObjects.length(); i++)
+    {
+        QJsonObject obj;
+        obj[QString::number(i)] = QString::number(pointableObjects[i]->getHash());
+        pointables.append(obj);
+    }
+
+    json["pointables"] = pointables;
+}
+
+void MaterialPoint::readHash(const QJsonObject &json)
+{
+    bool ok;
+    hash = json["hash"].toString().toLong(&ok);
+}
+
+void MaterialPoint::read(const QJsonObject &json, QVector<DrawableObject*> objects)
+{
+    center.x = json["x"].toDouble();
+    center.y = json["y"].toDouble();
+    radius = json["radius"].toDouble();
+    weight = json["weight"].toInt();
+
+    QJsonArray pointables = json["pointables"].toArray();
+
+    for (int i = 0; i < pointables.size(); i++)
+    {
+        bool ok;
+        long loadedHash = pointables.at(i).toString().toLong(&ok);
+        for (int j = 0; j < objects.size(); j++)
+        {
+            if (loadedHash == objects[j]->getHash())
+            {
+                this->pointableObjects.append((PointableObject*) objects[j]);
+            }
+        }
+    }
 
 }
 

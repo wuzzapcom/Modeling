@@ -14,17 +14,30 @@ class Spring: public PointableObject
 {
 public:
     Spring(Rectangle rect);
+    Spring();
 
     //DrawableObject methods
     QVector<Point*> draw();
     void move(Point point);
-    void moveTo(Point point, void *caller);
+    void moveTo(Point point);
     bool checkCursorInObject(Point point);
     bool isModelIncompleted();
-
-    void splitWith(MaterialPoint *materialPoint);
+    void write(QJsonObject &json);
+    void readHash(const QJsonObject &json);
+    void read(const QJsonObject &json, QVector<DrawableObject*> objects);
 
 private:
+
+    float rigidity;
+
+    /*
+     * Fields from PointableObject:
+     *
+     * ConnectableObject *first;
+     * ConnectableObject *second;
+     * float angle;
+     * Rectangle rectangle;
+    */
 
 };
 

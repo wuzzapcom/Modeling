@@ -266,7 +266,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
     if(this->model->getSelectedObject() != nullptr){
 
-        this->model->getSelectedObject()->moveTo(point, nullptr);
+        this->model->getSelectedObject()->moveTo(point);
         this->centralWidget()->update();
 
     }
@@ -282,7 +282,11 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
 }
 
-void MainWindow::save(){}
+void MainWindow::save()
+{
+    qInfo("MainWindow::save()");
+    this->model->save();
+}
 
 void MainWindow::open(){}
 

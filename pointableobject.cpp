@@ -5,7 +5,9 @@ PointableObject::PointableObject(Rectangle rect)
       first(nullptr),
       second(nullptr),
       rectangle(rect),
-      angle(0.0f)
+      angle(0.0f),
+      rotatedTopPoint(Point()),
+      rotatedBottomPoint(Point())
 {
 
 }
@@ -74,9 +76,6 @@ void PointableObject::updateAngle()
         }
     }
 
-
-
-
 }
 
 QVector<Point*> PointableObject::rotate(QVector<Point *> points)
@@ -102,6 +101,9 @@ QVector<Point*> PointableObject::rotate(QVector<Point *> points)
 
     }
 
+    rotatedTopPoint = *points[0];
+    rotatedBottomPoint = *points[points.size() - 1];
+
     return points;
 
 }
@@ -124,6 +126,44 @@ void PointableObject::updateLength()
 
 }
 
+void PointableObject::update()
+{
+    bool isSecondNull = false;
+    if (this->first == nullptr)
+        return;
+
+    if (this->second == nullptr)
+    {
+        isSecondNull = true;
+        second = new MaterialPoint(Point(0.0f, 0.0f), 0.1f);
+    }
+
+    Point contactPoint = first->getContactPoint(second);
+
+    this->updateAngle();
+    this->updateLength();
+    this->draw();
+
+    this->moveTo(
+                Point(
+                    contactPoint.x - (this->rotatedTopPoint.x - this->rectangle.getCenter().x),
+                    contactPoint.y - (this->rotatedTopPoint.y - this->rectangle.getCenter().y)
+                     )
+                );
+
+    if (isSecondNull)
+        this->second = nullptr;
+}
+
+void PointableObject::setFirstConnectable(ConnectableObject *f)
+{
+    this->first = f;
+}
+
+void PointableObject::setSecondConnectable(ConnectableObject *s)
+{
+    this->second = s;
+}
 
 
 

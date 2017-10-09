@@ -6,6 +6,7 @@
 #include <QVector3D>
 
 class ConnectableObject;
+class MaterialPoint;
 
 class PointableObject: public DrawableObject
 {
@@ -30,18 +31,26 @@ public:
     void updateAngle();
 
     /*
-     * rotate() - rotates given points around rectagle.getCenter() point for
-     * stored angle value.
-     * */
-    QVector<Point*> rotate(QVector<Point*> points);
-
-    /*
      * updateLength() - stretches or squeezes PointableObject when
      * ConnectableObjects move away or come together.
      * Updates stored rectangle value.
      * SHOULD BE CALLED AFTER updateAngle()!
      * */
     void updateLength();
+
+    /*
+     * Updates all PointableObject parameters:
+     *  1) angle
+     *  2) length
+     *  3) position
+     * */
+    void update();
+
+    /*
+     * rotate() - rotates given points around rectagle.getCenter() point for
+     * stored angle value.
+     * */
+    QVector<Point*> rotate(QVector<Point*> points);
 
     /*
      * Getters
@@ -52,13 +61,20 @@ public:
     /*
      * Setters
      * */
-    void setFirstConnectable(ConnectableObject *f){first = f;}
-    void setSecondConnectable(ConnectableObject *s){second = s;}
+    void setFirstConnectable(ConnectableObject *f);
+    void setSecondConnectable(ConnectableObject *s);
 
 protected:
 
     ConnectableObject *first;
     ConnectableObject *second;
+
+    /*
+     * These 2 points need for connecting spring to Connacteble objects. They are used in splitWith method.
+     * Filled in rotate method. It is FIRST AND LAST ELEMENTS OF ARRAY.
+     * */
+    Point rotatedTopPoint;
+    Point rotatedBottomPoint;
 
     float angle;
 

@@ -3,6 +3,8 @@
 //#include "drawableobject.h"
 #include "materialpoint.h"
 #include <QDebug>
+#include <QFile>
+#include <QJsonDocument>
 //#include "rectangle.h"
 //#include "spring.h"
 
@@ -34,6 +36,8 @@ public:
     DrawableObject *getIncompletedObject(){return incompletedObject;}
 
     void connectObjects(DrawableObject *first, DrawableObject *second);
+
+    void save();
 
 private:
     bool isPlaying;

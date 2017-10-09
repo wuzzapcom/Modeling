@@ -4,9 +4,14 @@ StationaryPoint::StationaryPoint(Rectangle rect)
     :ConnectableObject(),
       rectangle(rect)
 {
-
     this->type = STATIONARY_POINT;
+}
 
+StationaryPoint::StationaryPoint()
+    :ConnectableObject(),
+      rectangle(Rectangle())
+{
+    this->type = STATIONARY_POINT;
 }
 
 QVector<Point*> StationaryPoint::draw(){
@@ -40,7 +45,7 @@ void StationaryPoint::move(Point point){
 
 }
 
-void StationaryPoint::moveTo(Point point, void *caller){
+void StationaryPoint::moveTo(Point point){
 
     this->rectangle.moveTo(point);
 
@@ -77,3 +82,57 @@ Point StationaryPoint::getContactPoint(ConnectableObject *connectable)
             this->rectangle.leftTopPoint.y - this->rectangle.height
             );
 }
+
+void StationaryPoint::write(QJsonObject &json)
+{
+    json["hash"] = QString::number(hash);
+    json["x"] = rectangle.leftTopPoint.x;
+    json["y"] = rectangle.leftTopPoint.y;
+    json["width"] = rectangle.width;
+    json["height"] = rectangle.height;
+
+    QJsonArray pointables;
+
+    for (int i = 0; i < pointableObjects.size(); i++)
+    {
+        QJsonObject obj;
+        obj[QString::number(i)] = QString::number(pointableObjects[i]->getHash());
+        pointables.append(obj);
+    }
+
+    json["pointables"] = pointables;
+
+}
+
+void StationaryPoint::readHash(const QJsonObject &json)
+{
+    bool ok;
+    hash = json["hash"].toString().toLong(&ok);
+}
+
+void StationaryPoint::read(const QJsonObject &json, QVector<DrawableObject *> objects)
+{
+    rectangle.leftTopPoint.x = json["x"].toDouble();
+    rectangle.leftTopPoint.y = json["y"].toDouble();
+    rectangle.width = json["width"].toDouble();
+    rectangle.height = json["height"].toDouble();
+
+    QJsonArray pointables = json["pointables"].toArray();
+
+    for (int i = 0; i < pointables.size(); i++)
+    {
+        bool ok;
+        long loadedHash = pointables.at(i).toString().toLong(&ok);
+        for (int j = 0; j < objects.size(); j++)
+        {
+            if (loadedHash == objects[j]->getHash())
+            {
+                this->pointableObjects.append((PointableObject*) objects[j]);
+            }
+        }
+    }
+}
+
+
+
+

@@ -149,9 +149,38 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
     }
 
     incompletedSpring->setFirstConnectable(materialPoint);
-    incompletedSpring->splitWith(materialPoint);
 
     materialPoint->addPointable(incompletedSpring);
 
+}
+
+void ModelingModel::save()
+{
+
+    QFile saveFile(QStringLiteral("save.json"));
+
+    if (!saveFile.open(QIODevice::WriteOnly))
+    {
+            qWarning("Couldn't open save file.");
+    }
+
+    QVector<DrawableObject*> objects = getDrawableObjects();
+
+    QJsonObject saveObj;
+
+    QJsonArray saveArray;
+
+    for (int i = 0; i < objects.size(); i++)
+    {
+        QJsonObject obj;
+        objects[i]->write(obj);
+        saveArray.append(obj);
+    }
+
+    saveObj["drawables"] = saveArray;
+
+    QJsonDocument saveDoc(saveObj);
+
+    saveFile.write(saveDoc.toJson());
 
 }

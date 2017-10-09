@@ -2,6 +2,8 @@
 #define DRAWABLEOBJECT_H
 #include <QVector>
 #include <QPoint>
+#include <QJsonObject>
+#include <QJsonArray>
 //#include "spring.h"
 //#include "materialpoint.h"
 #include "rectangle.h"
@@ -35,7 +37,7 @@ public:
      * This method allows an object to be moved.
      * Semantics : this.point = point;
      * */
-    virtual void moveTo(Point point, void *caller) = 0;
+    virtual void moveTo(Point point) = 0;
 
     /*
      * This method checks if the point is in object.
@@ -50,17 +52,41 @@ public:
      * */
     virtual bool isModelIncompleted() = 0;
 
+    /*
+     * This method writes object to QJsonObject.
+     * */
+    virtual void write(QJsonObject &json) = 0;
+
+    /*
+     * Reading is performed in 2 steps :
+     *  1) Init all objects, read hashes.
+     *  2) Fill all other fields, like coordinates or pointers.
+     * */
+
+    /*
+     * First step of reading.
+     * */
+    virtual void readHash(const QJsonObject &json) = 0;
+
+    /*
+     * Second step of reading.
+     * */
+    virtual void read(const QJsonObject &json, QVector<DrawableObject*> objects) = 0;
+
     void setSelected(bool selected){isSelected = selected;}
     bool getSelected(){return isSelected;}
 
     void setType(DrawableType t){type = t;}
     DrawableType getType(){return type;}
 
+    long getHash(){return hash;}
+
 private:
     bool isSelected = false;
 
 protected:
     DrawableType type = NONE;
+    long hash = 0;
 };
 
 #endif // DRAWABLEOBJECT_H
