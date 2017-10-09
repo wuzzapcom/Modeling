@@ -264,6 +264,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
     Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
 
+    QVector<Spring*> springs = this->model->getSprings();
+    for (int i = 0; i < springs.size(); i++)
+        springs[i]->update();
+
     if(this->model->getSelectedObject() != nullptr){
 
         this->model->getSelectedObject()->moveTo(point);

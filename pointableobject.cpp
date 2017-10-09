@@ -14,11 +14,6 @@ PointableObject::PointableObject(Rectangle rect)
 
 void PointableObject::updateAngle()
 {
-
-    //this->angle = 0.0f;
-//    MaterialPoint *mp = new MaterialPoint(Point(0.0f, 0.0f), 0.3f);
-//    second = mp;
-
     Point p1 = first->getCenter();//first->getContactPoint(second);
     Point p2 = second->getCenter();//second->getContactPoint(first);
 
@@ -50,30 +45,10 @@ void PointableObject::updateAngle()
                     p1.y - p2.y
                     );
 
-        //First quarter
-        if (p1.x > p2.x && p1.y > p2.y)
-        {
+        if (p1.y > p2.y)
             this->angle = 90.0f - acosf((p1.x - p2.x) / hypo) / M_PI * 180;
-            return;
-        }
-        //Second quarter
-        if (p1.x < p2.x && p1.y > p2.y)
-        {
-            this->angle = 270.0f + acosf((p2.x - p1.x) / hypo) / M_PI * 180;
-            return;
-        }
-        //Third quarter
-        if(p1.x < p2.x && p1.y < p2.y)
-        {
-            this->angle = 180.0f + acosf((p2.x - p1.y) / hypo) / M_PI * 180;
-            return;
-        }
-        //Fourth quarter
-        if (p1.x > p2.y && p1.y < p2.y)
-        {
+        else
             this->angle = 90.0f + acosf((p1.x - p2.x) / hypo) / M_PI * 180;
-            return;
-        }
     }
 
 }
@@ -122,21 +97,17 @@ void PointableObject::updateLength()
                 pow(firstContactPoint.y - secondContactPoint.y, 2.0)
                 );
 
+    if (hypotenuse < std::numeric_limits<float>::epsilon())
+        return;
+
     this->rectangle.height = hypotenuse;
 
 }
 
 void PointableObject::update()
 {
-    bool isSecondNull = false;
-    if (this->first == nullptr)
+    if (this->first == nullptr || this->second == nullptr)
         return;
-
-    if (this->second == nullptr)
-    {
-        isSecondNull = true;
-        second = new MaterialPoint(Point(0.0f, 0.0f), 0.1f);
-    }
 
     Point contactPoint = first->getContactPoint(second);
 
@@ -150,9 +121,6 @@ void PointableObject::update()
                     contactPoint.y - (this->rotatedTopPoint.y - this->rectangle.getCenter().y)
                      )
                 );
-
-    if (isSecondNull)
-        this->second = nullptr;
 }
 
 void PointableObject::setFirstConnectable(ConnectableObject *f)
