@@ -106,7 +106,7 @@ private slots:
 
     void addMatPoint();
     void addSpring();
-    void addPendulum();
+    void addRod();
     void addStationaryPoint();
 
     void changePlayPauseState();

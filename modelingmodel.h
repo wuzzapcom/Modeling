@@ -18,12 +18,14 @@ public:
     void addMaterialPoint();
     void addSpring();
     void addStationalPoint();
+    void addRod();
 
     void completeModel();
 
     QVector<MaterialPoint*> getMaterialPoints();
     QVector<Spring*> getSprings();
     QVector<StationaryPoint*> getStatPoints();
+    QVector<Rod*> getRods();
 
     QVector<DrawableObject*> getDrawableObjects();
 
@@ -32,7 +34,7 @@ public:
 
     bool isObjectSelected(){return selectedObject != nullptr;}
 
-    void setIncompletedObjecT(DrawableObject *obj){incompletedObject = obj;}
+    void setIncompletedObject(DrawableObject *obj){incompletedObject = obj;}
     DrawableObject *getIncompletedObject(){return incompletedObject;}
 
     void connectObjects(DrawableObject *first, DrawableObject *second);

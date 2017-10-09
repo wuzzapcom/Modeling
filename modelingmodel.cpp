@@ -23,48 +23,47 @@ void ModelingModel::addMaterialPoint()
     qInfo("addMaterialPoint()");
 
     matPoints.append(new MaterialPoint(Point(0.0f, 0.0f), 0.5f));
-
-    MaterialPoint *mp = new MaterialPoint(Point(0.0f, 0.5f), 0.3f);
-
-    Point p = matPoints[matPoints.length() - 1]->getContactPoint(mp);
-
-    qDebug() << "Contact point : x = " << p.x << ", y = " << p.y;
-
 }
 
 void ModelingModel::addSpring()
 {
     qInfo("addSpring()");
 
-    springs.append(new Spring(Rectangle(Point(), 0.5f, 0.5f)));
-
+    springs.append(new Spring(Rectangle(Point(), 0.1f, 0.5f)));
 }
 
 void ModelingModel::addStationalPoint()
 {
-
     qInfo("addStationalPoint()");
 
     statPoints.append(new StationaryPoint(Rectangle(Point(), 0.2f, 0.2f)));
-
 }
 
-QVector<MaterialPoint*> ModelingModel::getMaterialPoints(){
+void ModelingModel::addRod()
+{
+    qInfo("addRod()");
 
+    rods.append(new Rod(Rectangle(Point(), 0.1f, 0.5f)));
+}
+
+QVector<MaterialPoint*> ModelingModel::getMaterialPoints()
+{
     return matPoints;
-
 }
 
-QVector<Spring*> ModelingModel::getSprings(){
-
+QVector<Spring*> ModelingModel::getSprings()
+{
     return springs;
-
 }
 
-QVector<StationaryPoint*> ModelingModel::getStatPoints(){
-
+QVector<StationaryPoint*> ModelingModel::getStatPoints()
+{
     return statPoints;
+}
 
+QVector<Rod*> ModelingModel::getRods()
+{
+    return rods;
 }
 
 QVector<DrawableObject*> ModelingModel::getDrawableObjects()
@@ -90,11 +89,16 @@ QVector<DrawableObject*> ModelingModel::getDrawableObjects()
 
 void ModelingModel::completeModel(){
 
-    for (int i = 0; i < springs.length(); i++){
-
+    for (int i = 0; i < springs.size(); i++)
+    {
         if (springs[i]->isModelIncompleted())
             this->incompletedObject = springs[i];
+    }
 
+    for (int i = 0; i < rods.size(); i++)
+    {
+        if (rods[i]->isModelIncompleted())
+            this->incompletedObject = rods[i];
     }
 
 }
@@ -102,14 +106,17 @@ void ModelingModel::completeModel(){
 void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second)
 {
 
-    Spring *incompletedSpring;
-    MaterialPoint *materialPoint;
+    PointableObject *pointable;
+    ConnectableObject *connectable;
 
     if (first->isModelIncompleted()){
 
         switch (first->getType()) {
         case SPRING:
-            incompletedSpring = (Spring*) first;
+            pointable = (PointableObject*) first;
+            break;
+        case ROD:
+            pointable = (PointableObject*) first;
             break;
         default:
             return;
@@ -118,8 +125,10 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
         switch (second->getType()) {
         case MATERIAL_POINT:
-            materialPoint = (MaterialPoint*) second;
+            connectable = (ConnectableObject*) second;
             break;
+        case STATIONARY_POINT:
+            connectable = (ConnectableObject*) second;
         default:
             return;
             break;
@@ -130,7 +139,10 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
         switch (first->getType()) {
         case MATERIAL_POINT:
-            materialPoint = (MaterialPoint*) first;
+            connectable = (ConnectableObject*) first;
+            break;
+        case STATIONARY_POINT:
+            connectable = (ConnectableObject*) first;
             break;
         default:
             return;
@@ -139,7 +151,10 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
         switch (second->getType()) {
         case SPRING:
-            incompletedSpring = (Spring*) second;
+            pointable = (PointableObject*) second;
+            break;
+        case ROD:
+            pointable = (PointableObject*) second;
             break;
         default:
             return;
@@ -148,12 +163,12 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
     }
 
-    if (incompletedSpring->getFirstConnectable() == nullptr)
-        incompletedSpring->setFirstConnectable(materialPoint);
+    if (pointable->getFirstConnectable() == nullptr)
+        pointable->setFirstConnectable(connectable);
     else
-        incompletedSpring->setSecondConnectable(materialPoint);
+        pointable->setSecondConnectable(connectable);
 
-    materialPoint->addPointable(incompletedSpring);
+    connectable->addPointable(pointable);
 
 }
 

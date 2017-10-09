@@ -87,16 +87,9 @@ bool Spring::checkCursorInObject(Point point)
 
 }
 
-bool Spring::isModelIncompleted(){
-
-    if (this->first == nullptr)
-        return true;
-
-//    if(this->second == nullptr)
-//        return true;
-
-    return false;
-
+bool Spring::isModelIncompleted()
+{
+    return (this->first == nullptr) && (this->second == nullptr);
 }
 
 void Spring::write(QJsonObject &json)

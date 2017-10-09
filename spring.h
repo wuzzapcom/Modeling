@@ -35,6 +35,8 @@ private:
      *
      * ConnectableObject *first;
      * ConnectableObject *second;
+     * Point rotatedTopPoint;
+     * Point rotatedBottomPoint;
      * float angle;
      * Rectangle rectangle;
     */

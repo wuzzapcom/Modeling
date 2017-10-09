@@ -59,11 +59,11 @@ void MainWindow::createToolbar()
     addSpringAction->setIcon(QIcon(":/spring.png"));
     connect(addSpringAction, &QAction::triggered, this, &MainWindow::addSpring);
 
-    QAction *addPendulum = new QAction(tr("Pendulum"), this);
-    addPendulum->setShortcut(QKeySequence::Open);
-    addPendulum->setStatusTip("Add math pendulum");
-    addPendulum->setIcon(QIcon(":pendulum.png"));
-    connect(addPendulum, &QAction::triggered, this, &MainWindow::addPendulum);
+    QAction *addRod = new QAction(tr("Pendulum"), this);
+    addRod->setShortcut(QKeySequence::Open);
+    addRod->setStatusTip("Add math pendulum");
+    addRod->setIcon(QIcon(":pendulum.png"));
+    connect(addRod, &QAction::triggered, this, &MainWindow::addRod);
 
     QAction *addStationaryPoint = new QAction(tr("Stationary point"), this);
     addStationaryPoint->setShortcut(QKeySequence::Open);
@@ -81,7 +81,7 @@ void MainWindow::createToolbar()
     figuresToolbar->setObjectName(QStringLiteral("testToolbar"));
     figuresToolbar->addAction(addMatPointAction);
     figuresToolbar->addAction(addSpringAction);
-    figuresToolbar->addAction(addPendulum);
+    figuresToolbar->addAction(addRod);
     figuresToolbar->addAction(addStationaryPoint);
     figuresToolbar->addAction(playPauseAction);
     figuresToolbar->setMovable(false);
@@ -268,6 +268,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     for (int i = 0; i < springs.size(); i++)
         springs[i]->update();
 
+    QVector<Rod*> rods = this->model->getRods();
+    for (int i = 0; i < rods.size(); i++)
+        rods[i]->update();
+
     if(this->model->getSelectedObject() != nullptr){
 
         this->model->getSelectedObject()->moveTo(point);
@@ -302,43 +306,40 @@ void MainWindow::paste(){}
 
 void MainWindow::addMatPoint()
 {
-
     qInfo("MainWindow::addMatPoint");
 
     this->model->addMaterialPoint();
     this->centralWidget()->update();
 
     addMatPointPropertiesToRightDock();
-
 }
 
 void MainWindow::addSpring()
 {
-
     qInfo("MainWindow::addSpring");
 
     this->model->addSpring();
     this->centralWidget()->update();
-
 }
 
-void MainWindow::addPendulum()
+void MainWindow::addRod()
 {
+    qInfo("MainWindow::addRod");
 
+    this->model->addRod();
+    this->centralWidget()->update();
 }
 
 void MainWindow::addStationaryPoint()
 {
-
     qInfo("MainWindow::addStationaryPoint");
 
     this->model->addStationalPoint();
     this->centralWidget()->update();
-
 }
 
-void MainWindow::changePlayPauseState(){
-
+void MainWindow::changePlayPauseState()
+{
     if (model->getIsPlaying()){
         model->setPlaying(false);
         playPauseAction->setIcon(QIcon(":/pause.png"));
@@ -349,7 +350,6 @@ void MainWindow::changePlayPauseState(){
         playPauseAction->setIcon(QIcon(":/play.png"));
         playPauseAction->setStatusTip("Start moving");
     }
-
 }
 
 
