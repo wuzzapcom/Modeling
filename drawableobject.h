@@ -4,8 +4,6 @@
 #include <QPoint>
 #include <QJsonObject>
 #include <QJsonArray>
-//#include "spring.h"
-//#include "materialpoint.h"
 #include "rectangle.h"
 
 enum DrawableType{
@@ -80,9 +78,11 @@ public:
     DrawableType getType(){return type;}
 
     long getHash(){return hash;}
+    long getNextID(){return ID_COUNTER++;}
 
 private:
     bool isSelected = false;
+    static long ID_COUNTER;
 
 protected:
     DrawableType type = NONE;

@@ -1,12 +1,9 @@
 #ifndef MODELINGMODEL_H
 #define MODELINGMODEL_H
-//#include "drawableobject.h"
 #include "materialpoint.h"
 #include <QDebug>
 #include <QFile>
 #include <QJsonDocument>
-//#include "rectangle.h"
-//#include "spring.h"
 
 class ModelingModel
 {

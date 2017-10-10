@@ -174,7 +174,9 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
 void ModelingModel::save()
 {
-
+    /*
+     * For macOS file will be created in applicationPackage/Contents/MacOS
+     * */
     QFile saveFile(QStringLiteral("save.json"));
 
     if (!saveFile.open(QIODevice::WriteOnly))
@@ -200,5 +202,7 @@ void ModelingModel::save()
     QJsonDocument saveDoc(saveObj);
 
     saveFile.write(saveDoc.toJson());
+
+    saveFile.close();
 
 }

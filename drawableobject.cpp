@@ -1,9 +1,9 @@
 #include "drawableobject.h"
 
+long DrawableObject::ID_COUNTER = 0;
+
 DrawableObject::DrawableObject()
 {
-
     this->type = NONE;
-    this->hash = (long) this;
-
+    this->hash = DrawableObject::getNextID();
 }
