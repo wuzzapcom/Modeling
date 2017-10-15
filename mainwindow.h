@@ -87,7 +87,9 @@ private:
     void mouseReleaseEvent(QMouseEvent *event);
 
     //Configuring right dock
+    void addPropertiesToRightDockBySelectedObject();
     void addMatPointPropertiesToRightDock();
+    void addSpringPropertiesToRightDock();
 
     void hideRightDock();
     void showRightDock();

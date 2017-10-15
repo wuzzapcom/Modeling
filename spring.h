@@ -25,6 +25,7 @@ public:
     void write(QJsonObject &json);
     void readHash(const QJsonObject &json);
     void read(const QJsonObject &json, QVector<DrawableObject*> objects);
+    void setRigidity(float r){rigidity = r;}
 
 private:
 

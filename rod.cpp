@@ -48,7 +48,7 @@ bool Rod::checkCursorInObject(Point point)
 
 bool Rod::isModelIncompleted()
 {
-    return (this->first == nullptr) && (this->second == nullptr);
+    return (this->first == nullptr) || (this->second == nullptr);
 }
 
 void Rod::write(QJsonObject &json)

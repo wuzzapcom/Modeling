@@ -237,7 +237,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                 this->centralWidget()->update();
                 isCursorInObject = true;
                 this->hideRightDock();
-                this->showRightDock();
+                this->addPropertiesToRightDockBySelectedObject();
 
                 break;
 
@@ -254,6 +254,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         }
 
     }
+
+    this->centralWidget()->update();
 
 }
 
@@ -324,6 +326,8 @@ void MainWindow::addSpring()
 
     this->model->addSpring();
     this->centralWidget()->update();
+
+    addSpringPropertiesToRightDock();
 }
 
 void MainWindow::addRod()
@@ -356,12 +360,34 @@ void MainWindow::changePlayPauseState()
     }
 }
 
+void MainWindow::addPropertiesToRightDockBySelectedObject()
+{
+    if (this->model->getSelectedObject() == nullptr)
+        return;
 
-//TODO add handling error when getSelectedObject returns nullptr
+    switch(this->model->getSelectedObject()->getType()){
+    case MATERIAL_POINT:
+        addMatPointPropertiesToRightDock();
+        break;
+    case SPRING:
+        addSpringPropertiesToRightDock();
+        break;
+    default:
+        qInfo() << "MainWindow::addPropertienToRightDockBySelectedObject(). Object has no properties";
+        break;
+    }
+}
+
 void MainWindow::addMatPointPropertiesToRightDock()
 {
     this->showRightDock();
     propertiesDock->setFixedSize(80, 120);
+
+    spin1->setVisible(true);
+    label1->setVisible(true);
+
+    spin2->setVisible(true);
+    label2->setVisible(true);
 
     spin1->disconnect();
     spin1->setValue(5);
@@ -371,6 +397,11 @@ void MainWindow::addMatPointPropertiesToRightDock()
         if (i > 5) spin1->setValue(5);
         else if (i < 1) spin1->setValue(1);
         else{
+            if (this->model->getSelectedObject() == nullptr ||
+                    this->model->getSelectedObject()->getType() != MATERIAL_POINT)
+            {
+                return;
+            }
             ((MaterialPoint*)this->model->getSelectedObject())->setRadius(((float)i) / 10);
             this->centralWidget()->update();
         }
@@ -385,6 +416,11 @@ void MainWindow::addMatPointPropertiesToRightDock()
         if (i > 10) spin1->setValue(10);
         else if (i < 1) spin1->setValue(1);
         else{
+            if (this->model->getSelectedObject() == nullptr ||
+                    this->model->getSelectedObject()->getType() != MATERIAL_POINT)
+            {
+                return;
+            }
             ((MaterialPoint*)this->model->getSelectedObject())->setWeight(i);
             this->centralWidget()->update();
         }
@@ -399,8 +435,44 @@ void MainWindow::addMatPointPropertiesToRightDock()
 
 }
 
-void MainWindow::hideRightDock(){
+void MainWindow::addSpringPropertiesToRightDock()
+{
+    this->showRightDock();
+    propertiesDock->setFixedSize(80, 65);
 
+    spin1->setVisible(true);
+    label1->setVisible(true);
+
+    spin1->disconnect();
+    spin1->setValue(5);
+    label1->setText("Rigidity");
+    connect(spin1, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            [=](int i){
+        if (i > 100) spin1->setValue(100);
+        else if (i < 1) spin1->setValue(1);
+        else{
+            if (this->model->getSelectedObject() == nullptr ||
+                    this->model->getSelectedObject()->getType() != SPRING)
+            {
+                return;
+            }
+            ((Spring*)this->model->getSelectedObject())->setRigidity((float)i);
+            this->centralWidget()->update();
+        }
+    });
+
+    spin2->setVisible(false);
+    label2->setVisible(false);
+
+    spin3->setVisible(false);
+    label3->setVisible(false);
+
+    spin4->setVisible(false);
+    label4->setVisible(false);
+}
+
+void MainWindow::hideRightDock()
+{
     if(!this->propertiesDock->isVisible())
         return;
 
@@ -409,8 +481,8 @@ void MainWindow::hideRightDock(){
 
 }
 
-void MainWindow::showRightDock(){
-
+void MainWindow::showRightDock()
+{
     if(this->propertiesDock->isVisible())
         return;
 
@@ -430,23 +502,6 @@ Point MainWindow::getPointInOpenGLCoordinateFromMouseEvent(QMouseEvent *event)
         (0.5 - ((float)p.y()) / centralWidget()->contentsRect().height()) * 2);
 
 }
-
-//QVector<DrawableObject*> MainWindow::assembleDrawableObjectVector()
-//{
-
-//    QVector<MaterialPoint*> matPoints = this->model->getMaterialPoints();
-//    QVector<Spring*> springs = this->model->getSprings();
-
-//    QVector<DrawableObject*> drawableObjects = QVector<DrawableObject*>();
-//    for(int i = 0; i < matPoints.length(); i++)
-//        drawableObjects.append((DrawableObject*) matPoints[i]);
-
-//    for(int i = 0; i < springs.length(); i++)
-//        drawableObjects.append((DrawableObject*) springs[i]);
-
-//    return drawableObjects;
-
-//}
 
 MainWindow::~MainWindow()
 {

@@ -171,7 +171,7 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
     if (pointable->getFirstConnectable() == nullptr)
         pointable->setFirstConnectable(connectable);
-    else
+    else if (pointable->getSecondConnectable() == nullptr)
         pointable->setSecondConnectable(connectable);
 
     connectable->addPointable(pointable);
