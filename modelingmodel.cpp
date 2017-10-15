@@ -163,6 +163,12 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
 
     }
 
+    for (int i = 0; i < connectable->getPointableObjects().size(); i++)
+    {
+        if (pointable == connectable->getPointableObjects()[i])
+            return;
+    }
+
     if (pointable->getFirstConnectable() == nullptr)
         pointable->setFirstConnectable(connectable);
     else
@@ -181,7 +187,8 @@ void ModelingModel::save()
 
     if (!saveFile.open(QIODevice::WriteOnly))
     {
-            qWarning("Couldn't open save file.");
+        qWarning("Couldn't open save file.");
+        return;
     }
 
     QVector<DrawableObject*> objects = getDrawableObjects();
@@ -197,6 +204,8 @@ void ModelingModel::save()
         saveArray.append(obj);
     }
 
+    saveObj["ID_COUNTER"] = QString::number(DrawableObject::getCurrentID());
+
     saveObj["drawables"] = saveArray;
 
     QJsonDocument saveDoc(saveObj);
@@ -205,4 +214,82 @@ void ModelingModel::save()
 
     saveFile.close();
 
+}
+
+void ModelingModel::load()
+{
+    //There is a test in header
+    QFile loadFile(QStringLiteral("save.json"));
+    if (!loadFile.open(QIODevice::ReadOnly))
+    {
+        qWarning("Couldn`t open save file.");
+        return;
+    }
+
+    QByteArray bytes = loadFile.readAll();
+
+    QJsonDocument loadDocument(QJsonDocument::fromJson(bytes));
+
+    QJsonObject loadObj = loadDocument.object();
+
+    DrawableObject::setCurrentID(loadObj["ID_COUNTER"].toString().toLong());
+
+    QJsonArray drawableObjects = loadObj["drawables"].toArray();
+
+    QVector<DrawableObject*> drawables;
+
+    for (QJsonValue drawableValue: drawableObjects)
+    {
+        QJsonObject obj = drawableValue.toObject();
+        DrawableType type = static_cast<DrawableType>(obj["type"].toInt());
+        qDebug() << "ModelingModel::load(). DrawableType = " << obj["type"].toString();
+        DrawableObject *drawable;
+
+        switch (type) {
+        case MATERIAL_POINT:
+            drawable = new MaterialPoint();
+            break;
+        case SPRING:
+            drawable = new Spring();
+            break;
+        case STATIONARY_POINT:
+            drawable = new StationaryPoint();
+            break;
+        case ROD:
+            drawable = new Rod();
+            break;
+        default:
+            qWarning() << "ModelingModel::load(). Not matched type.";
+            break;
+        }
+
+        drawable->readHash(obj);
+        drawables.push_back(drawable);
+    }
+
+    for (int i = 0; i < drawableObjects.size(); i++)
+    {
+        drawables[i]->read(drawableObjects.at(i).toObject(), drawables);
+    }
+
+    for (DrawableObject *drawable: drawables)
+    {
+        switch(drawable->getType()) {
+        case MATERIAL_POINT:
+            matPoints.append((MaterialPoint*)drawable);
+            break;
+        case SPRING:
+            springs.append((Spring*)drawable);
+            break;
+        case STATIONARY_POINT:
+            statPoints.append((StationaryPoint*)drawable);
+            break;
+        case ROD:
+            rods.append((Rod*)drawable);
+            break;
+        default:
+            qWarning() << "ModelingModel::load(). Not matched type.";
+            break;
+        }
+    }
 }

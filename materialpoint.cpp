@@ -1,6 +1,7 @@
 #include "common.h"
 //#include "materialpoint.h"
 
+//TODO add weight
 MaterialPoint::MaterialPoint(Point c, float r)
     :ConnectableObject(),
       center(c),
@@ -132,7 +133,8 @@ Point MaterialPoint::getCenter()
 
 void MaterialPoint::write(QJsonObject &json)
 {
-    json["hash"] = QString::number(hash);//QJsonValue(hash);
+    json["hash"] = QString::number(hash);
+    json["type"] = static_cast<int>(this->type);
     json["x"] = QJsonValue(center.x);
     json["y"] = center.y;
     json["radius"] = radius;
@@ -154,6 +156,10 @@ void MaterialPoint::readHash(const QJsonObject &json)
 {
     bool ok;
     hash = json["hash"].toString().toLong(&ok);
+    type = static_cast<DrawableType>(json["type"].toInt());
+    qDebug() << "readHash()";
+    qDebug() << "hash =" << hash;
+    qDebug() << "type =" << type;
 }
 
 void MaterialPoint::read(const QJsonObject &json, QVector<DrawableObject*> objects)
@@ -162,6 +168,12 @@ void MaterialPoint::read(const QJsonObject &json, QVector<DrawableObject*> objec
     center.y = json["y"].toDouble();
     radius = json["radius"].toDouble();
     weight = json["weight"].toInt();
+
+    qDebug() << "read()";
+    qDebug() << "x =" << center.x;
+    qDebug() << "y =" << center.y;
+    qDebug() << "radius =" << radius;
+    qDebug() << "weight =" << weight;
 
     QJsonArray pointables = json["pointables"].toArray();
 

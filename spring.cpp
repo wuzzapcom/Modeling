@@ -95,20 +95,27 @@ bool Spring::isModelIncompleted()
 void Spring::write(QJsonObject &json)
 {
     json["hash"] = QString::number(hash);
+    json["type"] = static_cast<int>(this->type);
     json["x"] = rectangle.leftTopPoint.x;
     json["y"] = rectangle.leftTopPoint.y;
     json["width"] = rectangle.width;
     json["height"] = rectangle.height;
     json["angle"] = angle;
     json["rigidiny"] = rigidity;
-    json["first"] = QString::number(first->getHash());
-    json["second"] = QString::number(second->getHash());
+    if (first != nullptr)
+        json["first"] = QString::number(first->getHash());
+    if (second != nullptr)
+        json["second"] = QString::number(second->getHash());
 }
 
 void Spring::readHash(const QJsonObject &json)
 {
     bool ok;
     hash = json["hash"].toString().toLong(&ok);
+    type = static_cast<DrawableType>(json["type"].toInt());
+    qDebug() << "readHash()";
+    qDebug() << "hash =" << hash;
+    qDebug() << "type =" << type;
 }
 
 void Spring::read(const QJsonObject &json, QVector<DrawableObject *> objects)
@@ -119,6 +126,13 @@ void Spring::read(const QJsonObject &json, QVector<DrawableObject *> objects)
     rectangle.height = json["height"].toDouble();
     angle = json["angle"].toDouble();
     rigidity = json["rigidity"].toDouble();
+
+    qDebug() << "read()";
+    qDebug() << "x =" << rectangle.leftTopPoint.x;
+    qDebug() << "y =" << rectangle.leftTopPoint.y;
+    qDebug() << "width =" << rectangle.width;
+    qDebug() << "height =" << rectangle.height;
+    qDebug() << "angle =" << angle;
 
     bool ok;
     long firstHash = json["first"].toString().toLong(&ok);

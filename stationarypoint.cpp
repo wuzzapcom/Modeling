@@ -86,6 +86,7 @@ Point StationaryPoint::getContactPoint(ConnectableObject *connectable)
 void StationaryPoint::write(QJsonObject &json)
 {
     json["hash"] = QString::number(hash);
+    json["type"] = static_cast<int>(this->type);
     json["x"] = rectangle.leftTopPoint.x;
     json["y"] = rectangle.leftTopPoint.y;
     json["width"] = rectangle.width;
@@ -108,6 +109,10 @@ void StationaryPoint::readHash(const QJsonObject &json)
 {
     bool ok;
     hash = json["hash"].toString().toLong(&ok);
+    type = static_cast<DrawableType>(json["type"].toInt());
+    qDebug() << "readHash()";
+    qDebug() << "hash =" << hash;
+    qDebug() << "type =" << type;
 }
 
 void StationaryPoint::read(const QJsonObject &json, QVector<DrawableObject *> objects)

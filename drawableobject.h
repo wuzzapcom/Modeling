@@ -78,7 +78,9 @@ public:
     DrawableType getType(){return type;}
 
     long getHash(){return hash;}
-    long getNextID(){return ID_COUNTER++;}
+    static long getNextID(){return ID_COUNTER++;}
+    static long getCurrentID(){return ID_COUNTER;}
+    static long setCurrentID(long id){ID_COUNTER = id;}
 
 private:
     bool isSelected = false;

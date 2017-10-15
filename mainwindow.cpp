@@ -129,9 +129,9 @@ void MainWindow::createMenus()
 
 void MainWindow::createActions(){
 
-    openAction = new QAction(tr("&Open"), this);
+    openAction = new QAction(tr("&Load"), this);
     openAction->setShortcut(QKeySequence::Open);
-    openAction->setStatusTip(tr("Open new file"));
+    openAction->setStatusTip(tr("Load saved file"));
     connect(openAction, &QAction::triggered, this, &MainWindow::open);
 
     saveAction = new QAction(tr("&Save"), this);
@@ -296,7 +296,11 @@ void MainWindow::save()
     this->model->save();
 }
 
-void MainWindow::open(){}
+void MainWindow::open(){
+    qInfo("MainWindow::open()");
+    this->model->load();
+    this->centralWidget()->update();
+}
 
 void MainWindow::help(){}
 

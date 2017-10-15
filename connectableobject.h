@@ -33,6 +33,8 @@ public:
      * */
     void addPointable(PointableObject *p);
 
+    QVector<PointableObject*> getPointableObjects(){return pointableObjects;}
+
 protected:
 
     QVector<PointableObject*> pointableObjects;

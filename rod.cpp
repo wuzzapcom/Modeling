@@ -54,6 +54,7 @@ bool Rod::isModelIncompleted()
 void Rod::write(QJsonObject &json)
 {
     json["hash"] = QString::number(hash);
+    json["type"] = static_cast<int>(this->type);
     json["x"] = rectangle.leftTopPoint.x;
     json["y"] = rectangle.leftTopPoint.y;
     json["width"] = rectangle.width;
@@ -67,6 +68,10 @@ void Rod::readHash(const QJsonObject &json)
 {
     bool ok;
     hash = json["hash"].toString().toLong(&ok);
+    type = static_cast<DrawableType>(json["type"].toInt());
+    qDebug() << "readHash()";
+    qDebug() << "hash =" << hash;
+    qDebug() << "type =" << type;
 }
 
 void Rod::read(const QJsonObject &json, QVector<DrawableObject *> objects)
