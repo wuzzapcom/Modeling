@@ -5,5 +5,6 @@
 #include "spring.h"
 #include "stationarypoint.h"
 #include "rod.h"
+#include "arrow.h"
 
 #endif // COMMON_H

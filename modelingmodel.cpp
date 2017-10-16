@@ -7,7 +7,8 @@ ModelingModel::ModelingModel()
       statPoints(QVector<StationaryPoint*>()),
       rods(QVector<Rod*>()),
       selectedObject(nullptr),
-      incompletedObject(nullptr)
+      incompletedObject(nullptr),
+      speedVectorArrow(nullptr)
 {}
 
 void ModelingModel::setPlaying(bool playing){
@@ -292,4 +293,12 @@ void ModelingModel::load()
             break;
         }
     }
+}
+
+void ModelingModel::setSpeedVectorArrow(Arrow *a)
+{
+//    if (this->speedVectorArrow != nullptr)
+//        delete this->speedVectorArrow;
+
+    this->speedVectorArrow = a;
 }

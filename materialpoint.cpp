@@ -74,6 +74,12 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
 
     Point connCenter = connectable->getCenter();
 
+    return this->getContactPoint(connCenter);
+
+}
+
+Point MaterialPoint::getContactPoint(Point connCenter)
+{
     if(fabs(connCenter.x - this->center.x) < std::numeric_limits<float>::epsilon())
     {
 
@@ -121,7 +127,6 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
                     this->center.y + this->radius * (connCenter.y - this->center.y) / hypo
                     );
     }
-
 }
 
 Point MaterialPoint::getCenter()

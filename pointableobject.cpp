@@ -55,7 +55,6 @@ void PointableObject::updateAngle()
 
 QVector<Point*> PointableObject::rotate(QVector<Point *> points)
 {
-
     Point center = this->rectangle.getCenter();
 
     QMatrix4x4 transformationMatrix;
@@ -80,7 +79,6 @@ QVector<Point*> PointableObject::rotate(QVector<Point *> points)
     rotatedBottomPoint = *points[points.size() - 1];
 
     return points;
-
 }
 
 void PointableObject::updateLength()

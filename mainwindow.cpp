@@ -230,7 +230,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                                 drawableObjects[i],
                                 this->model->getIncompletedObject()
                                 );
-
                 }
 
                 this->model->setSelectedObject(drawableObjects[i]);
@@ -261,7 +260,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-
     qInfo("MainWindow::mouseMoveEvent()");
 
     Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
@@ -274,22 +272,50 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     for (int i = 0; i < rods.size(); i++)
         rods[i]->update();
 
-    if(this->model->getSelectedObject() != nullptr){
+    if (this->model->getSelectedObject() != nullptr &&
+            this->model->getSelectedObject()->getType() == MATERIAL_POINT &&
+            this->model->getSpeedVectorArrow() != nullptr)
+    {
+        this->model->getSpeedVectorArrow()->updateState(true, point);
+        this->centralWidget()->update();
+    }
+    else if (this->model->getSelectedObject() != nullptr){
 
         this->model->getSelectedObject()->moveTo(point);
         this->centralWidget()->update();
 
     }
-
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-
     qInfo("MainWindow::mouseReleaseEvent");
 
     this->centralWidget()->update();
+}
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control){
+        qInfo("MainWindow::keyPressEvent(). Ctrl pressed");
+
+        if (this->model->getSelectedObject() == nullptr || this->model->getSelectedObject()->getType() != MATERIAL_POINT)
+            return;
+
+        Arrow *arrow = new Arrow();
+        arrow->setConnected((MaterialPoint*) this->model->getSelectedObject());
+
+        this->model->setSpeedVectorArrow(arrow);
+    }
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control)
+    {
+        this->model->setSpeedVectorArrow(nullptr);
+        delete this->model->getSpeedVectorArrow();
+    }
 }
 
 void MainWindow::save()

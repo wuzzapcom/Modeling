@@ -1,7 +1,7 @@
 #ifndef STATIONARYPOINT_H
 #define STATIONARYPOINT_H
 
-#include "spring.h"
+#include "arrow.h"
 
 class StationaryPoint: public ConnectableObject
 {

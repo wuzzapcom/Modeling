@@ -38,7 +38,8 @@ SOURCES += \
     stationarypoint.cpp \
     connectableobject.cpp \
     pointableobject.cpp \
-    rod.cpp
+    rod.cpp \
+    arrow.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +55,8 @@ HEADERS += \
     connectableobject.h \
     pointableobject.h \
     rod.h \
-    drawableinheritor.h
+    drawableinheritor.h \
+    arrow.h
 
 FORMS += \
         mainwindow.ui

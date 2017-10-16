@@ -86,6 +86,9 @@ private:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
+
     //Configuring right dock
     void addPropertiesToRightDockBySelectedObject();
     void addMatPointPropertiesToRightDock();

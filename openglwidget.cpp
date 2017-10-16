@@ -5,9 +5,6 @@ OpenGLWidget::OpenGLWidget(QWidget *parent, ModelingModel *m)
     , model(m)
 {
 
-//    model->addMaterialPoint();
-//    model->addSpring();
-
 }
 
 void OpenGLWidget::initializeGL()
@@ -43,6 +40,9 @@ void OpenGLWidget::paintGL()
     qglColor(blackColor);
 
     QVector<DrawableObject*> drawableObjects = model->getDrawableObjects();
+
+    if (model->getSpeedVectorArrow() != nullptr && model->getSpeedVectorArrow()->getIsVisible())
+        drawableObjects.push_back(model->getSpeedVectorArrow());
 
 
     for(int i = 0; i < drawableObjects.length(); i++){

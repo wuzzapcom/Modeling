@@ -28,10 +28,11 @@ public:
     Point getCenter();
     Point getContactPoint(ConnectableObject *connectable);
 
+    //for drawing Arrow
+    Point getContactPoint(Point connCenter);
+
     void setRadius(float r){radius = r;}
     void setWeight(int w){weight = w;}
-
-
 
 private:
 

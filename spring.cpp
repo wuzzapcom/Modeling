@@ -65,26 +65,20 @@ QVector<Point*> Spring::draw()
 
 void Spring::move(Point point)
 {
-
     this->rectangle.move(point);
-
 }
 
 void Spring::moveTo(Point point)
 {
-
     this->rectangle.moveTo(point);
-
 }
 
 bool Spring::checkCursorInObject(Point point)
 {
-
     return (point.x > this->rectangle.leftTopPoint.x) &&
             (point.x < (this->rectangle.leftTopPoint.x + this->rectangle.width)) &&
             (point.y < this->rectangle.leftTopPoint.y) &&
             (point.y > (this->rectangle.leftTopPoint.y - this->rectangle.height));
-
 }
 
 bool Spring::isModelIncompleted()
