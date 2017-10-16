@@ -5,7 +5,10 @@
 MaterialPoint::MaterialPoint(Point c, float r)
     :ConnectableObject(),
       center(c),
-      radius(r)
+      radius(r),
+      speedX(0.0f),
+      speedY(0.0f),
+      weight(1)
 {
 
     this->type = MATERIAL_POINT;
@@ -14,8 +17,11 @@ MaterialPoint::MaterialPoint(Point c, float r)
 
 MaterialPoint::MaterialPoint()
     :ConnectableObject(),
-      center(Point(0.0f, 0.0f)),
-             radius(0.0f)
+             center(Point(0.0f, 0.0f)),
+             radius(0.0f),
+             speedX(0.0f),
+             speedY(0.0f),
+             weight(1)
 {
     this->type = MATERIAL_POINT;
 }
@@ -71,15 +77,8 @@ bool MaterialPoint::checkCursorInObject(Point point)
 
 Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
 {
-
     Point connCenter = connectable->getCenter();
 
-    return this->getContactPoint(connCenter);
-
-}
-
-Point MaterialPoint::getContactPoint(Point connCenter)
-{
     if(fabs(connCenter.x - this->center.x) < std::numeric_limits<float>::epsilon())
     {
 
@@ -127,6 +126,7 @@ Point MaterialPoint::getContactPoint(Point connCenter)
                     this->center.y + this->radius * (connCenter.y - this->center.y) / hypo
                     );
     }
+
 }
 
 Point MaterialPoint::getCenter()

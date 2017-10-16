@@ -28,11 +28,9 @@ public:
     Point getCenter();
     Point getContactPoint(ConnectableObject *connectable);
 
-    //for drawing Arrow
-    Point getContactPoint(Point connCenter);
-
     void setRadius(float r){radius = r;}
     void setWeight(int w){weight = w;}
+    void setSpeed(float v_x, float v_y){speedX = v_x; speedY = v_y;}
 
 private:
 
@@ -40,6 +38,8 @@ private:
     float radius;
     int weight;
 
+    float speedX;
+    float speedY;
 
     int precision = 30;
 };

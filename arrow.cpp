@@ -168,7 +168,7 @@ QVector<Point*> Arrow::rotate(QVector<Point *> points)
 
 void Arrow::updateLength()
 {
-    Point firstContactPoint = this->connected->getCenter();//this->connected->getContactPoint(cursor);
+    Point firstContactPoint = this->connected->getCenter();
     Point secondContactPoint = cursor;
 
     float hypotenuse = sqrtf(
@@ -194,6 +194,14 @@ void Arrow::updateState(bool isVis, Point curs)
     this->moveTo(
                 Point(this->connected->getCenter().x - (this->rotatedTopPoint.x - this->rectangle.getCenter().x),
                       this->connected->getCenter().y - (this->rotatedTopPoint.y - this->rectangle.getCenter().y)
-                      ));
+                      )
+                );
+
+    this->connected->setSpeed(
+                this->rectangle.height * -sinf(this->angle * M_PI / 180),
+                this->rectangle.height * -cosf(this->angle * M_PI / 180)
+                );
+    qInfo() << this->rectangle.height * -sinf(this->angle * M_PI / 180);
+    qInfo() << this->rectangle.height * -cosf(this->angle * M_PI / 180);
 
 }
