@@ -144,6 +144,8 @@ void MaterialPoint::write(QJsonObject &json)
     json["y"] = center.y;
     json["radius"] = radius;
     json["weight"] = weight;
+    json["speedX"] = speedX;
+    json["speedY"] = speedY;
 
     QJsonArray pointables;
 
@@ -173,6 +175,8 @@ void MaterialPoint::read(const QJsonObject &json, QVector<DrawableObject*> objec
     center.y = json["y"].toDouble();
     radius = json["radius"].toDouble();
     weight = json["weight"].toInt();
+    speedX = json["speedX"].toDouble();
+    speedY = json["speedY"].toDouble();
 
     qDebug() << "read()";
     qDebug() << "x =" << center.x;
