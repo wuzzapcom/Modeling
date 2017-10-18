@@ -14,8 +14,8 @@ PointableObject::PointableObject(Rectangle rect)
 
 void PointableObject::updateAngle()
 {
-    Point p1 = first->getCenter();//first->getContactPoint(second);
-    Point p2 = second->getCenter();//second->getContactPoint(first);
+    Point p1 = first->getCenter();
+    Point p2 = second->getCenter();
 
     if(fabs(p1.x - p2.x) < std::numeric_limits<float>::epsilon())
     {
@@ -25,17 +25,17 @@ void PointableObject::updateAngle()
             return;
         }else
         {
-            this->angle = M_PI;
+            this->angle = 180.0f;
             return;
         }
     }else if(fabs(p1.y - p2.y) < std::numeric_limits<float>::epsilon())
     {
         if (p1.x > p2.x)
         {
-            this->angle = 3 * M_PI / 2;
+            this->angle = 90.0f;
             return;
         }else{
-            this->angle = M_PI / 2;
+            this->angle = 270.0f;
             return;
         }
     }else
