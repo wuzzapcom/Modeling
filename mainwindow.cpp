@@ -119,6 +119,7 @@ void MainWindow::createMenus()
 
     editMenu->addAction(copyAction);
     editMenu->addAction(pasteAction);
+    editMenu->addAction(deleteAction);
 
     helpMenu = menuBar->addMenu(tr("&Help"));
 
@@ -138,6 +139,11 @@ void MainWindow::createActions(){
     saveAction->setShortcut(QKeySequence::Save);
     saveAction->setStatusTip(tr("Save file"));
     connect(saveAction, &QAction::triggered, this, &MainWindow::save);
+
+    deleteAction = new QAction(tr("&Delete"), this);
+    deleteAction->setShortcut(QKeySequence::Delete);
+    deleteAction->setStatusTip(tr("Deletes selected object"));
+    connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteObject);
 
     helpAction = new QAction(tr("&Help"), this);
     helpAction->setShortcut(QKeySequence::HelpContents);
@@ -324,9 +330,51 @@ void MainWindow::save()
     this->model->save();
 }
 
-void MainWindow::open(){
+void MainWindow::open()
+{
     qInfo("MainWindow::open()");
     this->model->load();
+    this->centralWidget()->update();
+}
+
+void MainWindow::deleteObject()
+{
+    qInfo("MainWindow::deleteObject()");
+    if (this->model->getSelectedObject() != nullptr)
+    {
+        if (this->model->getSelectedObject()->getType() == MATERIAL_POINT ||
+                this->model->getSelectedObject()->getType() == STATIONARY_POINT)
+        {
+            ConnectableObject *conn = (ConnectableObject*) this->model->getSelectedObject();
+            QVector<PointableObject*> pointables = conn->getPointableObjects();
+
+            for (PointableObject *pointable: pointables)
+            {
+                if (pointable->getFirstConnectable() == conn)
+                    pointable->setFirstConnectable(nullptr);
+                if (pointable->getSecondConnectable() == conn)
+                    pointable->setSecondConnectable(nullptr);
+            }
+        }else if (this->model->getSelectedObject()->getType() == SPRING ||
+                  this->model->getSelectedObject()->getType() == ROD)
+        {
+            PointableObject *pointable = (PointableObject*) this->model->getSelectedObject();
+
+            for (PointableObject *p: pointable->getFirstConnectable()->getPointableObjects())
+            {
+                if (p == pointable)
+                    pointable->getFirstConnectable()->removeFromPointableObjects(p);//->getPointableObjects().removeOne(p);
+            }
+            for (PointableObject *p: pointable->getSecondConnectable()->getPointableObjects())
+            {
+                if (p == pointable)
+                    pointable->getSecondConnectable()->removeFromPointableObjects(p);//getPointableObjects().removeOne(p);
+            }
+        }
+        this->model->removeObjectFromVectors(this->model->getSelectedObject());
+        delete this->model->getSelectedObject();
+    }
+
     this->centralWidget()->update();
 }
 

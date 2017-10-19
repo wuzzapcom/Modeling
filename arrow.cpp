@@ -16,27 +16,6 @@ Arrow::Arrow()
 QVector<Point*> Arrow::draw()
 {
     QVector<Point*> points = QVector<Point*>(5);
-
-//    points[0] = new Point(
-//                this->rectangle.leftTopPoint.x,
-//                this->rectangle.leftTopPoint.y - this->rectangle.height / 4
-//                );
-//    points[1] = new Point(
-//                this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
-//                this->rectangle.leftTopPoint.y
-//                );
-//    points[2] = new Point(
-//                    this->rectangle.leftTopPoint.x + this->rectangle.width,
-//                    this->rectangle.leftTopPoint.y - this->rectangle.height / 4
-//                    );
-//    points[3] = new Point(
-//                this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
-//                this->rectangle.leftTopPoint.y
-//                );
-//    points[4] = new Point(
-//                this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
-//                this->rectangle.leftTopPoint.y - this->rectangle.height
-//                );
     points[0] = new Point(
                 this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
                 this->rectangle.leftTopPoint.y

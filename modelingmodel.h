@@ -39,6 +39,8 @@ public:
 
     void connectObjects(DrawableObject *first, DrawableObject *second);
 
+    void removeObjectFromVectors(DrawableObject *drawable);
+
     void save();
     void load();
 

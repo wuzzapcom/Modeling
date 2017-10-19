@@ -31,9 +31,12 @@ public:
     /*
      * Common methods for every inheritor
      * */
+
     void addPointable(PointableObject *p);
 
     QVector<PointableObject*> getPointableObjects(){return pointableObjects;}
+
+    void removeFromPointableObjects(PointableObject *p){pointableObjects.removeOne(p);}
 
 protected:
 

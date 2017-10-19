@@ -302,3 +302,11 @@ void ModelingModel::setSpeedVectorArrow(Arrow *a)
 
     this->speedVectorArrow = a;
 }
+
+void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
+{
+    this->matPoints.removeOne((MaterialPoint*) drawable);
+    this->statPoints.removeOne((StationaryPoint*) drawable);
+    this->springs.removeOne((Spring*) drawable);
+    this->rods.removeOne((Rod*) drawable);
+}

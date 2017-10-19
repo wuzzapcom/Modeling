@@ -59,6 +59,7 @@ private:
     QAction *helpAction;
     QAction *openAction;
     QAction *playPauseAction;
+    QAction *deleteAction;
 
     //Right dock widgets
     QSpinBox *spin1;
@@ -105,6 +106,7 @@ private slots:
 
     void save();
     void copy();
+    void deleteObject();
     void paste();
     void help();
     void open();
