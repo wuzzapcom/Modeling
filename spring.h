@@ -13,7 +13,7 @@ class MaterialPoint;
 class Spring: public PointableObject
 {
 public:
-    Spring(Rectangle rect);
+    Spring(struct Rectangle rect);
     Spring();
 
     //DrawableObject methods

@@ -11,7 +11,7 @@ class MaterialPoint;
 class PointableObject: public DrawableObject
 {
 public:
-    PointableObject(Rectangle rect);
+    PointableObject(struct Rectangle rect);
 
     /*
      * Methods which depends from inheritor
@@ -78,7 +78,7 @@ protected:
 
     float angle;
 
-    Rectangle rectangle;
+    struct Rectangle rectangle;
 
 };
 

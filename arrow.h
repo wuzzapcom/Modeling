@@ -33,7 +33,7 @@ public:
 private:
     MaterialPoint *connected;
     Point cursor;
-    Rectangle rectangle;
+    struct Rectangle rectangle;
     float angle;
     bool isVisible;
     Point rotatedTopPoint;

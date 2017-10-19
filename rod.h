@@ -6,7 +6,7 @@
 class Rod: public PointableObject
 {
 public:
-    Rod(Rectangle rect);
+    Rod(struct Rectangle rect);
     Rod();
 
     //DrawableObject methods

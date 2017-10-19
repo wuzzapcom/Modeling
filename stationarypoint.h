@@ -6,7 +6,7 @@
 class StationaryPoint: public ConnectableObject
 {
 public:
-    StationaryPoint(Rectangle rect);
+    StationaryPoint(struct Rectangle rect);
     StationaryPoint();
 
     //DrawableObject methods
@@ -25,7 +25,7 @@ public:
 
 private:
 
-    Rectangle rectangle;
+    struct Rectangle rectangle;
 
 };
 
