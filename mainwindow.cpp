@@ -293,7 +293,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+void MainWindow::mouseReleaseEvent(QMouseEvent *)
 {
     qInfo("MainWindow::mouseReleaseEvent");
 

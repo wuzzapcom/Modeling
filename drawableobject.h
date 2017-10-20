@@ -19,6 +19,7 @@ class DrawableObject
 {
 public:
     DrawableObject();
+    virtual ~DrawableObject() {}
 
     /*This methods allows an object to be drawn.
      * Returns QVector<Point*> based on internal presentation ob object.
@@ -81,7 +82,7 @@ public:
     long getHash(){return hash;}
     static long getNextID(){return ID_COUNTER++;}
     static long getCurrentID(){return ID_COUNTER;}
-    static long setCurrentID(long id){ID_COUNTER = id;}
+    static void setCurrentID(long id){ID_COUNTER = id;}
 
 private:
     bool isSelected = false;

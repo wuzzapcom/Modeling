@@ -6,9 +6,9 @@ MaterialPoint::MaterialPoint(Point c, float r)
     :ConnectableObject(),
       center(c),
       radius(r),
+      weight(1),
       speedX(0.0f),
-      speedY(0.0f),
-      weight(1)
+      speedY(0.0f)
 {
 
     this->type = MATERIAL_POINT;

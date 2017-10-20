@@ -4,10 +4,10 @@ PointableObject::PointableObject(Rectangle rect)
     :DrawableObject(),
       first(nullptr),
       second(nullptr),
-      rectangle(rect),
-      angle(0.0f),
       rotatedTopPoint(Point()),
-      rotatedBottomPoint(Point())
+      rotatedBottomPoint(Point()),
+      angle(0.0f),
+      rectangle(rect)
 {
 
 }

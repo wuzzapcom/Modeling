@@ -75,7 +75,7 @@ Point StationaryPoint::getCenter()
             );
 }
 
-Point StationaryPoint::getContactPoint(ConnectableObject *connectable)
+Point StationaryPoint::getContactPoint(ConnectableObject *)
 {
     return Point(
             this->rectangle.leftTopPoint.x + this->rectangle.width / 2,
