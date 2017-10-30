@@ -310,3 +310,116 @@ void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
     this->springs.removeOne((Spring*) drawable);
     this->rods.removeOne((Rod*) drawable);
 }
+
+void ModelingModel::createAccelerations()
+{
+    QVector<ConnectableObject*> connectables;
+
+    for(int i = 0; i < matPoints.size(); i++)
+        connectables.push_back((ConnectableObject*)matPoints[i]);
+    for(int i = 0; i < statPoints.size(); i++)
+        connectables.push_back((ConnectableObject*)statPoints[i]);
+
+    this->connectables = connectables;
+
+    QVector<std::function<float(std::valarray<float>)>> accs;
+
+    for(int i = 0; i < matPoints.size(); i++)
+    {
+        std::function<float(std::valarray<float>)> xAcceleration = [](std::valarray<float>){return 0;};
+        std::function<float(std::valarray<float>)> yAcceleration = [](std::valarray<float>){return 0;}; //TODO add mg to this start lambda
+        int x2Index = i;
+        for(int j = 0; j < matPoints[i]->getPointableObjects().size(); j++)
+        {
+            int x1Index = 0;
+            if (matPoints[i]->getPointableObjects()[j]->getType() == SPRING)
+            {
+                Spring* spring = (Spring*) matPoints[i]->getPointableObjects()[j];
+                float k = spring->getRigidity();
+                float m = matPoints[i]->getWeight();
+                float L0 = spring->getDefaultLength();
+                float g = this->modelG;
+                std::function<float(std::valarray<float>)> capturingAccelerationX = xAcceleration;
+                std::function<float(std::valarray<float>)> capturingAccelerationY = yAcceleration;
+
+                int index1 = findIndexOfConnectableByHash(connectables, spring->getFirstConnectable());
+                int index2 = findIndexOfConnectableByHash(connectables, spring->getSecondConnectable());
+                if (index1 == -1 || index2 == -1) continue;
+                if (index1 != x2Index) x1Index = index1;
+                else x1Index = index2;
+                xAcceleration = [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args){
+                    float x2 = args[x2Index];
+                    float y2 = args[x2Index + 1];
+                    float x1 = args[x1Index];
+                    float y1 = args[x1Index + 1];
+                    float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                    return capturingAccelerationX(args) + (-1) / m * k * (args[x2Index] - args[x1Index]) * powf(square - L0, 2) / square;
+                };
+                yAcceleration = [capturingAccelerationY, g, k, m, L0, x2Index, x1Index](std::valarray<float> args){
+                    float x2 = args[x2Index];
+                    float y2 = args[x2Index + 1];
+                    float x1 = args[x1Index];
+                    float y1 = args[x1Index + 1];
+                    float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                    return capturingAccelerationY(args) + g + (-1) / m * k * (args[x2Index] - args[x1Index]) * powf(square - L0, 2) / square;
+                };
+            }
+        }
+        accs.push_back(xAcceleration);
+        accs.push_back(yAcceleration);
+    }
+    accelerations = accs;
+}
+
+int ModelingModel::findIndexOfConnectableByHash(const QVector<ConnectableObject *> &connectables, ConnectableObject *conn)
+{
+    for (int i = 0; i < connectables.size(); i++)
+    {
+        if (connectables[i]->getHash() == conn->getHash())
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void ModelingModel::setConnectablesPosition()
+{
+    systemPosition = std::valarray<float>(connectables.size() * 4);
+    for (size_t i = 0; i < systemPosition.size(); i += 4)
+    {
+        systemPosition[i] = connectables[i/4]->getCenter().x;
+        systemPosition[i+1] = connectables[i/4]->getSpeedX();
+        systemPosition[i+2] = connectables[i/4]->getCenter().y;
+        systemPosition[i+3] = connectables[i/4]->getSpeedY();
+    }
+}
+
+std::valarray<float> ModelingModel::applyPositionsToAccelerations(std::valarray<float> args)
+{
+    std::valarray<float> result(accelerations.size());
+    for (size_t i = 0; i < result.size(); i++)
+    {
+        result[i] = accelerations[i](args);
+    }
+    return result;
+}
+
+std::valarray<float> ModelingModel::rungeKutta()
+{
+    float h = 1/60;
+    std::valarray<float> k1 = applyPositionsToAccelerations(systemPosition);
+    std::valarray<float> k2 = applyPositionsToAccelerations(systemPosition + h / 2 * k1);
+    std::valarray<float> k3 = applyPositionsToAccelerations(systemPosition + h / 2 * k2);
+    std::valarray<float> k4 = applyPositionsToAccelerations(systemPosition + h * k3);
+    return systemPosition + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+}
+
+
+
+
+
+
+
+
+

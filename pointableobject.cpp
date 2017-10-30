@@ -7,7 +7,8 @@ PointableObject::PointableObject(Rectangle rect)
       rectangle(rect),
       angle(0.0f),
       rotatedTopPoint(Point()),
-      rotatedBottomPoint(Point())
+      rotatedBottomPoint(Point()),
+      defaultLength(rect.height)
 {
 
 }
@@ -44,6 +45,8 @@ void PointableObject::updateAngle()
                     p1.x - p2.x,
                     p1.y - p2.y
                     );
+
+        defaultLength = hypo;
 
         if (p1.y > p2.y)
             this->angle = 90.0f - acosf((p1.x - p2.x) / hypo) / M_PI * 180;

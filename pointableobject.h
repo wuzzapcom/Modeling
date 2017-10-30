@@ -63,6 +63,8 @@ public:
      * */
     void setFirstConnectable(ConnectableObject *f);
     void setSecondConnectable(ConnectableObject *s);
+    void setDefaultLength(float l0){defaultLength = l0;}
+    float getDefaultLength(){return defaultLength;}
 
 protected:
 
@@ -77,6 +79,7 @@ protected:
     Point rotatedBottomPoint;
 
     float angle;
+    float defaultLength;
 
     Rectangle rectangle;
 

@@ -1,11 +1,8 @@
 #ifndef MATERIALPOINT_H
 #define MATERIALPOINT_H
-//#include "drawableobject.h"
 #include <math.h>
-//#include "spring.h"
 #include "rod.h"
 #include <QDebug>
-//#include "springableobject.h"
 #include "rod.h"
 
 class MaterialPoint: public ConnectableObject
@@ -30,7 +27,10 @@ public:
 
     void setRadius(float r){radius = r;}
     void setWeight(int w){weight = w;}
+    int getWeight(){return weight;}
     void setSpeed(float v_x, float v_y){speedX = v_x; speedY = v_y;}
+    float getSpeedX(){return speedX;}
+    float getSpeedY(){return speedY;}
 
 private:
 

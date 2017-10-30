@@ -13,6 +13,12 @@ public:
     /*
      * Methods which depends from inheritor
      * */
+    /*
+     * Material point will overload this methods, stationary point will not do this.
+     * */
+    float getSpeedX(){return 0.0;}
+    float getSpeedY(){return 0.0;}
+
 
     /*
      * getCenter() - should return center Point of ConnectableObject.

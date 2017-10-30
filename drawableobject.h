@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include "rectangle.h"
+#include <valarray>
 
 enum DrawableType{
     MATERIAL_POINT,

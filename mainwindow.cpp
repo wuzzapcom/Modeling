@@ -322,6 +322,15 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
         this->model->setSpeedVectorArrow(nullptr);
         delete this->model->getSpeedVectorArrow();
     }
+    if (event->key() == Qt::Key_G)
+    {
+        this->model->createAccelerations();
+        this->model->setConnectablesPosition();
+        std::valarray<float> res = this->model->rungeKutta();
+        qDebug() << "Runge-Kutta result";
+        for (int i = 0; i < res.size(); i++)
+            qDebug() << res[i];
+    }
 }
 
 void MainWindow::save()

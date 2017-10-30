@@ -17,6 +17,7 @@ public:
     void write(QJsonObject &json);
     void readHash(const QJsonObject &json);
     void read(const QJsonObject &json, QVector<DrawableObject*> objects);
+//    std::function<double(std::valarray<double>)> getXAcceleration(const ModelingModel &model){return nullptr;}
 
     void updateAngle();
     QVector<Point*> rotate(QVector<Point*> points);
