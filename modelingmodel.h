@@ -47,13 +47,14 @@ public:
     void setConnectablesPosition();
     std::valarray<float> rungeKutta();
     std::valarray<float> applyPositionsToAccelerations(std::valarray<float> args);
+    void applySpeedsAndCoordinatesToModel(std::valarray<float> arr);
 
     void save();
     void load();
 
 private:
     bool isPlaying;
-    float modelG = 9.8;
+    float modelG = -9.8;
 
     QVector<std::function<float(std::valarray<float>)>> accelerations;
     QVector<ConnectableObject*> connectables;

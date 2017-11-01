@@ -326,8 +326,9 @@ void ModelingModel::createAccelerations()
 
     for(int i = 0; i < matPoints.size(); i++)
     {
+        float g = this->modelG;
         std::function<float(std::valarray<float>)> xAcceleration = [](std::valarray<float>){return 0;};
-        std::function<float(std::valarray<float>)> yAcceleration = [](std::valarray<float>){return 0;}; //TODO add mg to this start lambda
+        std::function<float(std::valarray<float>)> yAcceleration = [g](std::valarray<float>){return g;}; //TODO add mg to this start lambda
         int x2Index = i;
         for(int j = 0; j < matPoints[i]->getPointableObjects().size(); j++)
         {
@@ -338,7 +339,6 @@ void ModelingModel::createAccelerations()
                 float k = spring->getRigidity();
                 float m = matPoints[i]->getWeight();
                 float L0 = spring->getDefaultLength();
-                float g = this->modelG;
                 std::function<float(std::valarray<float>)> capturingAccelerationX = xAcceleration;
                 std::function<float(std::valarray<float>)> capturingAccelerationY = yAcceleration;
 
@@ -355,13 +355,13 @@ void ModelingModel::createAccelerations()
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
                     return capturingAccelerationX(args) + (-1) / m * k * (args[x2Index] - args[x1Index]) * powf(square - L0, 2) / square;
                 };
-                yAcceleration = [capturingAccelerationY, g, k, m, L0, x2Index, x1Index](std::valarray<float> args){
+                yAcceleration = [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
                     float x2 = args[x2Index];
                     float y2 = args[x2Index + 1];
                     float x1 = args[x1Index];
                     float y1 = args[x1Index + 1];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationY(args) + g + (-1) / m * k * (args[x2Index] - args[x1Index]) * powf(square - L0, 2) / square;
+                    return capturingAccelerationY(args) + (-1) / m * k * (args[x2Index] - args[x1Index]) * powf(square - L0, 2) / square;
                 };
             }
         }
@@ -388,32 +388,53 @@ void ModelingModel::setConnectablesPosition()
     systemPosition = std::valarray<float>(connectables.size() * 4);
     for (size_t i = 0; i < systemPosition.size(); i += 4)
     {
-        systemPosition[i] = connectables[i/4]->getCenter().x;
-        systemPosition[i+1] = connectables[i/4]->getSpeedX();
-        systemPosition[i+2] = connectables[i/4]->getCenter().y;
-        systemPosition[i+3] = connectables[i/4]->getSpeedY();
+        if (connectables[i/4]->getType() == MATERIAL_POINT){
+            MaterialPoint* materialPoint = (MaterialPoint*) connectables[i/4];
+            systemPosition[i] = materialPoint->getCenter().x;
+            systemPosition[i+1] = materialPoint->getSpeedX();
+            systemPosition[i+2] = materialPoint->getCenter().y;
+            systemPosition[i+3] = materialPoint->getSpeedY();
+        }
     }
 }
 
 std::valarray<float> ModelingModel::applyPositionsToAccelerations(std::valarray<float> args)
 {
-    std::valarray<float> result(accelerations.size());
-    for (size_t i = 0; i < result.size(); i++)
+    std::valarray<float> result(systemPosition.size());
+    for (size_t i = 0; i < accelerations.size(); i++)
     {
-        result[i] = accelerations[i](args);
+        result[2*i + 1] = accelerations[i](args);
+        result[2*i] = result[2*i + 1];
     }
     return result;
 }
 
 std::valarray<float> ModelingModel::rungeKutta()
 {
-    float h = 1/60;
+    float h = 1.0f/60.0f;
     std::valarray<float> k1 = applyPositionsToAccelerations(systemPosition);
     std::valarray<float> k2 = applyPositionsToAccelerations(systemPosition + h / 2 * k1);
     std::valarray<float> k3 = applyPositionsToAccelerations(systemPosition + h / 2 * k2);
     std::valarray<float> k4 = applyPositionsToAccelerations(systemPosition + h * k3);
-    return systemPosition + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+    return systemPosition + h / 6 * (k1 + 2.0f * k2 + 2.0f * k3 + k4);
 }
+
+void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
+{
+    for (int i = 0; i < connectables.size(); i++)
+    {
+        if (connectables[i]->getType() == MATERIAL_POINT){
+            MaterialPoint* materialPoint = (MaterialPoint*) connectables[i];
+            materialPoint->setX(arr[4*i]);
+            materialPoint->setSpeedX(arr[4*i + 1]);
+            materialPoint->setY(arr[4*i + 2]);
+            materialPoint->setSpeedY(arr[4*i + 3]);
+        }
+    }
+}
+
+
+
 
 
 

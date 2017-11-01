@@ -19,7 +19,6 @@ public:
     float getSpeedX(){return 0.0;}
     float getSpeedY(){return 0.0;}
 
-
     /*
      * getCenter() - should return center Point of ConnectableObject.
      * For StationaryPoint it will be always the bottom triangle point.

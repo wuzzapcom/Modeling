@@ -327,6 +327,8 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
         this->model->createAccelerations();
         this->model->setConnectablesPosition();
         std::valarray<float> res = this->model->rungeKutta();
+        this->model->applySpeedsAndCoordinatesToModel(res);
+        this->centralWidget()->update();
         qDebug() << "Runge-Kutta result";
         for (int i = 0; i < res.size(); i++)
             qDebug() << res[i];

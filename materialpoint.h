@@ -24,13 +24,18 @@ public:
     //ConnactableObject methods
     Point getCenter();
     Point getContactPoint(ConnectableObject *connectable);
+    float getSpeedX(){return speedX;}
+    float getSpeedY(){return speedY;}
+    void setSpeedX(float ux){speedX = ux;}
+    void setSpeedY(float uy){speedY = uy;}
+    void setX(float x){center.x = x;}
+    void setY(float y){center.y = y;}
 
     void setRadius(float r){radius = r;}
     void setWeight(int w){weight = w;}
     int getWeight(){return weight;}
     void setSpeed(float v_x, float v_y){speedX = v_x; speedY = v_y;}
-    float getSpeedX(){return speedX;}
-    float getSpeedY(){return speedY;}
+
 
 private:
 
