@@ -401,10 +401,10 @@ void ModelingModel::setConnectablesPosition()
 std::valarray<float> ModelingModel::applyPositionsToAccelerations(std::valarray<float> args)
 {
     std::valarray<float> result(systemPosition.size());
-    for (size_t i = 0; i < accelerations.size(); i++)
+    for (int i = 0; i < accelerations.size(); i++)
     {
         result[2*i + 1] = accelerations[i](args);
-        result[2*i] = result[2*i + 1];
+        result[2*i] = args[2*i + 1];
     }
     return result;
 }
