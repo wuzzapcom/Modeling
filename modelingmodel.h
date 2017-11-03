@@ -10,6 +10,7 @@ class ModelingModel
 {
 public:
     ModelingModel();
+    ~ModelingModel();
 
     void setPlaying(bool playing);
     bool getIsPlaying();
@@ -42,12 +43,13 @@ public:
 
     void removeObjectFromVectors(DrawableObject *drawable);
 
-    void createAccelerations();
+    QVector<std::function<float(std::valarray<float>)>> createAccelerations();
     int findIndexOfConnectableByHash(const QVector<ConnectableObject*> &connectables, ConnectableObject *conn);
-    void setConnectablesPosition();
-    std::valarray<float> rungeKutta();
-    std::valarray<float> applyPositionsToAccelerations(std::valarray<float> args);
+    std::valarray<float> getConnectablesPosition();
+//    std::valarray<float> rungeKutta();
+//    std::valarray<float> applyPositionsToAccelerations(std::valarray<float> args);
     void applySpeedsAndCoordinatesToModel(std::valarray<float> arr);
+
 
     void save();
     void load();
@@ -56,9 +58,9 @@ private:
     bool isPlaying;
     float modelG = -9.8;
 
-    QVector<std::function<float(std::valarray<float>)>> accelerations;
+//    QVector<std::function<float(std::valarray<float>)>> accelerations;
     QVector<ConnectableObject*> connectables;
-    std::valarray<float> systemPosition;
+//    std::valarray<float> systemPosition;
 
     QVector<MaterialPoint*> matPoints;
     QVector<Spring*> springs;

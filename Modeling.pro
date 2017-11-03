@@ -39,7 +39,8 @@ SOURCES += \
     connectableobject.cpp \
     pointableobject.cpp \
     rod.cpp \
-    arrow.cpp
+    arrow.cpp \
+    rungecutta.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -56,7 +57,8 @@ HEADERS += \
     pointableobject.h \
     rod.h \
     drawableinheritor.h \
-    arrow.h
+    arrow.h \
+    rungecutta.h
 
 FORMS += \
         mainwindow.ui

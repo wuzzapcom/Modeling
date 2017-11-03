@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
 
+    configureTimer();
+    runCalculationsInSeparateThread();
 }
 
 
@@ -210,6 +212,30 @@ void MainWindow::createRightDock(){
 
 }
 
+void MainWindow::configureTimer()
+{
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateScene()));
+    timer->start(17); //for about 60 FPS
+}
+
+void MainWindow::runCalculationsInSeparateThread()
+{
+    QVector<std::function<float(std::valarray<float>)>> accelerations = this->model->createAccelerations();
+    std::valarray<float> positions = this->model->getConnectablesPosition();
+    this->rungeCutta = new RungeCutta(accelerations, positions);
+//    RungeCutta *rc = this->rungeCutta;
+}
+
+void MainWindow::updateRungeCutta()
+{
+    this->rungeCutta->resetState(
+                this->model->createAccelerations(),
+                this->model->getConnectablesPosition()
+                );
+//    this->rungeCutta->rungeCutta();
+}
+
 void MainWindow::mousePressEvent(QMouseEvent *event){
 
     if (event->button() == Qt::LeftButton){
@@ -217,7 +243,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
 
         Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
 
-        QVector<DrawableObject*> drawableObjects = this->model->getDrawableObjects();//assembleDrawableObjectVector();
+        QVector<DrawableObject*> drawableObjects = this->model->getDrawableObjects();
 
         bool isCursorInObject = false;
 
@@ -261,6 +287,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     }
 
     this->centralWidget()->update();
+    this->updateRungeCutta();
 
 }
 
@@ -291,6 +318,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         this->centralWidget()->update();
 
     }
+    this->updateRungeCutta();
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
@@ -321,17 +349,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     {
         this->model->setSpeedVectorArrow(nullptr);
         delete this->model->getSpeedVectorArrow();
-    }
-    if (event->key() == Qt::Key_G)
-    {
-        this->model->createAccelerations();
-        this->model->setConnectablesPosition();
-        std::valarray<float> res = this->model->rungeKutta();
-        this->model->applySpeedsAndCoordinatesToModel(res);
-        this->centralWidget()->update();
-        qDebug() << "Runge-Kutta result";
-        for (int i = 0; i < res.size(); i++)
-            qDebug() << res[i];
     }
 }
 
@@ -387,6 +404,7 @@ void MainWindow::deleteObject()
     }
 
     this->centralWidget()->update();
+    this->updateRungeCutta();
 }
 
 void MainWindow::help(){}
@@ -403,6 +421,8 @@ void MainWindow::addMatPoint()
     this->centralWidget()->update();
 
     addMatPointPropertiesToRightDock();
+
+    this->updateRungeCutta();
 }
 
 void MainWindow::addSpring()
@@ -413,6 +433,7 @@ void MainWindow::addSpring()
     this->centralWidget()->update();
 
     addSpringPropertiesToRightDock();
+    this->updateRungeCutta();
 }
 
 void MainWindow::addRod()
@@ -421,6 +442,7 @@ void MainWindow::addRod()
 
     this->model->addRod();
     this->centralWidget()->update();
+    this->updateRungeCutta();
 }
 
 void MainWindow::addStationaryPoint()
@@ -429,6 +451,7 @@ void MainWindow::addStationaryPoint()
 
     this->model->addStationalPoint();
     this->centralWidget()->update();
+    this->updateRungeCutta();
 }
 
 void MainWindow::changePlayPauseState()
@@ -443,6 +466,20 @@ void MainWindow::changePlayPauseState()
         playPauseAction->setIcon(QIcon(":/play.png"));
         playPauseAction->setStatusTip("Start moving");
     }
+}
+
+void MainWindow::updateScene()
+{
+    if (!this->model->getIsPlaying())
+        return;
+    this->rungeCutta->rungeCutta();
+    qInfo() << "----";
+    std::valarray<float> res = rungeCutta->getNextState();
+    for (int i = 0; i < res.size(); i++)
+        qInfo() << res[i];
+    this->model->applySpeedsAndCoordinatesToModel(res);
+    qInfo() << "----";
+    this->centralWidget()->update();
 }
 
 void MainWindow::addPropertiesToRightDockBySelectedObject()
@@ -590,5 +627,9 @@ Point MainWindow::getPointInOpenGLCoordinateFromMouseEvent(QMouseEvent *event)
 
 MainWindow::~MainWindow()
 {
+//    this->isCalculationsStopped = true;
+    delete model;
+    delete rungeCutta;
+//    delete isCalculationsStopped;
     delete ui;
 }

@@ -11,11 +11,13 @@ ModelingModel::ModelingModel()
       speedVectorArrow(nullptr)
 {}
 
-void ModelingModel::setPlaying(bool playing){
+void ModelingModel::setPlaying(bool playing)
+{
      isPlaying = playing;
 }
 
-bool ModelingModel::getIsPlaying(){
+bool ModelingModel::getIsPlaying()
+{
     return isPlaying;
 }
 
@@ -311,7 +313,7 @@ void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
     this->rods.removeOne((Rod*) drawable);
 }
 
-void ModelingModel::createAccelerations()
+QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAccelerations()
 {
     QVector<ConnectableObject*> connectables;
 
@@ -368,7 +370,7 @@ void ModelingModel::createAccelerations()
         accs.push_back(xAcceleration);
         accs.push_back(yAcceleration);
     }
-    accelerations = accs;
+    return accs;
 }
 
 int ModelingModel::findIndexOfConnectableByHash(const QVector<ConnectableObject *> &connectables, ConnectableObject *conn)
@@ -383,40 +385,20 @@ int ModelingModel::findIndexOfConnectableByHash(const QVector<ConnectableObject 
     return -1;
 }
 
-void ModelingModel::setConnectablesPosition()
+std::valarray<float> ModelingModel::getConnectablesPosition()
 {
-    systemPosition = std::valarray<float>(connectables.size() * 4);
-    for (size_t i = 0; i < systemPosition.size(); i += 4)
+    std::valarray<float> result(connectables.size() * 4);
+    for (size_t i = 0; i < result.size(); i += 4)
     {
         if (connectables[i/4]->getType() == MATERIAL_POINT){
             MaterialPoint* materialPoint = (MaterialPoint*) connectables[i/4];
-            systemPosition[i] = materialPoint->getCenter().x;
-            systemPosition[i+1] = materialPoint->getSpeedX();
-            systemPosition[i+2] = materialPoint->getCenter().y;
-            systemPosition[i+3] = materialPoint->getSpeedY();
+            result[i] = materialPoint->getCenter().x;
+            result[i+1] = materialPoint->getSpeedX();
+            result[i+2] = materialPoint->getCenter().y;
+            result[i+3] = materialPoint->getSpeedY();
         }
     }
-}
-
-std::valarray<float> ModelingModel::applyPositionsToAccelerations(std::valarray<float> args)
-{
-    std::valarray<float> result(systemPosition.size());
-    for (int i = 0; i < accelerations.size(); i++)
-    {
-        result[2*i + 1] = accelerations[i](args);
-        result[2*i] = args[2*i + 1];
-    }
     return result;
-}
-
-std::valarray<float> ModelingModel::rungeKutta()
-{
-    float h = 1.0f/60.0f;
-    std::valarray<float> k1 = applyPositionsToAccelerations(systemPosition);
-    std::valarray<float> k2 = applyPositionsToAccelerations(systemPosition + h / 2 * k1);
-    std::valarray<float> k3 = applyPositionsToAccelerations(systemPosition + h / 2 * k2);
-    std::valarray<float> k4 = applyPositionsToAccelerations(systemPosition + h * k3);
-    return systemPosition + h / 6 * (k1 + 2.0f * k2 + 2.0f * k3 + k4);
 }
 
 void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
@@ -433,8 +415,20 @@ void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
     }
 }
 
+ModelingModel::~ModelingModel()
+{
+    for (int i = 0; i < matPoints.size(); i++)
+        delete matPoints[i];
+    for (int i = 0; i < springs.size(); i++)
+        delete springs[i];
+    for (int i = 0; i < statPoints.size(); i++)
+        delete statPoints[i];
+    for (int i = 0; i < rods.size(); i++)
+        delete rods[i];
 
-
+    if (speedVectorArrow != nullptr)
+        delete speedVectorArrow;
+}
 
 
 

@@ -9,10 +9,11 @@
 #include <QOpenGLWidget>
 #include <QContextMenuEvent>
 #include <QVBoxLayout>
-//#include "modelingmodel.h"
+#include <QTimer>
 #include "openglwidget.h"
 #include <QtDebug>
-//#include "springableobject.h"
+#include <thread>
+#include "rungecutta.h"
 
 namespace Ui {
 class MainWindow;
@@ -71,6 +72,16 @@ private:
     QSpinBox *spin4;
     QLabel *label4;
 
+    QTimer *timer;
+    RungeCutta *rungeCutta;
+    //std::thread rungeCuttaThread;
+    //bool *isCalculationsStopped;
+
+    //configure updating scene
+    void configureTimer();
+    void runCalculationsInSeparateThread();
+    void updateRungeCutta();
+
     //Basic interface creators
     void createStatusBar();
     void createCentralWidget();
@@ -110,6 +121,8 @@ private slots:
     void paste();
     void help();
     void open();
+
+    void updateScene();
 
     void addMatPoint();
     void addSpring();
