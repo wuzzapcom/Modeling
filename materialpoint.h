@@ -26,6 +26,7 @@ public:
     Point getContactPoint(ConnectableObject *connectable);
     float getSpeedX(){return speedX;}
     float getSpeedY(){return speedY;}
+    float getRadius(){return radius;}
     void setSpeedX(float ux){speedX = ux;}
     void setSpeedY(float uy){speedY = uy;}
     void setX(float x){center.x = x;}

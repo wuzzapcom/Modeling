@@ -29,7 +29,7 @@ public:
     void setIsVisible(bool v){isVisible = v;}
     bool getIsVisible(){return isVisible;}
 
-    void updateState(bool isVis, Point curs);
+    std::valarray<float> updateState(bool isVis, Point curs);
 
 private:
     MaterialPoint *connected;

@@ -3,14 +3,14 @@
 
 Spring::Spring(Rectangle rect)
     :PointableObject(rect),
-      rigidity(0.0f)
+      rigidity(20.0f)
 {
     this->type = SPRING;
 }
 
 Spring::Spring()
     :PointableObject(Rectangle()),
-      rigidity(0.0f)
+      rigidity(20.0f)
 {
     this->type = SPRING;
 }
@@ -83,7 +83,7 @@ bool Spring::checkCursorInObject(Point point)
 
 bool Spring::isModelIncompleted()
 {
-    return (this->first == nullptr) || (this->second == nullptr);
+    return !((this->first) && (this->second));//(this->first == nullptr) || (this->second == nullptr);
 }
 
 void Spring::write(QJsonObject &json)

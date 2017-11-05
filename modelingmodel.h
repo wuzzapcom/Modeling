@@ -20,6 +20,7 @@ public:
     void addRod();
 
     void completeModel();
+    bool isModelCompleted();
 
     QVector<MaterialPoint*> getMaterialPoints();
     QVector<Spring*> getSprings();
@@ -41,22 +42,25 @@ public:
 
     void connectObjects(DrawableObject *first, DrawableObject *second);
 
+    void updateSpringsAndRods();
+
     void removeObjectFromVectors(DrawableObject *drawable);
 
     QVector<std::function<float(std::valarray<float>)>> createAccelerations();
     int findIndexOfConnectableByHash(const QVector<ConnectableObject*> &connectables, ConnectableObject *conn);
     std::valarray<float> getConnectablesPosition();
-//    std::valarray<float> rungeKutta();
-//    std::valarray<float> applyPositionsToAccelerations(std::valarray<float> args);
+    void resetMaterialPointsSpeeds();
     void applySpeedsAndCoordinatesToModel(std::valarray<float> arr);
 
+    float countPhi(Rod *rod);
+    float countPhiSpeed(Rod *rod);
 
     void save();
     void load();
 
 private:
     bool isPlaying;
-    float modelG = -9.8;
+    float modelG = 0.0f;//-2.0f;//-9.8;
 
 //    QVector<std::function<float(std::valarray<float>)>> accelerations;
     QVector<ConnectableObject*> connectables;

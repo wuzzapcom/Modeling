@@ -161,7 +161,7 @@ void Arrow::updateLength()
     this->rectangle.height = hypotenuse;
 }
 
-void Arrow::updateState(bool isVis, Point curs)
+std::valarray<float> Arrow::updateState(bool isVis, Point curs)
 {
     this->isVisible = isVis;
     this->cursor = curs;
@@ -176,11 +176,16 @@ void Arrow::updateState(bool isVis, Point curs)
                       )
                 );
 
-    this->connected->setSpeed(
-                this->rectangle.height * -sinf(this->angle * M_PI / 180),
-                this->rectangle.height * -cosf(this->angle * M_PI / 180)
-                );
+//    this->connected->setSpeed(
+//                this->rectangle.height * -sinf(this->angle * M_PI / 180),
+//                this->rectangle.height * -cosf(this->angle * M_PI / 180)
+//                );
     qInfo() << this->rectangle.height * -sinf(this->angle * M_PI / 180);
     qInfo() << this->rectangle.height * -cosf(this->angle * M_PI / 180);
+
+    std::valarray<float> speed(2);
+    speed[0] = this->rectangle.height * -sinf(this->angle * M_PI / 180);
+    speed[1] = this->rectangle.height * -cosf(this->angle * M_PI / 180);
+    return speed;
 
 }

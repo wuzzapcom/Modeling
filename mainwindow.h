@@ -74,12 +74,10 @@ private:
 
     QTimer *timer;
     RungeCutta *rungeCutta;
-    //std::thread rungeCuttaThread;
-    //bool *isCalculationsStopped;
 
     //configure updating scene
     void configureTimer();
-    void runCalculationsInSeparateThread();
+    void initializeRungeCutta();
     void updateRungeCutta();
 
     //Basic interface creators

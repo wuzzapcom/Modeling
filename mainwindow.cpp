@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
 
     configureTimer();
-    runCalculationsInSeparateThread();
+    initializeRungeCutta();
 }
 
 
@@ -219,7 +219,7 @@ void MainWindow::configureTimer()
     timer->start(17); //for about 60 FPS
 }
 
-void MainWindow::runCalculationsInSeparateThread()
+void MainWindow::initializeRungeCutta()
 {
     QVector<std::function<float(std::valarray<float>)>> accelerations = this->model->createAccelerations();
     std::valarray<float> positions = this->model->getConnectablesPosition();
@@ -229,6 +229,8 @@ void MainWindow::runCalculationsInSeparateThread()
 
 void MainWindow::updateRungeCutta()
 {
+    if (this->model->isModelCompleted())
+        return;
     this->rungeCutta->resetState(
                 this->model->createAccelerations(),
                 this->model->getConnectablesPosition()
@@ -258,10 +260,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                 if(this->model->getIncompletedObject() != nullptr
                         && drawableObjects[i] != this->model->getIncompletedObject()){
 
-                    model->connectObjects(
+                    this->model->connectObjects(
                                 drawableObjects[i],
                                 this->model->getIncompletedObject()
                                 );
+                    qInfo() << "CONNECT OBJECTS";
                 }
 
                 this->model->setSelectedObject(drawableObjects[i]);
@@ -287,7 +290,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     }
 
     this->centralWidget()->update();
-    this->updateRungeCutta();
+//    this->updateRungeCutta();
 
 }
 
@@ -297,26 +300,20 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
     Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
 
-    QVector<Spring*> springs = this->model->getSprings();
-    for (int i = 0; i < springs.size(); i++)
-        springs[i]->update();
-
-    QVector<Rod*> rods = this->model->getRods();
-    for (int i = 0; i < rods.size(); i++)
-        rods[i]->update();
+    this->model->updateSpringsAndRods();
 
     if (this->model->getSelectedObject() != nullptr &&
             this->model->getSelectedObject()->getType() == MATERIAL_POINT &&
             this->model->getSpeedVectorArrow() != nullptr)
     {
-        this->model->getSpeedVectorArrow()->updateState(true, point);
+        std::valarray<float> speed = this->model->getSpeedVectorArrow()->updateState(true, point);
+        ((MaterialPoint*)this->model->getSelectedObject())->setSpeed(speed[0], speed[1]);
         this->centralWidget()->update();
     }
-    else if (this->model->getSelectedObject() != nullptr){
-
+    else if (this->model->getSelectedObject() != nullptr)
+    {
         this->model->getSelectedObject()->moveTo(point);
         this->centralWidget()->update();
-
     }
     this->updateRungeCutta();
 }
@@ -330,16 +327,23 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Control){
+    if (event->key() == Qt::Key_Control)
+    {
         qInfo("MainWindow::keyPressEvent(). Ctrl pressed");
 
-        if (this->model->getSelectedObject() == nullptr || this->model->getSelectedObject()->getType() != MATERIAL_POINT)
+        if (this->model->getSelectedObject() == nullptr ||
+                this->model->getSelectedObject()->getType() != MATERIAL_POINT)
             return;
 
         Arrow *arrow = new Arrow();
         arrow->setConnected((MaterialPoint*) this->model->getSelectedObject());
 
         this->model->setSpeedVectorArrow(arrow);
+    }
+    else if (event->key() == Qt::Key_C)
+    {
+        qInfo("MainWindow::keyPressEvent(). C pressed");
+        this->model->resetMaterialPointsSpeeds();
     }
 }
 
@@ -349,6 +353,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     {
         this->model->setSpeedVectorArrow(nullptr);
         delete this->model->getSpeedVectorArrow();
+        this->centralWidget()->update();
     }
 }
 
@@ -478,6 +483,7 @@ void MainWindow::updateScene()
     for (int i = 0; i < res.size(); i++)
         qInfo() << res[i];
     this->model->applySpeedsAndCoordinatesToModel(res);
+    this->model->updateSpringsAndRods();
     qInfo() << "----";
     this->centralWidget()->update();
 }
@@ -512,7 +518,7 @@ void MainWindow::addMatPointPropertiesToRightDock()
     label2->setVisible(true);
 
     spin1->disconnect();
-    spin1->setValue(5);
+    spin1->setValue(1);
     label1->setText("Radius");
     connect(spin1, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
         [=](int i){
@@ -566,7 +572,7 @@ void MainWindow::addSpringPropertiesToRightDock()
     label1->setVisible(true);
 
     spin1->disconnect();
-    spin1->setValue(5);
+    spin1->setValue(20);
     label1->setText("Rigidity");
     connect(spin1, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             [=](int i){

@@ -47,6 +47,8 @@ void PointableObject::updateAngle()
                     );
 
         defaultLength = hypo;
+        qInfo() << "Default length of spring: ";
+        qInfo() << defaultLength;
 
         if (p1.y > p2.y)
             this->angle = 90.0f - acosf((p1.x - p2.x) / hypo) / M_PI * 180;

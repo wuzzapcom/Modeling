@@ -25,7 +25,7 @@ void ModelingModel::addMaterialPoint()
 {
     qInfo("addMaterialPoint()");
 
-    matPoints.append(new MaterialPoint(Point(0.0f, 0.0f), 0.5f));
+    matPoints.append(new MaterialPoint(Point(0.0f, 0.0f), 0.1f));
 }
 
 void ModelingModel::addSpring()
@@ -90,8 +90,8 @@ QVector<DrawableObject*> ModelingModel::getDrawableObjects()
 
 }
 
-void ModelingModel::completeModel(){
-
+void ModelingModel::completeModel()
+{
     for (int i = 0; i < springs.size(); i++)
     {
         if (springs[i]->isModelIncompleted())
@@ -103,7 +103,21 @@ void ModelingModel::completeModel(){
         if (rods[i]->isModelIncompleted())
             this->incompletedObject = rods[i];
     }
+}
 
+bool ModelingModel::isModelCompleted()
+{
+    for (int i = 0; i < springs.size(); i++)
+    {
+        if (springs[i]->isModelIncompleted())
+            return true;
+    }
+    for (int i = 0; i < rods.size(); i++)
+    {
+        if (rods[i]->isModelIncompleted())
+            return true;
+    }
+    return false;
 }
 
 void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second)
@@ -351,20 +365,24 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
                 else x1Index = index2;
                 xAcceleration = [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args){
                     float x2 = args[x2Index];
-                    float y2 = args[x2Index + 1];
+                    float y2 = args[x2Index + 2];
                     float x1 = args[x1Index];
-                    float y1 = args[x1Index + 1];
+                    float y1 = args[x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationX(args) + (-1) / m * k * (args[x2Index] - args[x1Index]) * powf(square - L0, 2) / square;
+                    return capturingAccelerationX(args) + (-1) / m * k * powf(square - L0, 2)* (x2 - x1)  / square;
                 };
                 yAcceleration = [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
                     float x2 = args[x2Index];
-                    float y2 = args[x2Index + 1];
+                    float y2 = args[x2Index + 2];
                     float x1 = args[x1Index];
-                    float y1 = args[x1Index + 1];
+                    float y1 = args[x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationY(args) + (-1) / m * k * (args[x2Index] - args[x1Index]) * powf(square - L0, 2) / square;
+                    return capturingAccelerationY(args) + (-1) / m * k * powf(square - L0, 2) * (y2 - y1) / square;
                 };
+            }
+            else if (matPoints[i]->getPointableObjects()[j]->getType() == ROD)
+            {
+                Rod *rod = (Rod*) matPoints[i]->getPointableObjects()[j];
             }
         }
         accs.push_back(xAcceleration);
@@ -387,18 +405,56 @@ int ModelingModel::findIndexOfConnectableByHash(const QVector<ConnectableObject 
 
 std::valarray<float> ModelingModel::getConnectablesPosition()
 {
-    std::valarray<float> result(connectables.size() * 4);
-    for (size_t i = 0; i < result.size(); i += 4)
+    std::valarray<float> result(matPoints.size() * 4 + rods.size() * 2);
+    for (size_t i = 0; i < matPoints.size(); i += 4)
     {
-        if (connectables[i/4]->getType() == MATERIAL_POINT){
-            MaterialPoint* materialPoint = (MaterialPoint*) connectables[i/4];
-            result[i] = materialPoint->getCenter().x;
-            result[i+1] = materialPoint->getSpeedX();
-            result[i+2] = materialPoint->getCenter().y;
-            result[i+3] = materialPoint->getSpeedY();
-        }
+        result[i] = matPoints[i/4]->getCenter().x;
+        result[i+1] = matPoints[i/4]->getSpeedX();
+        result[i+2] = matPoints[i/4]->getCenter().y;
+        result[i+3] = matPoints[i/4]->getSpeedY();
     }
-    return result;
+    for (size_t i = matPoints.size() * 4; i < rods.size(); i += 2)
+    {
+        result[i] = countPhi(rods[i]);
+        result[i + 1] = countPhiSpeed(rods[i]);
+    }
+}
+
+float ModelingModel::countPhi(Rod *rod)
+{
+    ConnectableObject *c1 = rod->getFirstConnectable();
+    ConnectableObject *c2 = rod->getSecondConnectable();
+    float x1 = c1->getCenter().x;
+    float y1 = c1->getCenter().y;
+    float x2 = c2->getCenter().x;
+    float y2 = c2->getCenter().y;
+    float hypo = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1));
+    return asinf((x2 - x1) / hypo);
+}
+
+float ModelingModel::countPhiSpeed(Rod *rod)
+{
+    MaterialPoint *matPoint;
+    if (rod->getFirstConnectable()->getType() == MATERIAL_POINT)
+        matPoint = (MaterialPoint*) rod->getFirstConnectable();
+    else if (rod->getSecongConnectable()->getType() == MATERIAL_POINT)
+        matPoint = (MaterialPoint*) rod->getSecondConnectable();
+
+    float vx = matPoint->getSpeedX();
+    float vy = matPoint->getSpeedY();
+    float R = matPoint->getRadius();
+    float sign = vx >= 0 ? 1.0f : -1.0f;
+
+    return sign * sqrtf(vx*vx + vy*vy) / R;
+}
+
+void ModelingModel::resetMaterialPointsSpeeds()
+{
+    for (int i = 0; i < matPoints.size(); i++)
+    {
+        matPoints[i]->setSpeedX(0.0f);
+        matPoints[i]->setSpeedY(0.0f);
+    }
 }
 
 void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
@@ -413,6 +469,15 @@ void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
             materialPoint->setSpeedY(arr[4*i + 3]);
         }
     }
+}
+
+void ModelingModel::updateSpringsAndRods()
+{
+    for (int i = 0; i < springs.size(); i++)
+        springs[i]->update();
+
+    for (int i = 0; i < rods.size(); i++)
+        rods[i]->update();
 }
 
 ModelingModel::~ModelingModel()
