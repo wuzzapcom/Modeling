@@ -189,7 +189,7 @@ void MaterialPoint::read(const QJsonObject &json, QVector<DrawableObject*> objec
     for (int i = 0; i < pointables.size(); i++)
     {
         bool ok;
-        long loadedHash = pointables.at(i).toString().toLong(&ok);
+        long loadedHash = pointables[i].toObject()[QString::number(i)].toString().toLong(&ok);
         for (int j = 0; j < objects.size(); j++)
         {
             if (loadedHash == objects[j]->getHash())

@@ -79,6 +79,7 @@ private:
     void configureTimer();
     void initializeRungeCutta();
     void updateRungeCutta();
+    void logRungeCuttaToCSV(std::valarray<float> res);
 
     //Basic interface creators
     void createStatusBar();

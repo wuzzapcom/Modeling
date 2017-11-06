@@ -367,6 +367,7 @@ void MainWindow::open()
 {
     qInfo("MainWindow::open()");
     this->model->load();
+    updateRungeCutta();
     this->centralWidget()->update();
 }
 
@@ -482,10 +483,26 @@ void MainWindow::updateScene()
     std::valarray<float> res = rungeCutta->getNextState();
     for (int i = 0; i < res.size(); i++)
         qInfo() << res[i];
+    logRungeCuttaToCSV(res);
     this->model->applySpeedsAndCoordinatesToModel(res);
     this->model->updateSpringsAndRods();
     qInfo() << "----";
     this->centralWidget()->update();
+}
+
+void MainWindow::logRungeCuttaToCSV(std::valarray<float> res)
+{
+    QFile csv("logs.csv");
+    csv.open(QFile::Append | QFile::Text);
+    QTextStream csvStream(&csv);
+
+    for (int i = 0; i < res.size() - 1; i++)
+    {
+        csvStream << res[i] << ",";
+    }
+    csvStream << res[res.size() - 1] << "\r\n";
+    csv.close();
+
 }
 
 void MainWindow::addPropertiesToRightDockBySelectedObject()

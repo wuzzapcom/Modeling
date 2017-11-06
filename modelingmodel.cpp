@@ -380,10 +380,10 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
                     return capturingAccelerationY(args) + (-1) / m * k * powf(square - L0, 2) * (y2 - y1) / square;
                 };
             }
-            else if (matPoints[i]->getPointableObjects()[j]->getType() == ROD)
-            {
-                Rod *rod = (Rod*) matPoints[i]->getPointableObjects()[j];
-            }
+//            else if (matPoints[i]->getPointableObjects()[j]->getType() == ROD)
+//            {
+//                Rod *rod = (Rod*) matPoints[i]->getPointableObjects()[j];
+//            }
         }
         accs.push_back(xAcceleration);
         accs.push_back(yAcceleration);
@@ -405,32 +405,32 @@ int ModelingModel::findIndexOfConnectableByHash(const QVector<ConnectableObject 
 
 std::valarray<float> ModelingModel::getConnectablesPosition()
 {
-//        std::valarray<float> result(connectables.size() * 4);
-//        for (size_t i = 0; i < result.size(); i += 4)
-//        {
-//            if (connectables[i/4]->getType() == MATERIAL_POINT){
-//                MaterialPoint* materialPoint = (MaterialPoint*) connectables[i/4];
-//                result[i] = materialPoint->getCenter().x;
-//                result[i+1] = materialPoint->getSpeedX();
-//                result[i+2] = materialPoint->getCenter().y;
-//                result[i+3] = materialPoint->getSpeedY();
-//            }
-//        }
-//        return result;
-    std::valarray<float> result(matPoints.size() * 4 + rods.size() * 2);
-    for (size_t i = 0; i < matPoints.size(); i += 4)
-    {
-        result[i] = matPoints[i/4]->getCenter().x;
-        result[i+1] = matPoints[i/4]->getSpeedX();
-        result[i+2] = matPoints[i/4]->getCenter().y;
-        result[i+3] = matPoints[i/4]->getSpeedY();
-    }
-    for (size_t i = matPoints.size() * 4; i < rods.size(); i += 2)
-    {
-        result[i] = countPhi(rods[i]);
-        result[i + 1] = countPhiSpeed(rods[i]);
-    }
-    return result;
+        std::valarray<float> result(connectables.size() * 4);
+        for (size_t i = 0; i < result.size(); i += 4)
+        {
+            if (connectables[i/4]->getType() == MATERIAL_POINT){
+                MaterialPoint* materialPoint = (MaterialPoint*) connectables[i/4];
+                result[i] = materialPoint->getCenter().x;
+                result[i+1] = materialPoint->getSpeedX();
+                result[i+2] = materialPoint->getCenter().y;
+                result[i+3] = materialPoint->getSpeedY();
+            }
+        }
+        return result;
+//    std::valarray<float> result(matPoints.size() * 4 + rods.size() * 2);
+//    for (size_t i = 0; i < matPoints.size(); i += 4)
+//    {
+//        result[i] = matPoints[i/4]->getCenter().x;
+//        result[i+1] = matPoints[i/4]->getSpeedX();
+//        result[i+2] = matPoints[i/4]->getCenter().y;
+//        result[i+3] = matPoints[i/4]->getSpeedY();
+//    }
+//    for (size_t i = matPoints.size() * 4; i < rods.size(); i += 2)
+//    {
+//        result[i] = countPhi(rods[i]);
+//        result[i + 1] = countPhiSpeed(rods[i]);
+//    }
+//    return result;
 }
 
 float ModelingModel::countPhi(Rod *rod)

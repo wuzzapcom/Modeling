@@ -95,7 +95,7 @@ void Spring::write(QJsonObject &json)
     json["width"] = rectangle.width;
     json["height"] = rectangle.height;
     json["angle"] = angle;
-    json["rigidiny"] = rigidity;
+    json["rigidity"] = rigidity;
     if (first != nullptr)
         json["first"] = QString::number(first->getHash());
     if (second != nullptr)
