@@ -364,18 +364,18 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
                 if (index1 != x2Index) x1Index = index1;
                 else x1Index = index2;
                 xAcceleration = [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                    float x2 = args[x2Index];
-                    float y2 = args[x2Index + 2];
-                    float x1 = args[x1Index];
-                    float y1 = args[x1Index + 2];
+                    float x2 = args[4*x2Index];
+                    float y2 = args[4*x2Index + 2];
+                    float x1 = args[4*x1Index];
+                    float y1 = args[4*x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
                     return capturingAccelerationX(args) + (-1) / m * k * powf(square - L0, 2)* (x2 - x1)  / square;
                 };
                 yAcceleration = [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                    float x2 = args[x2Index];
-                    float y2 = args[x2Index + 2];
-                    float x1 = args[x1Index];
-                    float y1 = args[x1Index + 2];
+                    float x2 = args[4*x2Index];
+                    float y2 = args[4*x2Index + 2];
+                    float x1 = args[4*x1Index];
+                    float y1 = args[4*x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
                     return capturingAccelerationY(args) + (-1) / m * k * powf(square - L0, 2) * (y2 - y1) / square;
                 };
