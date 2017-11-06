@@ -8,7 +8,7 @@ PointableObject::PointableObject(Rectangle rect)
       angle(0.0f),
       rotatedTopPoint(Point()),
       rotatedBottomPoint(Point()),
-      defaultLength(rect.height)
+      defaultLength(2.0f)
 {
 
 }
@@ -46,9 +46,9 @@ void PointableObject::updateAngle()
                     p1.y - p2.y
                     );
 
-        defaultLength = hypo;
-        qInfo() << "Default length of spring: ";
-        qInfo() << defaultLength;
+//        defaultLength = hypo;
+//        qInfo() << "Default length of spring: ";
+//        qInfo() << defaultLength;
 
         if (p1.y > p2.y)
             this->angle = 90.0f - acosf((p1.x - p2.x) / hypo) / M_PI * 180;

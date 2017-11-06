@@ -583,7 +583,7 @@ void MainWindow::addMatPointPropertiesToRightDock()
 void MainWindow::addSpringPropertiesToRightDock()
 {
     this->showRightDock();
-    propertiesDock->setFixedSize(80, 65);
+    propertiesDock->setFixedSize(80, 120);
 
     spin1->setVisible(true);
     label1->setVisible(true);
@@ -606,8 +606,26 @@ void MainWindow::addSpringPropertiesToRightDock()
         }
     });
 
-    spin2->setVisible(false);
-    label2->setVisible(false);
+    spin2->setVisible(true);
+    label2->setVisible(true);
+
+    spin2->disconnect();
+    spin2->setValue(2.0f);
+    label2->setText("Default length");
+    connect(spin2, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            [=](int i){
+        if (i > 10) spin2->setValue(10);
+        else if (i < 1) spin2->setValue(1);
+        else{
+            if (this->model->getSelectedObject() == nullptr ||
+                    this->model->getSelectedObject()->getType() != SPRING)
+            {
+                return;
+            }
+            ((Spring*) this->model->getSelectedObject())->setDefaultLength((float)i);
+            this->centralWidget()->update();
+        }
+    });
 
     spin3->setVisible(false);
     label3->setVisible(false);

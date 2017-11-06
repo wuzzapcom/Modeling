@@ -96,6 +96,7 @@ void Spring::write(QJsonObject &json)
     json["height"] = rectangle.height;
     json["angle"] = angle;
     json["rigidity"] = rigidity;
+    json["defaultLength"] = defaultLength;
     if (first != nullptr)
         json["first"] = QString::number(first->getHash());
     if (second != nullptr)
@@ -120,6 +121,7 @@ void Spring::read(const QJsonObject &json, QVector<DrawableObject *> objects)
     rectangle.height = json["height"].toDouble();
     angle = json["angle"].toDouble();
     rigidity = json["rigidity"].toDouble();
+    defaultLength = json["defaultLength"].toDouble();
 
     qDebug() << "read()";
     qDebug() << "x =" << rectangle.leftTopPoint.x;
