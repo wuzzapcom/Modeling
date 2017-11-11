@@ -382,7 +382,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
                 int pointsSize = matPoints.size();
                 if (phiIndex == -1) continue;
                 phiAcceleration = [capturingAccelerationPhi, l, g, phiIndex, pointsSize](std::valarray<float> args){
-                    return capturingAccelerationPhi(args) + (-1) / l * g * cos(args[pointsSize*4 + 2*phiIndex] * M_PI / 180);
+                    return capturingAccelerationPhi(args) + (-1) / l * g * sin(args[pointsSize*4 + 2*phiIndex] * M_PI / 180);
                 };
             }
         }
