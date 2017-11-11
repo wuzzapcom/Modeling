@@ -46,14 +46,38 @@ void PointableObject::updateAngle()
                     p1.y - p2.y
                     );
 
-//        defaultLength = hypo;
+//        if (this->type == ROD)
+//            defaultLength = hypo;
 //        qInfo() << "Default length of spring: ";
 //        qInfo() << defaultLength;
 
+//        if (p1.y > p2.y)
+//            this->angle = asinf((p1.x - p2.x) / hypo) / M_PI * 180;
+//        else
+//            this->angle = 90 + acosf((p1.x - p2.x) / hypo) / M_PI * 180;
         if (p1.y > p2.y)
-            this->angle = 90.0f - acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+        {
+            if (p1.x > p2.x)
+            {
+                this->angle = 90 - acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+            }
+            else
+            {
+                this->angle = 270 + acosf(-(p1.x - p2.x) / hypo) / M_PI * 180;
+            }
+        }
         else
-            this->angle = 90.0f + acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+        {
+            if (p1.x > p2.x)
+            {
+                this->angle = 90 + asinf(-(p1.y - p2.y) / hypo) / M_PI * 180;
+            }
+            else
+            {
+                this->angle = 270 + asinf((p1.y - p2.y) / hypo) / M_PI * 180;
+            }
+        }
+
     }
 
 }
@@ -107,7 +131,7 @@ void PointableObject::updateLength()
 
 }
 
-void PointableObject::update()
+void PointableObject::update(bool isMovedByUser)
 {
     if (this->first == nullptr || this->second == nullptr)
         return;
@@ -115,7 +139,10 @@ void PointableObject::update()
     Point contactPoint = first->getContactPoint(second);
 
     this->updateAngle();
-    this->updateLength();
+    if (this->getType() == SPRING)
+        this->updateLength();
+    else if (isMovedByUser)
+        this->updateLength();
     this->draw();
 
     this->moveTo(

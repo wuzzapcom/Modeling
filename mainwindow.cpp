@@ -300,7 +300,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
     Point point = getPointInOpenGLCoordinateFromMouseEvent(event);
 
-    this->model->updateSpringsAndRods();
+    this->model->updateSpringsAndRods(true);
 
     if (this->model->getSelectedObject() != nullptr &&
             this->model->getSelectedObject()->getType() == MATERIAL_POINT &&
@@ -485,7 +485,7 @@ void MainWindow::updateScene()
         qInfo() << res[i];
     logRungeCuttaToCSV(res);
     this->model->applySpeedsAndCoordinatesToModel(res);
-    this->model->updateSpringsAndRods();
+    this->model->updateSpringsAndRods(false);
     qInfo() << "----";
     this->centralWidget()->update();
 }

@@ -44,7 +44,7 @@ public:
      *  2) length
      *  3) position
      * */
-    void update();
+    void update(bool isMovedByUser);
 
     /*
      * rotate() - rotates given points around rectagle.getCenter() point for
@@ -63,8 +63,8 @@ public:
      * */
     void setFirstConnectable(ConnectableObject *f);
     void setSecondConnectable(ConnectableObject *s);
-    void setDefaultLength(float l0){defaultLength = l0;}
-    float getDefaultLength(){return defaultLength;}
+    void setDefaultLength(float l0){rectangle.height = l0;}//{defaultLength = l0;}
+    float getDefaultLength(){return rectangle.height;}//{return defaultLength;}
 
 protected:
 

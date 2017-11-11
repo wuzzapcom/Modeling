@@ -42,12 +42,12 @@ public:
 
     void connectObjects(DrawableObject *first, DrawableObject *second);
 
-    void updateSpringsAndRods();
+    void updateSpringsAndRods(bool isMovedByUser);
 
     void removeObjectFromVectors(DrawableObject *drawable);
 
     QVector<std::function<float(std::valarray<float>)>> createAccelerations();
-    int findIndexOfConnectableByHash(const QVector<ConnectableObject*> &connectables, ConnectableObject *conn);
+    int findIndexOfDrawableByHash(DrawableObject *conn);
     std::valarray<float> getConnectablesPosition();
     void resetMaterialPointsSpeeds();
     void applySpeedsAndCoordinatesToModel(std::valarray<float> arr);
@@ -60,7 +60,7 @@ public:
 
 private:
     bool isPlaying;
-    float modelG = 0.0f;//-2.0f;//-9.8;
+    float modelG = 10.0f;//-2.0f;//-9.8;
 
 //    QVector<std::function<float(std::valarray<float>)>> accelerations;
     QVector<ConnectableObject*> connectables;

@@ -9,6 +9,8 @@ public:
     Rod(Rectangle rect);
     Rod();
 
+    float getAngle(){return this->angle;}
+
     //DrawableObject methods
     QVector<Point*> draw();
     void move(Point point);
