@@ -37,6 +37,10 @@ public:
     int getWeight(){return weight;}
     void setSpeed(float v_x, float v_y){speedX = v_x; speedY = v_y;}
 
+    //External logic methods
+    bool isConnectedToRods();
+    //Assume that there is just one rod, so return first;
+    PointableObject *getRod();
 
 private:
 

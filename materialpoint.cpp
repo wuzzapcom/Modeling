@@ -201,7 +201,26 @@ void MaterialPoint::read(const QJsonObject &json, QVector<DrawableObject*> objec
 
 }
 
+bool MaterialPoint::isConnectedToRods()
+{
+    for (int i = 0; i < pointableObjects.size(); i++)
+    {
+        if (pointableObjects[i]->getType() == ROD)
+            return true;
+    }
+    return false;
+}
 
+PointableObject *MaterialPoint::getRod()
+{
+    for (int i = 0; i < pointableObjects.size(); i++)
+    {
+        if (pointableObjects[i]->getType() == ROD)
+            return pointableObjects[i];
+    }
+    qDebug() << "MaterialPoint::getRod(). Rod not found.";
+    return nullptr;
+}
 
 
 

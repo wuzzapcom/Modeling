@@ -60,7 +60,7 @@ public:
 
 private:
     bool isPlaying;
-    float modelG = 10.0f;//-2.0f;//-9.8;
+    float modelG = 10.0f;
 
 //    QVector<std::function<float(std::valarray<float>)>> accelerations;
     QVector<ConnectableObject*> connectables;

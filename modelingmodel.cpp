@@ -327,6 +327,11 @@ void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
     this->rods.removeOne((Rod*) drawable);
 }
 
+/*
+ * Изменить составление массива Q в getConnectablesPosition, чтобы количество координат было в два раза больше, чем ускорений
+ * Изменить applySpeedsAndCoordinates, чтобы понимать, какие из этих скоростей нужно выбирать, хотя это может и не понадобиться
+ * */
+
 QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAccelerations()
 {
     QVector<std::function<float(std::valarray<float>)>> accs;
@@ -357,20 +362,20 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
                 if (index1 != x2Index) x1Index = index1;
                 else x1Index = index2;
                 xAcceleration = [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                    float x2 = args[4*x2Index];
-                    float y2 = args[4*x2Index + 2];
-                    float x1 = args[4*x1Index];
-                    float y1 = args[4*x1Index + 2];
+                    float x2 = args[6*x2Index];
+                    float y2 = args[6*x2Index + 2];
+                    float x1 = args[6*x1Index];
+                    float y1 = args[6*x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationX(args) + (-1) / m * k * powf(square - L0, 2)* (x2 - x1)  / square;
+                    return capturingAccelerationX(args) + (-1) / m * k * (square - L0)* (x2 - x1)  / square;
                 };
                 yAcceleration = [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                    float x2 = args[4*x2Index];
-                    float y2 = args[4*x2Index + 2];
-                    float x1 = args[4*x1Index];
-                    float y1 = args[4*x1Index + 2];
+                    float x2 = args[6*x2Index];
+                    float y2 = args[6*x2Index + 2];
+                    float x1 = args[6*x1Index];
+                    float y1 = args[6*x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationY(args) + (-1) / m * k * powf(square - L0, 2) * (y2 - y1) / square;
+                    return capturingAccelerationY(args) + (-1) / m * k * (square - L0) * (y2 - y1) / square;
                 };
             }
             else if (matPoints[i]->getPointableObjects()[j]->getType() == ROD)
@@ -378,11 +383,11 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
                 Rod *rod = (Rod*) matPoints[i]->getPointableObjects()[j];
                 std::function<float(std::valarray<float>)> capturingAccelerationPhi = phiAcceleration;
                 float l = rod->getDefaultLength();
-                int phiIndex = findIndexOfDrawableByHash(rod);
-                int pointsSize = matPoints.size();
+                int phiIndex = findIndexOfDrawableByHash(matPoints[i]);
+//                int pointsSize = matPoints.size();
                 if (phiIndex == -1) continue;
-                phiAcceleration = [capturingAccelerationPhi, l, g, phiIndex, pointsSize](std::valarray<float> args){
-                    return capturingAccelerationPhi(args) + (-1) / l * g * sin(args[pointsSize*4 + 2*phiIndex] * M_PI / 180);
+                phiAcceleration = [capturingAccelerationPhi, l, g, phiIndex](std::valarray<float> args){
+                    return capturingAccelerationPhi(args) + (-1) / l * g * sin(args[6*phiIndex + 4] * M_PI / 180);
                 };
             }
         }
@@ -402,42 +407,52 @@ int ModelingModel::findIndexOfDrawableByHash(DrawableObject *conn)
             return i;
         }
     }
-    for (int i = 0; i < rods.size(); i++)
-    {
-        if (rods[i]->getHash() == conn->getHash())
-        {
-            return i;
-        }
-    }
+//    for (int i = 0; i < rods.size(); i++)
+//    {
+//        if (rods[i]->getHash() == conn->getHash())
+//        {
+//            return i;
+//        }
+//    }
     return -1;
 }
 
 std::valarray<float> ModelingModel::getConnectablesPosition()
 {
-//        std::valarray<float> result(connectables.size() * 4);
-//        for (size_t i = 0; i < result.size(); i += 4)
-//        {
-//            if (connectables[i/4]->getType() == MATERIAL_POINT){
-//                MaterialPoint* materialPoint = (MaterialPoint*) connectables[i/4];
-//                result[i] = materialPoint->getCenter().x;
-//                result[i+1] = materialPoint->getSpeedX();
-//                result[i+2] = materialPoint->getCenter().y;
-//                result[i+3] = materialPoint->getSpeedY();
-//            }
-//        }
-//        return result;
-    std::valarray<float> result(matPoints.size() * 4 + rods.size() * 2);
-    for (size_t i = 0; i < matPoints.size() * 4; i += 4)
+//    std::valarray<float> result(matPoints.size() * 4 + rods.size() * 2);
+//    for (size_t i = 0; i < matPoints.size() * 4; i += 4)
+//    {
+//        result[i] = matPoints[i/4]->getCenter().x;
+//        result[i+1] = matPoints[i/4]->getSpeedX();
+//        result[i+2] = matPoints[i/4]->getCenter().y;
+//        result[i+3] = matPoints[i/4]->getSpeedY();
+//    }
+//    for (size_t i = 0; i < rods.size(); i++)
+//    {
+//        result[matPoints.size() * 4 + i * 2] = countPhi(rods[i]);
+//        result[matPoints.size() * 4 + i * 2 + 1] = countPhiSpeed(rods[i]);
+//    }
+//    return result;
+    std::valarray<float> result(matPoints.size() * 6);
+    for (size_t i = 0; i < matPoints.size(); i++)
     {
-        result[i] = matPoints[i/4]->getCenter().x;
-        result[i+1] = matPoints[i/4]->getSpeedX();
-        result[i+2] = matPoints[i/4]->getCenter().y;
-        result[i+3] = matPoints[i/4]->getSpeedY();
-    }
-    for (size_t i = 0; i < rods.size(); i++)
-    {
-        result[matPoints.size() * 4 + i * 2] = countPhi(rods[i]);
-        result[matPoints.size() * 4 + i * 2 + 1] = countPhiSpeed(rods[i]);
+        result[i * 6] = matPoints[i]->getCenter().x;
+        result[i * 6 + 1] = matPoints[i]->getSpeedX();
+        result[i * 6 + 2] = matPoints[i]->getCenter().y;
+        result[i * 6 + 3] = matPoints[i]->getSpeedY();
+        if (matPoints[i]->isConnectedToRods())
+        {
+            result[i * 6 + 4] = countPhi(
+                        (Rod*) matPoints[i]->getRod()
+                        );
+            result[i * 6 + 5] = countPhiSpeed(
+                        (Rod*) matPoints[i]->getRod()
+                        );
+        }else
+        {
+            result[i * 6 + 4] = 0.0f;
+            result[i * 6 + 5] = 0.0f;
+        }
     }
     return result;
 }
@@ -446,14 +461,6 @@ float ModelingModel::countPhi(Rod *rod)
 {
     qInfo() << "phi = " << rod->getAngle();
     return rod->getAngle();
-//    ConnectableObject *c1 = rod->getFirstConnectable();
-//    ConnectableObject *c2 = rod->getSecondConnectable();
-//    float x1 = c1->getCenter().x;
-//    float y1 = c1->getCenter().y;
-//    float x2 = c2->getCenter().x;
-//    float y2 = c2->getCenter().y;
-//    float hypo = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-//    return asinf((x2 - x1) / hypo);
 }
 
 float ModelingModel::countPhiSpeed(Rod *rod)
@@ -466,7 +473,7 @@ float ModelingModel::countPhiSpeed(Rod *rod)
 
     float vx = matPoint->getSpeedX();
     float vy = matPoint->getSpeedY();
-    float R = rod->getDefaultLength();//matPoint->getRadius();
+    float R = rod->getDefaultLength();
     float sign = vx >= 0 ? 1.0f : -1.0f;
 
     return sign * sqrtf(vx*vx + vy*vy) / R;
@@ -480,56 +487,88 @@ void ModelingModel::resetMaterialPointsSpeeds()
         matPoints[i]->setSpeedY(0.0f);
     }
 }
-//TODO rewrite this ( connectables deleted. Apply phi!)
+
 void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
 {
     for (int i = 0; i < matPoints.size(); i++)
     {
-        matPoints[i]->setX(arr[4*i]);
-        matPoints[i]->setSpeedX(arr[4*i + 1]);
-        matPoints[i]->setY(arr[4*i + 2]);
-        matPoints[i]->setSpeedY(arr[4*i + 3]);
-    }
-    for (int i = 0; i < rods.size(); i+=2)
-    {
-        MaterialPoint *matPoint;
-        StationaryPoint *statPoint;
-        if (rods[i]->getFirstConnectable()->getType() == MATERIAL_POINT)
+        if (arr[i * 6 + 4] == 0.0f && arr[i * 6 + 5] == 0.0f)
         {
-            matPoint = (MaterialPoint*) rods[i]->getFirstConnectable();
-            statPoint = (StationaryPoint*) rods[i]->getSecondConnectable();
-        }
-        if (rods[i]->getSecondConnectable()->getType() == MATERIAL_POINT)
+            matPoints[i]->setX(arr[i * 6]);
+            matPoints[i]->setSpeedX(arr[i * 6 + 1]);
+            matPoints[i]->setY(arr[i * 6 + 2]);
+            matPoints[i]->setSpeedY(arr[i * 6 + 3]);
+        }else
         {
-            matPoint = (MaterialPoint*) rods[i]->getSecondConnectable();
-            statPoint = (StationaryPoint*) rods[i]->getFirstConnectable();
+            Rod *rod = (Rod*) matPoints[i]->getRod();
+            MaterialPoint *matPoint;
+            StationaryPoint *statPoint;
+            if (rod->getFirstConnectable()->getType() == MATERIAL_POINT)
+            {
+                matPoint = (MaterialPoint*) rod->getFirstConnectable();
+                statPoint = (StationaryPoint*) rod->getSecondConnectable();
+            }
+            if (rod->getSecondConnectable()->getType() == MATERIAL_POINT)
+            {
+                matPoint = (MaterialPoint*) rod->getSecondConnectable();
+                statPoint = (StationaryPoint*) rod->getFirstConnectable();
+            }
+            float length = rod->getDefaultLength();
+            float x = statPoint->getCenter().x - sinf(arr[i * 6 + 4] * M_PI / 180) * (length + matPoint->getRadius());
+            float y = statPoint->getCenter().y + sinf((arr[i * 6 + 4] - 90) * M_PI / 180) * (length + matPoint->getRadius());
+            float vx = arr[i * 6 + 5] * cosf(arr[i * 6 + 4] * M_PI / 180);
+            float vy = arr[i * 6 + 5] * sinf(arr[i * 6 + 4] * M_PI / 180);
+            qInfo() << "applySpeedsAndCoordinates";
+            qInfo() << "phi = " << arr[i * 6 + 4];
+            qInfo() << "x = " << x;
+            qInfo() << "y = " << y;
+            qInfo() << "vphi = " << arr[i * 6 + 5];
+            qInfo() << "vx = " << vx;
+            qInfo() << "vy = " << vy;
+            matPoint->setX(x);
+            matPoint->setY(y);
+            matPoint->setSpeedX(vx);
+            matPoint->setSpeedY(vy);
+
         }
-        float length = rods[i]->getDefaultLength();
-        float x = statPoint->getCenter().x - sinf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180) * (length + matPoint->getRadius());
-        float y = statPoint->getCenter().y + sinf((arr[matPoints.size() * 4 + 2*i] - 90) * M_PI / 180) * (length + matPoint->getRadius());
-        float vx = arr[matPoints.size() * 4 + 2*i+1] * cosf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180);
-        float vy = arr[matPoints.size() * 4 + 2*i+1] * sinf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180);
-        qInfo() << "applySpeedsAndCoordinates";
-        qInfo() << "phi = " << arr[matPoints.size() * 4 + i];
-        qInfo() << "x = " << x;
-        qInfo() << "y = " << y;
-        qInfo() << "vphi = " << arr[matPoints.size() * 4 + 2*i+1];
-        qInfo() << "vx = " << vx;
-        qInfo() << "vy = " << vy;
-        matPoint->setX(x);
-        matPoint->setY(y);
-        matPoint->setSpeedX(vx);
-        matPoint->setSpeedY(vy);
     }
-//    for (int i = 0; i < connectables.size(); i++)
+//    for (int i = 0; i < matPoints.size(); i++)
 //    {
-//        if (connectables[i]->getType() == MATERIAL_POINT){
-//            MaterialPoint* materialPoint = (MaterialPoint*) connectables[i];
-//            materialPoint->setX(arr[4*i]);
-//            materialPoint->setSpeedX(arr[4*i + 1]);
-//            materialPoint->setY(arr[4*i + 2]);
-//            materialPoint->setSpeedY(arr[4*i + 3]);
+//        matPoints[i]->setX(arr[4*i]);
+//        matPoints[i]->setSpeedX(arr[4*i + 1]);
+//        matPoints[i]->setY(arr[4*i + 2]);
+//        matPoints[i]->setSpeedY(arr[4*i + 3]);
+//    }
+//    for (int i = 0; i < rods.size(); i+=2)
+//    {
+//        MaterialPoint *matPoint;
+//        StationaryPoint *statPoint;
+//        if (rods[i]->getFirstConnectable()->getType() == MATERIAL_POINT)
+//        {
+//            matPoint = (MaterialPoint*) rods[i]->getFirstConnectable();
+//            statPoint = (StationaryPoint*) rods[i]->getSecondConnectable();
 //        }
+//        if (rods[i]->getSecondConnectable()->getType() == MATERIAL_POINT)
+//        {
+//            matPoint = (MaterialPoint*) rods[i]->getSecondConnectable();
+//            statPoint = (StationaryPoint*) rods[i]->getFirstConnectable();
+//        }
+//        float length = rods[i]->getDefaultLength();
+//        float x = statPoint->getCenter().x - sinf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180) * (length + matPoint->getRadius());
+//        float y = statPoint->getCenter().y + sinf((arr[matPoints.size() * 4 + 2*i] - 90) * M_PI / 180) * (length + matPoint->getRadius());
+//        float vx = arr[matPoints.size() * 4 + 2*i+1] * cosf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180);
+//        float vy = arr[matPoints.size() * 4 + 2*i+1] * sinf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180);
+//        qInfo() << "applySpeedsAndCoordinates";
+//        qInfo() << "phi = " << arr[matPoints.size() * 4 + i];
+//        qInfo() << "x = " << x;
+//        qInfo() << "y = " << y;
+//        qInfo() << "vphi = " << arr[matPoints.size() * 4 + 2*i+1];
+//        qInfo() << "vx = " << vx;
+//        qInfo() << "vy = " << vy;
+//        matPoint->setX(x);
+//        matPoint->setY(y);
+//        matPoint->setSpeedX(vx);
+//        matPoint->setSpeedY(vy);
 //    }
 }
 
