@@ -349,6 +349,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
             if (matPoints[i]->getPointableObjects()[j]->getType() == SPRING)
             {
                 //TODO add check if connected to material point which connected to ROD, another formula for this case
+                //TODO CHECK WEIGHTS(did captured value from correct matPoint)
                 Spring* spring = (Spring*) matPoints[i]->getPointableObjects()[j];
                 float k = spring->getRigidity();
                 float m = matPoints[i]->getWeight();
@@ -361,22 +362,70 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
                 if (index1 == -1 || index2 == -1) continue;
                 if (index1 != x2Index) x1Index = index1;
                 else x1Index = index2;
-                xAcceleration = [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                    float x2 = args[6*x2Index];
-                    float y2 = args[6*x2Index + 2];
-                    float x1 = args[6*x1Index];
-                    float y1 = args[6*x1Index + 2];
-                    float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationX(args) + (-1) / m * k * (square - L0)* (x2 - x1)  / square;
-                };
-                yAcceleration = [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                    float x2 = args[6*x2Index];
-                    float y2 = args[6*x2Index + 2];
-                    float x1 = args[6*x1Index];
-                    float y1 = args[6*x1Index + 2];
-                    float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationY(args) + (-1) / m * k * (square - L0) * (y2 - y1) / square;
-                };
+
+                if (matPoints[i]->isConnectedToRods())
+                {
+                    std::function<float(std::valarray<float>)> capturingAccelerationPhi = phiAcceleration;
+
+                    if (spring->getFirstConnectable()->getHash() == matPoints[i]->getHash())
+                        m = ((MaterialPoint*) spring->getSecondConnectable())->getWeight();
+                    else
+                        m = ((MaterialPoint*) spring->getFirstConnectable())->getWeight();
+
+                    float l = matPoints[i]->getRod()->getDefaultLength();
+
+                    float x_i0 = 0.0f;
+                    float y_i0 = 0.0f;
+                    if (matPoints[i]->getRod()->getFirstConnectable()->getType() == STATIONARY_POINT)
+                    {
+                        x_i0 = matPoints[i]->getRod()->getFirstConnectable()->getCenter().x;
+                        y_i0 = matPoints[i]->getRod()->getFirstConnectable()->getCenter().y;
+                    }else
+                    {
+                        x_i0 = matPoints[i]->getRod()->getSecondConnectable()->getCenter().x;
+                        y_i0 = matPoints[i]->getRod()->getSecondConnectable()->getCenter().y;
+                    }
+                    int iIndex = x2Index;//findIndexOfDrawableByHash(matPoints[i]);
+                    int jIndex = x1Index;//findIndexOfDrawableByHash(matPoints[j]);
+                    /*
+                     * xi0 и yi0 — координаты точки закрепления маятника, xj и yj — координаты второго конца пружины
+                     * (он может быть неподвижной точкой, свободной материальной точкой или грузом маятника),
+                     * L­ij0 — длина пружины в состоянии покоя, φi — угол стержня.
+                     * Если второй конец пружины — неподвижная точка, то xj, yj — константы, если материальная
+                     * точка — то её текущие координаты, если другой маятник, то вместо xj, yj нужно подставить
+                     * координаты груза (xj ← xj0 + ℓj·sin φj и аналогично для yj­).
+                    */
+
+                    phiAcceleration = [capturingAccelerationPhi, m, l, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<float> args){
+                        float phi = args[6 * iIndex + 4] * M_PI / 180;
+                        float x_j = args[6 * jIndex];
+                        float y_j = args[6 * jIndex + 2];
+                        float square = sqrtf(powf(x_i0 + l * sinf(phi) - x_j, 2) + powf(y_i0 + l * cosf(phi) - y_j, 2));
+                        return capturingAccelerationPhi(args) + (/*-*/ 1) / (l * l * m) //TODO CHECK SIGN HERE
+                                * (square - L0)
+                                * (2 * (l * cosf(phi) * (l*sinf(phi) + x_i0 - x_j)
+                                        - l * sinf(phi) * (l * cosf(phi) + y_i0 - y_j)))
+                                / square;
+                    };
+                }else
+                {
+                    xAcceleration = [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args){
+                        float x2 = args[6*x2Index];
+                        float y2 = args[6*x2Index + 2];
+                        float x1 = args[6*x1Index];
+                        float y1 = args[6*x1Index + 2];
+                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        return capturingAccelerationX(args) + (-1) / m * k * (square - L0)* (x2 - x1)  / square;
+                    };
+                    yAcceleration = [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
+                        float x2 = args[6*x2Index];
+                        float y2 = args[6*x2Index + 2];
+                        float x1 = args[6*x1Index];
+                        float y1 = args[6*x1Index + 2];
+                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        return capturingAccelerationY(args) + (-1) / m * k * (square - L0, 2) * (y2 - y1) / square;
+                    };
+                }
             }
             else if (matPoints[i]->getPointableObjects()[j]->getType() == ROD)
             {
