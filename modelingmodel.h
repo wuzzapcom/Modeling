@@ -47,6 +47,28 @@ public:
     void removeObjectFromVectors(DrawableObject *drawable);
 
     QVector<std::function<float(std::valarray<float>)>> createAccelerations();
+    //Order matters! First is x, then y and phi lambdas
+    QVector<std::function<float(std::valarray<float>)>> createSpringAccelerations(
+                                                            std::function<float(std::valarray<float>)> xAccs,
+                                                            std::function<float(std::valarray<float>)> yAccs,
+                                                            std::function<float(std::valarray<float>)> phiAccs,
+                                                            int externalIndex,
+                                                            int internalIndex
+                                                            );
+    QVector<std::function<float(std::valarray<float>)>> createRodAccelerations(
+                                                            std::function<float(std::valarray<float>)> xAccs,
+                                                            std::function<float(std::valarray<float>)> yAccs,
+                                                            std::function<float(std::valarray<float>)> phiAccs,
+                                                            int externalIndex,
+                                                            int internalIndex
+                                                            );
+    QVector<std::function<float(std::valarray<float>)>> createSpringAndRodAccelerations(
+                                                            std::function<float(std::valarray<float>)> xAccs,
+                                                            std::function<float(std::valarray<float>)> yAccs,
+                                                            std::function<float(std::valarray<float>)> phiAccs,
+                                                            int externalIndex,
+                                                            int internalIndex
+                                                            );
     int findIndexOfDrawableByHash(DrawableObject *conn);
     std::valarray<float> getConnectablesPosition();
     void resetMaterialPointsSpeeds();
