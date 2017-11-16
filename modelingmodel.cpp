@@ -418,34 +418,67 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     int index2 = findIndexOfDrawableByHash(spring->getSecondConnectable());
 
     if (index1 == -1 || index2 == -1)
-        return result;
+    {
+        StationaryPoint *statPoint;
+        if (index1 == -1 && spring->getFirstConnectable()->getType() == STATIONARY_POINT)
+            statPoint = (StationaryPoint*) spring->getFirstConnectable();
+        else if (index2 == -1 && spring->getSecondConnectable()->getType() == STATIONARY_POINT)
+            statPoint = (StationaryPoint*) spring->getSecondConnectable();
+        else
+        {
+            qInfo() << "No stationary point found";
+            return result;
+        }
+        float x1 = statPoint->getCenter().x;
+        float y1 = statPoint->getCenter().y;
+        result.push_back(
+                [capturingAccelerationX, k, m, L0, x2Index, x1, y1](std::valarray<float> args)
+                    {
+                        float x2 = args[6*x2Index];
+                        float y2 = args[6*x2Index + 2];
+                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        return capturingAccelerationX(args) + (-1.0f) / m * k * (square - L0) * (x2 - x1)  / square;
+                    }
+                );
+        result.push_back(
+                [capturingAccelerationY, k, m, L0, x2Index, x1, y1](std::valarray<float> args){
+                        float x2 = args[6*x2Index];
+                        float y2 = args[6*x2Index + 2];
+                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        return capturingAccelerationY(args) + (-1.0f) / m * k * (square - L0) * (y2 - y1) / square;
+                    }
+                );
 
-    if (index1 != externalIndex)
-        x1Index = index1;
+    }
     else
-        x1Index = index2;
+    {
+        if (index1 != externalIndex)
+            x1Index = index1;
+        else
+            x1Index = index2;
 
-    result.push_back(
-            [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args)
-                {
-                    float x2 = args[6*x2Index];
-                    float y2 = args[6*x2Index + 2];
-                    float x1 = args[6*x1Index];
-                    float y1 = args[6*x1Index + 2];
-                    float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationX(args) + (-1.0f) / m * k * (square - L0) * (x2 - x1)  / square;
-                }
-            );
-    result.push_back(
-            [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                    float x2 = args[6*x2Index];
-                    float y2 = args[6*x2Index + 2];
-                    float x1 = args[6*x1Index];
-                    float y1 = args[6*x1Index + 2];
-                    float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationY(args) + (-1.0f) / m * k * (square - L0) * (y2 - y1) / square;
-                }
-            );
+        result.push_back(
+                [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args)
+                    {
+                        float x2 = args[6*x2Index];
+                        float y2 = args[6*x2Index + 2];
+                        float x1 = args[6*x1Index];
+                        float y1 = args[6*x1Index + 2];
+                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        return capturingAccelerationX(args) + (-1.0f) / m * k * (square - L0) * (x2 - x1)  / square;
+                    }
+                );
+        result.push_back(
+                [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
+                        float x2 = args[6*x2Index];
+                        float y2 = args[6*x2Index + 2];
+                        float x1 = args[6*x1Index];
+                        float y1 = args[6*x1Index + 2];
+                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        return capturingAccelerationY(args) + (-1.0f) / m * k * (square - L0) * (y2 - y1) / square;
+                    }
+                );
+    }
     result.push_back(
             phiAcc
             );
