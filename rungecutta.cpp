@@ -37,6 +37,12 @@ void RungeCutta::resetState(
     countedModelStates.push_back(startState);
 }
 
+void RungeCutta::updateStates(std::valarray<float> startState)
+{
+    countedModelStates.clear();
+    countedModelStates.push_back(startState);
+}
+
 std::valarray<float> RungeCutta::applyPositionsToAccelerations(std::valarray<float> args)
 {
     std::valarray<float> result(countedModelStates.first().size());
@@ -48,17 +54,18 @@ std::valarray<float> RungeCutta::applyPositionsToAccelerations(std::valarray<flo
     return result;
 }
 
-void RungeCutta::rungeCutta()
+std::valarray<float> RungeCutta::rungeCutta()
 {
     if (this->accelerations.size() == 0)
-        return;
+        return countedModelStates.last();
     if (this->countedModelStates.size() > 60)
-        return;
+        return countedModelStates.last();
     float h = 1.0f / 60.0f;
     std::valarray<float> k1 = applyPositionsToAccelerations(countedModelStates.last());
     std::valarray<float> k2 = applyPositionsToAccelerations(countedModelStates.last() + h / 2 * k1);
     std::valarray<float> k3 = applyPositionsToAccelerations(countedModelStates.last() + h / 2 * k2);
     std::valarray<float> k4 = applyPositionsToAccelerations(countedModelStates.last() + h * k3);
 
-    countedModelStates.push_back(countedModelStates.last() + h / 6 * (k1 + 2.0f * k2 + 2.0f * k3 + k4));
+//    countedModelStates.push_back(countedModelStates.last() + h / 6 * (k1 + 2.0f * k2 + 2.0f * k3 + k4));
+    return countedModelStates.last() + h / 6 * (k1 + 2.0f * k2 + 2.0f * k3 + k4);
 }

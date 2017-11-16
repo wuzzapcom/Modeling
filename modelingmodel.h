@@ -75,7 +75,7 @@ public:
     void applySpeedsAndCoordinatesToModel(std::valarray<float> arr);
 
     float countPhi(Rod *rod);
-    float countPhiSpeed(Rod *rod);
+    float countPhiSpeed(Rod *rod, float phi);
 
     void save();
     void load();

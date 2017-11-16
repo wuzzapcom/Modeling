@@ -479,9 +479,10 @@ void MainWindow::updateScene()
     if (!this->model->getIsPlaying())
         return;
 
-    this->rungeCutta->rungeCutta();
+    this->rungeCutta->updateStates(this->model->getConnectablesPosition());
+    std::valarray<float> res = this->rungeCutta->rungeCutta();
 
-    std::valarray<float> res = rungeCutta->getNextState();
+//    std::valarray<float> res = rungeCutta->getNextState();
     logRungeCuttaToCSV(res);
 
     this->model->applySpeedsAndCoordinatesToModel(res);

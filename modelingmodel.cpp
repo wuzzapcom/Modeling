@@ -560,11 +560,13 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     {
         x_i0 = matPoints[externalIndex]->getRod()->getFirstConnectable()->getCenter().x;
         y_i0 = matPoints[externalIndex]->getRod()->getFirstConnectable()->getCenter().y;
-    }else
+    }else if (matPoints[externalIndex]->getRod()->getSecondConnectable()->getType() == STATIONARY_POINT)
     {
         x_i0 = matPoints[externalIndex]->getRod()->getSecondConnectable()->getCenter().x;
         y_i0 = matPoints[externalIndex]->getRod()->getSecondConnectable()->getCenter().y;
     }
+    else
+        return result;
     int iIndex = x2Index;
     int jIndex = x1Index;
 
@@ -634,7 +636,8 @@ std::valarray<float> ModelingModel::getConnectablesPosition()
                         (Rod*) matPoints[i]->getRod()
                         );
             result[i * 6 + 5] = countPhiSpeed(
-                        (Rod*) matPoints[i]->getRod()
+                        (Rod*) matPoints[i]->getRod(),
+                        result[i * 6 + 4]
                         );
         }else
         {
@@ -651,7 +654,7 @@ float ModelingModel::countPhi(Rod *rod)
     return rod->getAngle();
 }
 
-float ModelingModel::countPhiSpeed(Rod *rod)
+float ModelingModel::countPhiSpeed(Rod *rod, float phi)
 {
     MaterialPoint *matPoint;
     if (rod->getFirstConnectable()->getType() == MATERIAL_POINT)
@@ -660,11 +663,10 @@ float ModelingModel::countPhiSpeed(Rod *rod)
         matPoint = (MaterialPoint*) rod->getSecondConnectable();
 
     float vx = matPoint->getSpeedX();
-    float vy = matPoint->getSpeedY();
-    float R = rod->getDefaultLength();
-    float sign = vx >= 0 ? 1.0f : -1.0f;
+    //float vy = matPoint->getSpeedY();
 
-    return sign * sqrtf(vx*vx + vy*vy) / R;
+    return vx / cosf(phi * M_PI / 180);
+    //return sign * sqrtf(vx*vx + vy*vy) / R;
 }
 
 void ModelingModel::resetMaterialPointsSpeeds()

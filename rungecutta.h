@@ -16,7 +16,10 @@ public:
             QVector<std::function<float(std::valarray<float>)>> accs,
             std::valarray<float> startState
             );
-    void rungeCutta();
+    void updateStates(
+            std::valarray<float> startState
+            );
+    std::valarray<float> rungeCutta();
 private:
 
     QMutex mutex;
