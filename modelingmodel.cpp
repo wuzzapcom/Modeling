@@ -330,77 +330,61 @@ void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
 
 /*
  * TODO
- * THINK ABOUT RESETING xAcceleration, yAcceleration and phiAcceleration in some cases
+ * CHECK WEIGHTS(did captured value from correct matPoint)
+ * FIX PROBLEM WITH DEFAULT LENGTH
+ * ADDING CONNECTION SPRING TO STAT POINT: two variants of lambda. If connected to statPoint, then capture its position,
+ *  else use current lambda.
  * */
 QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAccelerations()
 {
     QVector<std::function<float(std::valarray<float>)>> accs;
+    float g = this->modelG;
 
     for(int i = 0; i < matPoints.size(); i++)
     {
-        float g = this->modelG;
         std::function<float(std::valarray<float>)> xAcceleration = [](std::valarray<float>){return 0;};
         std::function<float(std::valarray<float>)> yAcceleration = [g](std::valarray<float>){return -g;};
         std::function<float(std::valarray<float>)> phiAcceleration = [](std::valarray<float>){return 0;};
-        int x2Index = i;
+
         for(int j = 0; j < matPoints[i]->getPointableObjects().size(); j++)
         {
-            int x1Index = 0;
+            QVector<std::function<float(std::valarray<float>)>> accs;
+
             if (matPoints[i]->getPointableObjects()[j]->getType() == SPRING)
             {
-                //TODO CHECK WEIGHTS(did captured value from correct matPoint)
-                Spring* spring = (Spring*) matPoints[i]->getPointableObjects()[j];
-                float k = spring->getRigidity();
-                float m = matPoints[i]->getWeight();
-                float L0 = spring->getDefaultLength();
-                std::function<float(std::valarray<float>)> capturingAccelerationX = xAcceleration;
-                std::function<float(std::valarray<float>)> capturingAccelerationY = yAcceleration;
-
-                int index1 = findIndexOfDrawableByHash(spring->getFirstConnectable());
-                int index2 = findIndexOfDrawableByHash(spring->getSecondConnectable());
-                if (index1 == -1 || index2 == -1) continue;
-                if (index1 != x2Index) x1Index = index1;
-                else x1Index = index2;
-
                 if (matPoints[i]->isConnectedToRods())
                 {
-                    QVector<std::function<float(std::valarray<float>)>> accs = createSpringAndRodAccelerations(
+                    accs = createSpringAndRodAccelerations(
                                 xAcceleration,
                                 yAcceleration,
                                 phiAcceleration,
                                 i,
                                 j
-                            );
-                    xAcceleration = accs[0];
-                    yAcceleration = accs[1];
-                    phiAcceleration = accs[2];
+                                );
                 }else
                 {
-                    QVector<std::function<float(std::valarray<float>)>> accs = createSpringAccelerations(
+                    accs = createSpringAccelerations(
                                 xAcceleration,
                                 yAcceleration,
                                 phiAcceleration,
                                 i,
                                 j
-                            );
-                    xAcceleration = accs[0];
-                    yAcceleration = accs[1];
-                    phiAcceleration = accs[2];
+                                );
                 }
             }
             else if (matPoints[i]->getPointableObjects()[j]->getType() == ROD)
             {
-                QVector<std::function<float(std::valarray<float>)>> accs = createRodAccelerations(
+                accs = createRodAccelerations(
                                 xAcceleration,
                                 yAcceleration,
                                 phiAcceleration,
                                 i,
                                 j
-                            );
-                xAcceleration = accs[0];
-                yAcceleration = accs[1];
-                phiAcceleration = accs[2];
+                                );
             }
+            xAcceleration = accs[0];
+            yAcceleration = accs[1];
+            phiAcceleration = accs[2];
         }
         accs.push_back(xAcceleration);
         accs.push_back(yAcceleration);
@@ -449,7 +433,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
                     float x1 = args[6*x1Index];
                     float y1 = args[6*x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationX(args) + (-1) / m * k * (square - L0)* (x2 - x1)  / square;
+                    return capturingAccelerationX(args) + (-1.0f) / m * k * (square - L0) * (x2 - x1)  / square;
                 }
             );
     result.push_back(
@@ -459,7 +443,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
                     float x1 = args[6*x1Index];
                     float y1 = args[6*x1Index + 2];
                     float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
-                    return capturingAccelerationY(args) + (-1) / m * k * (square - L0, 2) * (y2 - y1) / square;
+                    return capturingAccelerationY(args) + (-1.0f) / m * k * (square - L0) * (y2 - y1) / square;
                 }
             );
     result.push_back(
@@ -493,7 +477,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createRodAcce
     result.push_back(
             [capturingAccelerationPhi, l, g, phiIndex](std::valarray<float> args)
                 {
-                    return capturingAccelerationPhi(args) + (-1) / l * g * sin(args[6*phiIndex + 4] * M_PI / 180);
+                    return capturingAccelerationPhi(args) + (-1.0f) / l * g * sin(args[6*phiIndex + 4] * M_PI / 180);
                 }
              );
     return result;
@@ -515,6 +499,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
 
     float m = matPoints[externalIndex]->getWeight();
     float L0 = spring->getDefaultLength();
+    float k = spring->getRigidity();
 
     int x1Index = 0;
     int x2Index = externalIndex;
@@ -553,13 +538,13 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     result.push_back(xAcc);
     result.push_back(yAcc);
     result.push_back(
-            [capturingAccelerationPhi, m, l, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<float> args){
+            [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<float> args){
                     float phi = args[6 * iIndex + 4] * M_PI / 180;
                     float x_j = args[6 * jIndex];
                     float y_j = args[6 * jIndex + 2];
-                    float square = sqrtf(powf(x_i0 + l * sinf(phi) - x_j, 2) + powf(y_i0 + l * cosf(phi) - y_j, 2));
-                    return capturingAccelerationPhi(args) + (/*-*/ 1) / (l * l * m) //TODO CHECK SIGN HERE
-                            * (square - L0)
+                    float square = sqrtf(powf(x_i0 + l * cosf(phi) - x_j, 2) + powf(y_i0 + l * sinf(phi) - y_j, 2));
+                    return capturingAccelerationPhi(args) + (/*-*/ 1.0f) / (l * l * m) //TODO CHECK SIGN HERE
+                            * k * (square - L0)
                             * (2 * (l * cosf(phi) * (l*sinf(phi) + x_i0 - x_j)
                                     - l * sinf(phi) * (l * cosf(phi) + y_i0 - y_j)))
                             / square;
@@ -688,13 +673,6 @@ void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
             float y = statPoint->getCenter().y + sinf((arr[i * 6 + 4] - 90) * M_PI / 180) * (length + matPoint->getRadius());
             float vx = arr[i * 6 + 5] * cosf(arr[i * 6 + 4] * M_PI / 180);
             float vy = arr[i * 6 + 5] * sinf(arr[i * 6 + 4] * M_PI / 180);
-            qInfo() << "applySpeedsAndCoordinates";
-            qInfo() << "phi = " << arr[i * 6 + 4];
-            qInfo() << "x = " << x;
-            qInfo() << "y = " << y;
-            qInfo() << "vphi = " << arr[i * 6 + 5];
-            qInfo() << "vx = " << vx;
-            qInfo() << "vy = " << vy;
             matPoint->setX(x);
             matPoint->setY(y);
             matPoint->setSpeedX(vx);

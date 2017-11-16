@@ -478,15 +478,15 @@ void MainWindow::updateScene()
 {
     if (!this->model->getIsPlaying())
         return;
+
     this->rungeCutta->rungeCutta();
-    qInfo() << "----";
+
     std::valarray<float> res = rungeCutta->getNextState();
-    for (int i = 0; i < res.size(); i++)
-        qInfo() << res[i];
     logRungeCuttaToCSV(res);
+
     this->model->applySpeedsAndCoordinatesToModel(res);
     this->model->updateSpringsAndRods(false);
-    qInfo() << "----";
+
     this->centralWidget()->update();
 }
 
@@ -496,11 +496,15 @@ void MainWindow::logRungeCuttaToCSV(std::valarray<float> res)
     csv.open(QFile::Append | QFile::Text);
     QTextStream csvStream(&csv);
 
+    qInfo() << "Runge-Cutta vector";
+
     for (int i = 0; i < res.size() - 1; i++)
     {
         csvStream << res[i] << ",";
+        qInfo() << res[i];
     }
     csvStream << res[res.size() - 1] << "\r\n";
+    qInfo() << "-----------";
     csv.close();
 
 }
