@@ -8,7 +8,8 @@ MaterialPoint::MaterialPoint(Point c, float r)
       radius(r),
       speedX(0.0f),
       speedY(0.0f),
-      weight(1)
+      weight(1),
+      angularSpeed(0.0f)
 {
 
     this->type = MATERIAL_POINT;
@@ -21,7 +22,8 @@ MaterialPoint::MaterialPoint()
              radius(0.0f),
              speedX(0.0f),
              speedY(0.0f),
-             weight(1)
+             weight(1),
+             angularSpeed(0.0f)
 {
     this->type = MATERIAL_POINT;
 }
@@ -146,6 +148,7 @@ void MaterialPoint::write(QJsonObject &json)
     json["weight"] = weight;
     json["speedX"] = speedX;
     json["speedY"] = speedY;
+    json["angularSpeed"] = angularSpeed;
 
     QJsonArray pointables;
 
@@ -177,6 +180,7 @@ void MaterialPoint::read(const QJsonObject &json, QVector<DrawableObject*> objec
     weight = json["weight"].toInt();
     speedX = json["speedX"].toDouble();
     speedY = json["speedY"].toDouble();
+    angularSpeed = json["angularSpeed"].toDouble();
 
     qDebug() << "read()";
     qDebug() << "x =" << center.x;

@@ -37,6 +37,9 @@ public:
     int getWeight(){return weight;}
     void setSpeed(float v_x, float v_y){speedX = v_x; speedY = v_y;}
 
+    float getAngularSpeed(){return angularSpeed;}
+    void setAngularSpeed(float speed){angularSpeed = speed;}
+
     //External logic methods
     bool isConnectedToRods();
     //Assume that there is just one rod, so return first;
@@ -50,6 +53,7 @@ private:
 
     float speedX;
     float speedY;
+    float angularSpeed;
 
     int precision = 30;
 };

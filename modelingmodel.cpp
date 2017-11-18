@@ -635,10 +635,10 @@ std::valarray<float> ModelingModel::getConnectablesPosition()
             result[i * 6 + 4] = countPhi(
                         (Rod*) matPoints[i]->getRod()
                         );
-            result[i * 6 + 5] = countPhiSpeed(
+            result[i * 6 + 5] = matPoints[i]->getAngularSpeed();/*countPhiSpeed(
                         (Rod*) matPoints[i]->getRod(),
                         result[i * 6 + 4]
-                        );
+                        );*/
         }else
         {
             result[i * 6 + 4] = 0.0f;
@@ -656,17 +656,8 @@ float ModelingModel::countPhi(Rod *rod)
 
 float ModelingModel::countPhiSpeed(Rod *rod, float phi)
 {
-    MaterialPoint *matPoint;
-    if (rod->getFirstConnectable()->getType() == MATERIAL_POINT)
-        matPoint = (MaterialPoint*) rod->getFirstConnectable();
-    else if (rod->getSecondConnectable()->getType() == MATERIAL_POINT)
-        matPoint = (MaterialPoint*) rod->getSecondConnectable();
-
-    float vx = matPoint->getSpeedX();
-    //float vy = matPoint->getSpeedY();
-
-    return vx / cosf(phi * M_PI / 180);
-    //return sign * sqrtf(vx*vx + vy*vy) / R;
+    qWarning() << "Not implemented";
+    return 0.0f;
 }
 
 void ModelingModel::resetMaterialPointsSpeeds()
@@ -706,53 +697,12 @@ void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
             float length = rod->getDefaultLength();
             float x = statPoint->getCenter().x - sinf(arr[i * 6 + 4] * M_PI / 180) * (length + matPoint->getRadius());
             float y = statPoint->getCenter().y + sinf((arr[i * 6 + 4] - 90) * M_PI / 180) * (length + matPoint->getRadius());
-            float vx = arr[i * 6 + 5] * cosf(arr[i * 6 + 4] * M_PI / 180);
-            float vy = arr[i * 6 + 5] * sinf(arr[i * 6 + 4] * M_PI / 180);
+            float angularSpeed = arr[i * 6 + 5];
             matPoint->setX(x);
             matPoint->setY(y);
-            matPoint->setSpeedX(vx);
-            matPoint->setSpeedY(vy);
-
+            matPoint->setAngularSpeed(angularSpeed);
         }
     }
-//    for (int i = 0; i < matPoints.size(); i++)
-//    {
-//        matPoints[i]->setX(arr[4*i]);
-//        matPoints[i]->setSpeedX(arr[4*i + 1]);
-//        matPoints[i]->setY(arr[4*i + 2]);
-//        matPoints[i]->setSpeedY(arr[4*i + 3]);
-//    }
-//    for (int i = 0; i < rods.size(); i+=2)
-//    {
-//        MaterialPoint *matPoint;
-//        StationaryPoint *statPoint;
-//        if (rods[i]->getFirstConnectable()->getType() == MATERIAL_POINT)
-//        {
-//            matPoint = (MaterialPoint*) rods[i]->getFirstConnectable();
-//            statPoint = (StationaryPoint*) rods[i]->getSecondConnectable();
-//        }
-//        if (rods[i]->getSecondConnectable()->getType() == MATERIAL_POINT)
-//        {
-//            matPoint = (MaterialPoint*) rods[i]->getSecondConnectable();
-//            statPoint = (StationaryPoint*) rods[i]->getFirstConnectable();
-//        }
-//        float length = rods[i]->getDefaultLength();
-//        float x = statPoint->getCenter().x - sinf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180) * (length + matPoint->getRadius());
-//        float y = statPoint->getCenter().y + sinf((arr[matPoints.size() * 4 + 2*i] - 90) * M_PI / 180) * (length + matPoint->getRadius());
-//        float vx = arr[matPoints.size() * 4 + 2*i+1] * cosf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180);
-//        float vy = arr[matPoints.size() * 4 + 2*i+1] * sinf(arr[matPoints.size() * 4 + 2*i] * M_PI / 180);
-//        qInfo() << "applySpeedsAndCoordinates";
-//        qInfo() << "phi = " << arr[matPoints.size() * 4 + i];
-//        qInfo() << "x = " << x;
-//        qInfo() << "y = " << y;
-//        qInfo() << "vphi = " << arr[matPoints.size() * 4 + 2*i+1];
-//        qInfo() << "vx = " << vx;
-//        qInfo() << "vy = " << vy;
-//        matPoint->setX(x);
-//        matPoint->setY(y);
-//        matPoint->setSpeedX(vx);
-//        matPoint->setSpeedY(vy);
-//    }
 }
 
 void ModelingModel::updateSpringsAndRods(bool isMovedByUser)
