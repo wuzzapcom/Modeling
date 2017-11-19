@@ -86,21 +86,21 @@ void Arrow::updateAngle()
     {
         if (p1.y > p2.y)
         {
-            this->angle = 0.0f;
+            this->angle = 180.0f;
             return;
         }else
         {
-            this->angle = M_PI;
+            this->angle = 180.0f;//M_PI;
             return;
         }
     }else if(fabs(p1.y - p2.y) < std::numeric_limits<float>::epsilon())
     {
         if (p1.x > p2.x)
         {
-            this->angle = 3 * M_PI / 2;
+            this->angle = 270.0f;//3 * M_PI / 2;
             return;
         }else{
-            this->angle = M_PI / 2;
+            this->angle = 90.0f;//M_PI / 2;
             return;
         }
     }else
