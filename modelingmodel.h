@@ -21,6 +21,7 @@ public:
 
     void completeModel();
     bool isModelCompleted();
+    bool isModelCorrect();
 
     QVector<MaterialPoint*> getMaterialPoints();
     QVector<Spring*> getSprings();

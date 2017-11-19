@@ -468,9 +468,18 @@ void MainWindow::changePlayPauseState()
         playPauseAction->setStatusTip("Stop moving");
     }
     else{
-        model->setPlaying(true);
-        playPauseAction->setIcon(QIcon(":/play.png"));
-        playPauseAction->setStatusTip("Start moving");
+        if (this->model->isModelCorrect())
+        {
+            model->setPlaying(true);
+            playPauseAction->setIcon(QIcon(":/play.png"));
+            playPauseAction->setStatusTip("Start moving");
+        }
+        else
+        {
+            playPauseAction->setStatusTip("Model is not correct");
+            this->update();
+        }
+
     }
 }
 
@@ -615,7 +624,7 @@ void MainWindow::addSpringPropertiesToRightDock()
     label2->setVisible(true);
 
     spin2->disconnect();
-    spin2->setValue(2.0f);
+    spin2->setValue(0.5f);
     label2->setText("Default length");
     connect(spin2, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             [=](int i){

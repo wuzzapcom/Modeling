@@ -11,6 +11,20 @@ ModelingModel::ModelingModel()
       speedVectorArrow(nullptr)
 {}
 
+bool ModelingModel::isModelCorrect()
+{
+    if (this->isModelCompleted())
+        return false;
+    for (int i = 0; i < rods.size(); i++)
+    {
+        if (!(rods[i]->getFirstConnectable()->getType() == STATIONARY_POINT || rods[i]->getSecondConnectable()->getType() == STATIONARY_POINT))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void ModelingModel::setPlaying(bool playing)
 {
      isPlaying = playing;
@@ -666,6 +680,7 @@ void ModelingModel::resetMaterialPointsSpeeds()
     {
         matPoints[i]->setSpeedX(0.0f);
         matPoints[i]->setSpeedY(0.0f);
+        matPoints[i]->setAngularSpeed(0.0f);
     }
 }
 

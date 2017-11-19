@@ -8,7 +8,7 @@ PointableObject::PointableObject(Rectangle rect)
       angle(0.0f),
       rotatedTopPoint(Point()),
       rotatedBottomPoint(Point()),
-      defaultLength(2.0f)
+      defaultLength(0.5f)
 {
 
 }
