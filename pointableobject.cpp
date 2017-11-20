@@ -79,7 +79,6 @@ void PointableObject::updateAngle()
         }
 
     }
-
 }
 
 QVector<Point*> PointableObject::rotate(QVector<Point *> points)
@@ -161,6 +160,15 @@ void PointableObject::setFirstConnectable(ConnectableObject *f)
 void PointableObject::setSecondConnectable(ConnectableObject *s)
 {
     this->second = s;
+    //if (this->getType() == ROD)
+    //{
+        if (this->getFirstConnectable()->getType() == MATERIAL_POINT && this->getSecondConnectable()->getType() == STATIONARY_POINT)
+        {
+            ConnectableObject *tmp = this->first;
+            this->first = this->second;
+            this->second = tmp;
+        }
+    //}
 }
 
 

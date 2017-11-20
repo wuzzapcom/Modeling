@@ -22,6 +22,19 @@ bool ModelingModel::isModelCorrect()
             return false;
         }
     }
+    for (int i = 0; i < matPoints.size(); i++)
+    {
+        int numberOfRods = 0;
+        for (int j = 0; j < matPoints[i]->getPointableObjects().size(); j++)
+        {
+            if (matPoints[i]->getPointableObjects()[j]->getType() == ROD)
+            {
+                numberOfRods++;
+            }
+        }
+        if (numberOfRods > 1)
+            return false;
+    }
     return true;
 }
 
@@ -542,30 +555,6 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
 
     std::function<float(std::valarray<float>)> capturingAccelerationPhi = phiAcc;
 
-    Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
-
-    float m = matPoints[externalIndex]->getWeight();
-    float L0 = spring->getDefaultLength();
-    float k = spring->getRigidity();
-
-    int x1Index = 0;
-    int x2Index = externalIndex;
-    int index1 = findIndexOfDrawableByHash(spring->getFirstConnectable());
-    int index2 = findIndexOfDrawableByHash(spring->getSecondConnectable());
-
-    if (index1 == -1 || index2 == -1)
-        return result;
-
-    if (index1 != externalIndex)
-        x1Index = index1;
-    else
-        x1Index = index2;
-
-    if (spring->getFirstConnectable()->getHash() == matPoints[externalIndex]->getHash())
-        m = ((MaterialPoint*) spring->getSecondConnectable())->getWeight();
-    else
-        m = ((MaterialPoint*) spring->getFirstConnectable())->getWeight();
-
     float l = matPoints[externalIndex]->getRod()->getDefaultLength();
 
     float x_i0 = 0.0f;
@@ -581,24 +570,83 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     }
     else
         return result;
-    int iIndex = x2Index;
-    int jIndex = x1Index;
 
-    result.push_back(xAcc);
-    result.push_back(yAcc);
-    result.push_back(
-            [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<float> args){
+    Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
+
+    float m = matPoints[externalIndex]->getWeight();
+    float L0 = spring->getDefaultLength();
+    float k = spring->getRigidity();
+
+    /*if (spring->getFirstConnectable()->getHash() == matPoints[externalIndex]->getHash())
+        m = ((MaterialPoint*) spring->getSecondConnectable())->getWeight();
+    else
+        m = ((MaterialPoint*) spring->getFirstConnectable())->getWeight();*/
+
+    int x1Index = 0;
+    int x2Index = externalIndex;
+    int index1 = findIndexOfDrawableByHash(spring->getFirstConnectable());
+    int index2 = findIndexOfDrawableByHash(spring->getSecondConnectable());
+
+    if (index1 == -1 || index2 == -1)
+    {
+        int iIndex;
+        float x_j;
+        float y_j;
+        StationaryPoint *statPoint;
+        if (spring->getFirstConnectable()->getType() == STATIONARY_POINT)
+        {
+            statPoint = (StationaryPoint*)spring->getFirstConnectable();
+        }
+        else if (spring->getSecondConnectable()->getType() == STATIONARY_POINT)
+        {
+            statPoint = (StationaryPoint*)spring->getFirstConnectable();
+        }
+        else
+        {
+            qWarning() << "Stationary point not found";
+            return result;
+        }
+        iIndex = x2Index;
+        x_j = statPoint->getCenter().x;
+        y_j = statPoint->getCenter().y;
+        result.push_back(xAcc);
+        result.push_back(yAcc);
+        result.push_back(
+            [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, x_j, y_j](std::valarray<float> args){
                     float phi = args[6 * iIndex + 4] * M_PI / 180;
-                    float x_j = args[6 * jIndex];
-                    float y_j = args[6 * jIndex + 2];
                     float square = sqrtf(powf(x_i0 + l * cosf(phi) - x_j, 2) + powf(y_i0 + l * sinf(phi) - y_j, 2));
                     return capturingAccelerationPhi(args) + (/*-*/ 1.0f) / (l * l * m) //TODO CHECK SIGN HERE
                             * k * (square - L0)
                             * (2 * (l * cosf(phi) * (l*sinf(phi) + x_i0 - x_j)
                                     - l * sinf(phi) * (l * cosf(phi) + y_i0 - y_j)))
                             / square;
-                }
-                    );
+        });
+    }
+    else
+    {
+        if (index1 != externalIndex)
+            x1Index = index1;
+        else
+            x1Index = index2;
+        int iIndex = x2Index;
+        int jIndex = x1Index;
+
+        result.push_back(xAcc);
+        result.push_back(yAcc);
+        result.push_back(
+                [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<float> args){
+                        float phi = args[6 * iIndex + 4] * M_PI / 180;
+                        float x_j = args[6 * jIndex];
+                        float y_j = args[6 * jIndex + 2];
+                        float square = sqrtf(powf(x_i0 + l * cosf(phi) - x_j, 2) + powf(y_i0 + l * sinf(phi) - y_j, 2));
+                        return capturingAccelerationPhi(args) + (/*-*/ 1.0f) / (l * l * m) //TODO CHECK SIGN HERE
+                                * k * (square - L0)
+                                * (2 * (l * cosf(phi) * (l*sinf(phi) + x_i0 - x_j)
+                                        - l * sinf(phi) * (l * cosf(phi) + y_i0 - y_j)))
+                                / square;
+                    }
+                        );
+    }
     return result;
 }
 
