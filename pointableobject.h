@@ -65,6 +65,8 @@ public:
     void setSecondConnectable(ConnectableObject *s);
     void setDefaultLength(float l0){rectangle.height = l0;}//{defaultLength = l0;}
     float getDefaultLength(){return rectangle.height;}//{return defaultLength;}
+    void setRestingLength(float l0){restingLength = l0;}
+    float getRestingLength(){return restingLength;}
 
 protected:
 
@@ -80,6 +82,7 @@ protected:
 
     float angle;
     float defaultLength;
+    float restingLength = 0.0f;
 
     Rectangle rectangle;
 

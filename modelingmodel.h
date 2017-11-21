@@ -70,6 +70,11 @@ public:
                                                             int externalIndex,
                                                             int internalIndex
                                                             );
+
+    float countSystemEnergy();
+    float countKineticEnergy();
+    float countPotentialEnergy();
+
     int findIndexOfDrawableByHash(DrawableObject *conn);
     std::valarray<float> getConnectablesPosition();
     void resetMaterialPointsSpeeds();
@@ -83,7 +88,7 @@ public:
 
 private:
     bool isPlaying;
-    float modelG = 10.0f;
+    float modelG = 10.0f;//10.0f;
 
 //    QVector<std::function<float(std::valarray<float>)>> accelerations;
     QVector<ConnectableObject*> connectables;

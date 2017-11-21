@@ -235,7 +235,7 @@ void MainWindow::updateRungeCutta()
                 this->model->createAccelerations(),
                 this->model->getConnectablesPosition()
                 );
-//    this->rungeCutta->rungeCutta();
+
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event){
@@ -508,12 +508,13 @@ void MainWindow::logRungeCuttaToCSV(std::valarray<float> res)
 
     qInfo() << "Runge-Cutta vector";
 
-    for (int i = 0; i < res.size() - 1; i++)
+    for (int i = 0; i < res.size(); i++)
     {
         csvStream << res[i] << ",";
         qInfo() << res[i];
     }
-    csvStream << res[res.size() - 1] << "\r\n";
+    csvStream << this->model->countKineticEnergy() << ",";
+    csvStream << this->model->countPotentialEnergy() << "\r\n";
     qInfo() << "-----------";
     csv.close();
 

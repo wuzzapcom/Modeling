@@ -15,6 +15,8 @@ bool ModelingModel::isModelCorrect()
 {
     if (this->isModelCompleted())
         return false;
+    if (this->matPoints.size() == 0 && this->statPoints.size() == 0)
+        return false;
     for (int i = 0; i < rods.size(); i++)
     {
         if (!(rods[i]->getFirstConnectable()->getType() == STATIONARY_POINT || rods[i]->getSecondConnectable()->getType() == STATIONARY_POINT))
@@ -432,6 +434,8 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
 
     Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
 
+    spring->setRestingLength(spring->getDefaultLength());
+
     float k = spring->getRigidity();
     float m = matPoints[externalIndex]->getWeight();
     float L0 = spring->getDefaultLength();
@@ -572,6 +576,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
         return result;
 
     Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
+    spring->setRestingLength(spring->getDefaultLength());
 
     float m = matPoints[externalIndex]->getWeight();
     float L0 = spring->getDefaultLength();
@@ -775,6 +780,53 @@ void ModelingModel::updateSpringsAndRods(bool isMovedByUser)
 
     for (int i = 0; i < rods.size(); i++)
         rods[i]->update(isMovedByUser);
+}
+
+float ModelingModel::countSystemEnergy()
+{
+    return /*countKineticEnergy() + */countPotentialEnergy();
+}
+
+float ModelingModel::countKineticEnergy()
+{
+    float energy = 0.0f;
+    for (int i = 0; i < matPoints.size(); i++)
+    {
+        if (matPoints[i]->getRod() == nullptr)
+        {
+            float squareV = powf(matPoints[i]->getSpeedX(), 2) + powf(matPoints[i]->getSpeedY(), 2);
+            energy += matPoints[i]->getWeight() * squareV / 2;
+        }
+        else
+        {
+            float w = matPoints[i]->getAngularSpeed();
+            energy += matPoints[i]->getWeight() * powf(matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius(), 2) * powf(w, 2) / 2;
+        }
+    }
+    return energy;
+}
+
+float ModelingModel::countPotentialEnergy()
+{
+    float energy = 0.0f;
+    for (int i = 0; i < springs.size(); i++)
+    {
+        energy += springs[i]->getRigidity() * powf(springs[i]->getDefaultLength() - springs[i]->getRestingLength(), 2) / 2;
+    }
+
+    float zeroForPotentionalEnergy = -1000.0f;
+    for (int i = 0; i < matPoints.size(); i++)
+    {
+        if (matPoints[i]->getRod() == nullptr)
+        {
+            energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getCenter().y - zeroForPotentionalEnergy);
+        }
+        else
+        {
+            energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) * (1 - cosf(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180));
+        }
+    }
+    return energy;
 }
 
 ModelingModel::~ModelingModel()
