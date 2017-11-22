@@ -466,6 +466,7 @@ void MainWindow::changePlayPauseState()
         model->setPlaying(false);
         playPauseAction->setIcon(QIcon(":/pause.png"));
         playPauseAction->setStatusTip("Stop moving");
+        this->model->getLogger()->stopLogging();
     }
     else{
         if (this->model->isModelCorrect())
@@ -473,6 +474,7 @@ void MainWindow::changePlayPauseState()
             model->setPlaying(true);
             playPauseAction->setIcon(QIcon(":/play.png"));
             playPauseAction->setStatusTip("Start moving");
+            this->model->getLogger()->startLogging(this->model->getMaterialPoints().size());
         }
         else
         {
@@ -492,7 +494,12 @@ void MainWindow::updateScene()
     std::valarray<float> res = this->rungeCutta->rungeCutta();
 
 //    std::valarray<float> res = rungeCutta->getNextState();
-    logRungeCuttaToCSV(res);
+//    logRungeCuttaToCSV(res);
+    this->model->getLogger()->log(
+                res,
+                this->model->countKineticEnergy(),
+                this->model->countPotentialEnergy()
+                );
 
     this->model->applySpeedsAndCoordinatesToModel(res);
     this->model->updateSpringsAndRods(false);
@@ -500,25 +507,25 @@ void MainWindow::updateScene()
     this->centralWidget()->update();
 }
 
-void MainWindow::logRungeCuttaToCSV(std::valarray<float> res)
-{
-    QFile csv("logs.csv");
-    csv.open(QFile::Append | QFile::Text);
-    QTextStream csvStream(&csv);
+//void MainWindow::logRungeCuttaToCSV(std::valarray<float> res)
+//{
+//    QFile csv("logs.csv");
+//    csv.open(QFile::Append | QFile::Text);
+//    QTextStream csvStream(&csv);
 
-    qInfo() << "Runge-Cutta vector";
+//    qInfo() << "Runge-Cutta vector";
 
-    for (int i = 0; i < res.size(); i++)
-    {
-        csvStream << res[i] << ",";
-        qInfo() << res[i];
-    }
-    csvStream << this->model->countKineticEnergy() << ",";
-    csvStream << this->model->countPotentialEnergy() << "\r\n";
-    qInfo() << "-----------";
-    csv.close();
+//    for (int i = 0; i < res.size(); i++)
+//    {
+//        csvStream << res[i] << ",";
+//        qInfo() << res[i];
+//    }
+//    csvStream << this->model->countKineticEnergy() << ",";
+//    csvStream << this->model->countPotentialEnergy() << "\r\n";
+//    qInfo() << "-----------";
+//    csv.close();
 
-}
+//}
 
 void MainWindow::addPropertiesToRightDockBySelectedObject()
 {

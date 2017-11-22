@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <math.h>
+#include "csvlogger.h"
 
 class ModelingModel
 {
@@ -86,6 +87,8 @@ public:
     void save();
     void load();
 
+    CsvLogger *getLogger(){return &logger;}
+
 private:
     bool isPlaying;
     float modelG = 10.0f;//10.0f;
@@ -102,6 +105,8 @@ private:
     DrawableObject* selectedObject;
     DrawableObject* incompletedObject;
     Arrow *speedVectorArrow;
+
+    CsvLogger logger;
 
 };
 

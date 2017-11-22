@@ -5,7 +5,7 @@ void clearLogsFile();
 
 int main(int argc, char *argv[])
 {
-    clearLogsFile();
+//    clearLogsFile();
     QApplication a(argc, argv);
     MainWindow w;
     w.show();

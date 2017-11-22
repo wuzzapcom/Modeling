@@ -40,7 +40,8 @@ SOURCES += \
     pointableobject.cpp \
     rod.cpp \
     arrow.cpp \
-    rungecutta.cpp
+    rungecutta.cpp \
+    csvlogger.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -58,7 +59,8 @@ HEADERS += \
     rod.h \
     drawableinheritor.h \
     arrow.h \
-    rungecutta.h
+    rungecutta.h \
+    csvlogger.h
 
 FORMS += \
         mainwindow.ui
