@@ -28,8 +28,7 @@ class LogPlotter:
 
 	def __pick_file(self):
 
-		files = [f for f in os.listdir(self.__path_to_logs) if os.path.isfile(f)]
-
+		files = [f for f in os.listdir(self.__path_to_logs)]
 		max_timestamp = 0
 		selected_filename = ''
 		for f in files:
@@ -45,18 +44,23 @@ class LogPlotter:
 		return [line[position] for line in self.lines]
 
 	def buildEnergiesPlot(self):
+
 		W = self.__getNumberFromEveryLineFromGivenPosition(len(self.lines[0]) - 2)
 		E = self.__getNumberFromEveryLineFromGivenPosition(len(self.lines[0]) - 1)
 		energy = [w + e for (w, e) in zip(W, E)]
 		f, (energyPlot, wPlot, ePlot) = plt.subplots(3, sharex = True)
+		xValues = range(len(self.lines))
+
 		energyPlot.set_title('Full Energy Plot')
 		energyPlot.plot(W, label = "Kinetic Energy")
 		energyPlot.plot(E, label = "Potentional Energy")
 		energyPlot.plot(energy, label = "Full Energy")
 		energyPlot.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
 	           ncol=2, mode="expand", borderaxespad=0.)
+
 		wPlot.set_title('Kinetic Energy Plot')
 		wPlot.plot(W)
+
 		ePlot.set_title('Potentional Energy Plot')
 		ePlot.plot(E)
 		plt.show()
@@ -70,5 +74,5 @@ class LogPlotter:
 		plt.xlabel('iterations')
 		plt.show()
 
-logPlotter = LogPlotter()#LogPlotter('1511372546.csv')
-logPlotter.buildPlot(3)
+logPlotter = LogPlotter()
+logPlotter.buildEnergiesPlot()
