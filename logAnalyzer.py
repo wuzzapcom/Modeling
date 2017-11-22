@@ -3,6 +3,9 @@ import os
 from os.path import basename
 
 class LogPlotter:
+	# Append yourself
+	
+	__path_to_logs = '/Users/wuzzapcom/Coding/Courceworks/build-Modeling-Desktop_Qt_5_9_1_clang_64bit-Debug/Modeling.app/Contents/MacOS/'
 
 	def __init__(self, filename = None):
 		self.row_names = []
@@ -10,6 +13,8 @@ class LogPlotter:
 
 		if filename == None:
 			filename = self.__pick_file()
+
+		filename = self.__path_to_logs + filename
 
 		csv = open(filename, 'r')
 		lines = csv.readlines()
@@ -23,7 +28,8 @@ class LogPlotter:
 
 	def __pick_file(self):
 
-		files = [f for f in os.listdir('.') if os.path.isfile(f)]
+		files = [f for f in os.listdir(self.__path_to_logs) if os.path.isfile(f)]
+
 		max_timestamp = 0
 		selected_filename = ''
 		for f in files:
