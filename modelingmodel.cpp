@@ -784,7 +784,7 @@ void ModelingModel::updateSpringsAndRods(bool isMovedByUser)
 
 float ModelingModel::countSystemEnergy()
 {
-    return /*countKineticEnergy() + */countPotentialEnergy();
+    return countKineticEnergy() + countPotentialEnergy();
 }
 
 float ModelingModel::countKineticEnergy()
@@ -799,8 +799,8 @@ float ModelingModel::countKineticEnergy()
         }
         else
         {
-            float w = matPoints[i]->getAngularSpeed();
-            energy += matPoints[i]->getWeight() * powf(matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius(), 2) * powf(w, 2) / 2;
+            float w = matPoints[i]->getAngularSpeed() * M_PI / 180.0f;
+            energy += matPoints[i]->getWeight() * powf(matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius(), 2) * powf(w, 2) / 2.0f;
         }
     }
     return energy;
@@ -823,7 +823,8 @@ float ModelingModel::countPotentialEnergy()
         }
         else
         {
-            energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) * (1 - cosf(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180));
+            energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) *
+                    (1 - cosf(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180.0f));
         }
     }
     return energy;
