@@ -438,7 +438,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
 
     float k = spring->getRigidity();
     float m = matPoints[externalIndex]->getWeight();
-    float L0 = spring->getDefaultLength();
+    //float L0 = spring->getRestingLength();//spring->getDefaultLength();
 
     std::function<float(std::valarray<float>)> capturingAccelerationX = xAcc;
     std::function<float(std::valarray<float>)> capturingAccelerationY = yAcc;
@@ -460,6 +460,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
             qInfo() << "No stationary point found";
             return result;
         }
+        float L0 = spring->getRestingLength() + matPoints[externalIndex]->getRadius();
         float x1 = statPoint->getCenter().x;
         float y1 = statPoint->getCenter().y;
         result.push_back(
@@ -483,6 +484,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     }
     else
     {
+        float L0 = spring->getRestingLength() + ((MaterialPoint*)spring->getFirstConnectable())->getRadius() + ((MaterialPoint*)spring->getSecondConnectable())->getRadius();
         if (index1 != externalIndex)
             x1Index = index1;
         else
@@ -530,7 +532,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createRodAcce
     Rod *rod = (Rod*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
     std::function<float(std::valarray<float>)> capturingAccelerationPhi = phiAcc;
 
-    float l = rod->getDefaultLength();
+    float l = rod->getDefaultLength() + matPoints[externalIndex]->getRadius();
     int phiIndex = findIndexOfDrawableByHash(matPoints[externalIndex]);
 
     if (phiIndex == -1)
@@ -559,7 +561,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
 
     std::function<float(std::valarray<float>)> capturingAccelerationPhi = phiAcc;
 
-    float l = matPoints[externalIndex]->getRod()->getDefaultLength();
+    float l = matPoints[externalIndex]->getRod()->getDefaultLength() + matPoints[externalIndex]->getRadius();
 
     float x_i0 = 0.0f;
     float y_i0 = 0.0f;
@@ -579,7 +581,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     spring->setRestingLength(spring->getDefaultLength());
 
     float m = matPoints[externalIndex]->getWeight();
-    float L0 = spring->getDefaultLength();
+    float L0 = spring->getDefaultLength() + matPoints[externalIndex]->getRadius();
     float k = spring->getRigidity();
 
     /*if (spring->getFirstConnectable()->getHash() == matPoints[externalIndex]->getHash())
@@ -814,7 +816,7 @@ float ModelingModel::countPotentialEnergy()
         energy += springs[i]->getRigidity() * powf(springs[i]->getDefaultLength() - springs[i]->getRestingLength(), 2) / 2;
     }
 
-    float zeroForPotentionalEnergy = -1000.0f;
+    float zeroForPotentionalEnergy = 0.0f;
     for (int i = 0; i < matPoints.size(); i++)
     {
         if (matPoints[i]->getRod() == nullptr)
