@@ -60,12 +60,12 @@ std::valarray<double> RungeCutta::rungeCutta()
         return countedModelStates.last();
     if (this->countedModelStates.size() > 60)
         return countedModelStates.last();
-    double h = 1.0f / 60.0f;
+    double h = 1.0 / 60.0;
     std::valarray<double> k1 = applyPositionsToAccelerations(countedModelStates.last());
     std::valarray<double> k2 = applyPositionsToAccelerations(countedModelStates.last() + h / 2 * k1);
     std::valarray<double> k3 = applyPositionsToAccelerations(countedModelStates.last() + h / 2 * k2);
     std::valarray<double> k4 = applyPositionsToAccelerations(countedModelStates.last() + h * k3);
 
-//    countedModelStates.push_back(countedModelStates.last() + h / 6 * (k1 + 2.0f * k2 + 2.0f * k3 + k4));
-    return countedModelStates.last() + h / 6 * (k1 + 2.0f * k2 + 2.0f * k3 + k4);
+//    countedModelStates.push_back(countedModelStates.last() + h / 6 * (k1 + 2.0 * k2 + 2.0 * k3 + k4));
+    return countedModelStates.last() + h / 6 * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
 }

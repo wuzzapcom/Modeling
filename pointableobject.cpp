@@ -6,7 +6,7 @@ PointableObject::PointableObject(Rectangle rect)
       second(nullptr),
       rotatedTopPoint(Point()),
       rotatedBottomPoint(Point()),
-      angle(0.0f),
+      angle(0.0),
       defaultLength(0.5f),
       rectangle(rect)
 {
@@ -22,21 +22,21 @@ void PointableObject::updateAngle()
     {
         if (p1.y > p2.y)
         {
-            this->angle = 0.0f;
+            this->angle = 0.0;
             return;
         }else
         {
-            this->angle = 180.0f;
+            this->angle = 180.0;
             return;
         }
     }else if(fabs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
     {
         if (p1.x > p2.x)
         {
-            this->angle = 90.0f;
+            this->angle = 90.0;
             return;
         }else{
-            this->angle = 270.0f;
+            this->angle = 270.0;
             return;
         }
     }else

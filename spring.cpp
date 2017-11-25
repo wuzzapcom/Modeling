@@ -3,14 +3,14 @@
 
 Spring::Spring(Rectangle rect)
     :PointableObject(rect),
-      rigidity(20.0f)
+      rigidity(20.0)
 {
     this->type = SPRING;
 }
 
 Spring::Spring()
     :PointableObject(Rectangle()),
-      rigidity(20.0f)
+      rigidity(20.0)
 {
     this->type = SPRING;
 }

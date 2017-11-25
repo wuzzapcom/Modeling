@@ -7,7 +7,7 @@ Rod::Rod(Rectangle rect)
 }
 
 Rod::Rod()
-    :PointableObject(Rectangle(Point(0.0f, 0.0f), 0.0f, 0.0f))
+    :PointableObject(Rectangle(Point(0.0, 0.0), 0.0, 0.0))
 {
     this->type = ROD;
 }

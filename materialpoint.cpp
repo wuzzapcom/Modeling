@@ -7,9 +7,9 @@ MaterialPoint::MaterialPoint(Point c, double r)
       center(c),
       radius(r),
       weight(1),
-      speedX(0.0f),
-      speedY(0.0f),
-      angularSpeed(0.0f)
+      speedX(0.0),
+      speedY(0.0),
+      angularSpeed(0.0)
 {
 
     this->type = MATERIAL_POINT;
@@ -18,12 +18,12 @@ MaterialPoint::MaterialPoint(Point c, double r)
 
 MaterialPoint::MaterialPoint()
     :ConnectableObject(),
-             center(Point(0.0f, 0.0f)),
-             radius(0.0f),
+             center(Point(0.0, 0.0)),
+             radius(0.0),
              weight(1),
-             speedX(0.0f),
-             speedY(0.0f),
-             angularSpeed(0.0f)
+             speedX(0.0),
+             speedY(0.0),
+             angularSpeed(0.0)
 {
     this->type = MATERIAL_POINT;
 }
@@ -32,7 +32,7 @@ QVector<Point*> MaterialPoint::draw()
 {
     QVector<Point*> points = QVector<Point*>(this->precision + 1);
     Point *point;
-    double angle = 0.0f;
+    double angle = 0.0;
     double deltaAngle = 2 * M_PI / this->precision;
 
     for(int i = 0; i < precision + 1; i++){

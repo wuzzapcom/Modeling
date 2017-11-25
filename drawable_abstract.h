@@ -215,7 +215,7 @@ protected:
 
     double angle;
     double defaultLength;
-    double restingLength = 0.0f;
+    double restingLength = 0.0;
 
     Rectangle rectangle;
 

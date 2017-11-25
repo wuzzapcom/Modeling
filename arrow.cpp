@@ -5,7 +5,7 @@ Arrow::Arrow()
     connected(nullptr),
     cursor(Point()),
     rectangle(Rectangle(Point(), 0.1f, 0.2f)),
-    angle(0.0f),
+    angle(0.0),
     isVisible(false),
     rotatedTopPoint(Point()),
     rotatedBottomPoint(Point())
@@ -86,21 +86,21 @@ void Arrow::updateAngle()
     {
         if (p1.y > p2.y)
         {
-            this->angle = 180.0f;
+            this->angle = 180.0;
             return;
         }else
         {
-            this->angle = 180.0f;//M_PI;
+            this->angle = 180.0;//M_PI;
             return;
         }
     }else if(fabs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
     {
         if (p1.x > p2.x)
         {
-            this->angle = 270.0f;//3 * M_PI / 2;
+            this->angle = 270.0;//3 * M_PI / 2;
             return;
         }else{
-            this->angle = 90.0f;//M_PI / 2;
+            this->angle = 90.0;//M_PI / 2;
             return;
         }
     }else
@@ -111,9 +111,9 @@ void Arrow::updateAngle()
                     );
 
         if (p1.y > p2.y)
-            this->angle = 90.0f - std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
+            this->angle = 90.0 - std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
         else
-            this->angle = 90.0f + std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
+            this->angle = 90.0 + std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
     }
 }
 

@@ -10,8 +10,8 @@ Point::Point(double new_x, double new_y)
 
 Point::Point()
 {
-    this->x = 0.0f;
-    this->y = 0.0f;
+    this->x = 0.0;
+    this->y = 0.0;
 }
 
 Rectangle::Rectangle(Point leftTop, double width, double height)
@@ -28,8 +28,8 @@ Rectangle::Rectangle()
 {
 
     this->leftTopPoint = Point();
-    this->width = 0.0f;
-    this->height = 0.0f;
+    this->width = 0.0;
+    this->height = 0.0;
     this->angle = 0;
 
 }
