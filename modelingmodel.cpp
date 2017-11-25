@@ -438,7 +438,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
 
     float k = spring->getRigidity();
     float m = matPoints[externalIndex]->getWeight();
-    //float L0 = spring->getRestingLength();//spring->getDefaultLength();
+    float L0 = this->countSpringDefaultLength(spring); //spring->getRestingLength();//spring->getDefaultLength();
 
     std::function<float(std::valarray<float>)> capturingAccelerationX = xAcc;
     std::function<float(std::valarray<float>)> capturingAccelerationY = yAcc;
@@ -460,7 +460,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
             qInfo() << "No stationary point found";
             return result;
         }
-        float L0 = spring->getRestingLength() + matPoints[externalIndex]->getRadius();
+        //float L0 = spring->getRestingLength() + matPoints[externalIndex]->getRadius();
         float x1 = statPoint->getCenter().x;
         float y1 = statPoint->getCenter().y;
         result.push_back(
@@ -484,7 +484,14 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     }
     else
     {
-        float L0 = spring->getRestingLength() + ((MaterialPoint*)spring->getFirstConnectable())->getRadius() + ((MaterialPoint*)spring->getSecondConnectable())->getRadius();
+        //float L0 = this->countSpringDefaultLength(spring);
+//        float L0 = spring->getRestingLength() + ((MaterialPoint*)spring->getFirstConnectable())->getRadius() + ((MaterialPoint*)spring->getSecondConnectable())->getRadius();
+//        logger.logLengths(L0,
+//                           spring->getFirstConnectable()->getCenter().x,
+//                           spring->getFirstConnectable()->getCenter().y,
+//                           spring->getSecondConnectable()->getCenter().x,
+//                           spring->getSecondConnectable()->getCenter().y
+//                           );
         if (index1 != externalIndex)
             x1Index = index1;
         else
@@ -543,7 +550,7 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createRodAcce
     result.push_back(
             [capturingAccelerationPhi, l, g, phiIndex](std::valarray<float> args)
                 {
-                    return capturingAccelerationPhi(args) + (-1.0f) / l * g * sin(args[6*phiIndex + 4] * M_PI / 180);
+                    return capturingAccelerationPhi(args) + (-1.0f) / l * g * sinf(args[6*phiIndex + 4] * M_PI / 180.0f);
                 }
              );
     return result;
@@ -789,6 +796,44 @@ float ModelingModel::countSystemEnergy()
     return countKineticEnergy() + countPotentialEnergy();
 }
 
+float ModelingModel::countSpringDefaultLength(Spring *spring)
+{
+    StationaryPoint *statPoint = nullptr;
+    MaterialPoint *matPoint1 = nullptr;
+    MaterialPoint *matPoint2 = nullptr;
+    if (spring->getFirstConnectable()->getType() == STATIONARY_POINT)
+    {
+        statPoint = (StationaryPoint*) spring->getFirstConnectable();
+        matPoint1 = (MaterialPoint*) spring->getSecondConnectable();
+    }
+    else if (spring->getSecondConnectable()->getType() == STATIONARY_POINT)
+    {
+        statPoint = (StationaryPoint*) spring->getSecondConnectable();
+        matPoint1 = (MaterialPoint*) spring->getFirstConnectable();
+    }
+    else
+    {
+        matPoint1 = (MaterialPoint*) spring->getFirstConnectable();
+        matPoint2 = (MaterialPoint*) spring->getSecondConnectable();
+    }
+
+    if (statPoint == nullptr)
+    {
+        float length1 = spring->getRestingLength() + matPoint1->getRadius() + matPoint2->getRadius();
+        float length2 = sqrtf(powf(matPoint1->getCenter().x - matPoint2->getCenter().x, 2.0f) + powf(matPoint1->getCenter().y - matPoint2->getCenter().y, 2.0f));
+        qInfo() << "length1" << length1;
+        qInfo() << "length2" << length2;
+        return length2;
+    }else
+    {
+        float length1 = spring->getRestingLength() + matPoint1->getRadius();
+        float length2 = sqrtf(powf(matPoint1->getCenter().x - statPoint->getCenter().x, 2.0f) + powf(matPoint1->getCenter().y - statPoint->getCenter().y, 2.0f));
+        qInfo() << "length1" << length1;
+        qInfo() << "length2" << length2;
+        return length2;
+    }
+}
+
 float ModelingModel::countKineticEnergy()
 {
     float energy = 0.0f;
@@ -815,18 +860,16 @@ float ModelingModel::countPotentialEnergy()
     {
         energy += springs[i]->getRigidity() * powf(springs[i]->getDefaultLength() - springs[i]->getRestingLength(), 2) / 2;
     }
-
-    float zeroForPotentionalEnergy = 0.0f;
     for (int i = 0; i < matPoints.size(); i++)
     {
         if (matPoints[i]->getRod() == nullptr)
         {
-            energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getCenter().y - zeroForPotentionalEnergy);
+            energy += matPoints[i]->getWeight() * this->modelG * matPoints[i]->getCenter().y;
         }
         else
         {
             energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) *
-                    (1 - cosf(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180.0f));
+                    (1.0f - cosf(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180.0f));
         }
     }
     return energy;

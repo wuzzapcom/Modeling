@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 from os.path import basename
+import math
 
 class LogPlotter:
 	# Append yourself
@@ -33,7 +34,7 @@ class LogPlotter:
 		selected_filename = ''
 		for f in files:
 			if f.endswith('.csv'):
-				if int(basename(f)[:-4]) > max_timestamp:
+				if basename(f)[:-4].isdigit() and int(basename(f)[:-4]) > max_timestamp:
 					max_timestamp = int(basename(f[:-4]))
 					selected_filename = basename(f)
 
@@ -74,5 +75,26 @@ class LogPlotter:
 		plt.xlabel('iterations')
 		plt.show()
 
+	def testLengths(self):
+		csv = open(self.__path_to_logs + 'lengths.csv', 'r')
+		lines = csv.readlines()
+		csv.close()
+
+		values = []
+
+		splittedLines = [line.split(',') for line in lines]
+
+		for lineIndex in range(len(splittedLines)):
+			values.append([float(element) for element in splittedLines[lineIndex]])
+
+		for valueRow in values:
+			length = math.sqrt((valueRow[1] - valueRow[3]) * (valueRow[1] - valueRow[3]) + (valueRow[2] - valueRow[4]) * (valueRow[2] - valueRow[4]))
+			print('Expected : True, got : ' + str(length == valueRow[0]))
+			if (length != valueRow[0]):
+				print('\tL0 ' + str(valueRow[0]))
+				print('\tlength ' + str(length))
+
+
 logPlotter = LogPlotter()
 logPlotter.buildEnergiesPlot()
+#logPlotter.testLengths()

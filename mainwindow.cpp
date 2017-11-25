@@ -487,6 +487,8 @@ void MainWindow::changePlayPauseState()
 
 void MainWindow::updateScene()
 {
+    this->model->updateSpringsAndRods(true);
+
     if (!this->model->getIsPlaying())
         return;
 
