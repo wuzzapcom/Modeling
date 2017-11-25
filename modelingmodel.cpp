@@ -364,7 +364,7 @@ void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
 QVector<std::function<double(std::valarray<double>)>> ModelingModel::createAccelerations()
 {
     QVector<std::function<double(std::valarray<double>)>> accs;
-    double g = this->modelG;
+    double g = this->gravitation;
 
     for(int i = 0; i < matPoints.size(); i++)
     {
@@ -532,7 +532,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createRodAc
 {
     QVector<std::function<double(std::valarray<double>)>> result;
 
-    double g = this->modelG;
+    double g = this->gravitation;
     Rod *rod = (Rod*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
     std::function<double(std::valarray<double>)> capturingAccelerationPhi = phiAcc;
 
@@ -832,15 +832,23 @@ double ModelingModel::countPotentialEnergy()
     {
         if (matPoints[i]->getRod() == nullptr)
         {
-            energy += matPoints[i]->getWeight() * this->modelG * matPoints[i]->getCenter().y;
+            energy += matPoints[i]->getWeight() * this->gravitation * matPoints[i]->getCenter().y;
         }
         else
         {
-            energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) *
+            energy += matPoints[i]->getWeight() * this->gravitation * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) *
                     (1.0f - std::cos(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180.0f));
         }
     }
     return energy;
+}
+
+void ModelingModel::switchGravitation()
+{
+    if (this->gravitation == ENABLED_GRAVITATION_VALUE)
+        this->gravitation = DISABLED_GRAVITATION_VALUE;
+    else if (this->gravitation == DISABLED_GRAVITATION_VALUE)
+        this->gravitation = ENABLED_GRAVITATION_VALUE;
 }
 
 ModelingModel::~ModelingModel()

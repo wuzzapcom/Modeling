@@ -344,6 +344,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         qInfo("MainWindow::keyPressEvent(). C pressed");
         this->model->resetMaterialPointsSpeeds();
     }
+    else if (event->key() == Qt::Key_G)
+    {
+        qInfo("MainWindow::keyPressEvent(). G pressed");
+        this->model->switchGravitation();
+        this->updateRungeCutta();
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event)

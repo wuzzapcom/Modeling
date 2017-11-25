@@ -6,6 +6,9 @@
 #include "drawable_objects.h"
 #include "csvlogger.h"
 
+const double ENABLED_GRAVITATION_VALUE = 10.0;
+const double DISABLED_GRAVITATION_VALUE = 0.0;
+
 class ModelingModel
 {
 public:
@@ -21,6 +24,7 @@ public:
     void addSpring();
     void addStationalPoint();
     void addRod();
+    void switchGravitation();
 
     /*
      * Updating model methods
@@ -96,7 +100,7 @@ public:
 
 private:
     bool isPlaying;
-    double modelG = 0.0f;
+    double gravitation = DISABLED_GRAVITATION_VALUE;
 
     QVector<ConnectableObject*> connectables;
 
