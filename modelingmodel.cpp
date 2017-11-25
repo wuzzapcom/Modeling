@@ -289,7 +289,7 @@ void ModelingModel::load()
         QJsonObject obj = drawableValue.toObject();
         DrawableType type = static_cast<DrawableType>(obj["type"].toInt());
         qDebug() << "ModelingModel::load(). DrawableType = " << obj["type"].toString();
-        DrawableObject *drawable;
+        DrawableObject *drawable = nullptr;
 
         switch (type) {
         case MATERIAL_POINT:
@@ -342,9 +342,6 @@ void ModelingModel::load()
 
 void ModelingModel::setSpeedVectorArrow(Arrow *a)
 {
-//    if (this->speedVectorArrow != nullptr)
-//        delete this->speedVectorArrow;
-
     this->speedVectorArrow = a;
 }
 
@@ -364,20 +361,20 @@ void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
  * ADDING CONNECTION SPRING TO STAT POINT: two variants of lambda. If connected to statPoint, then capture its position,
  *  else use current lambda.
  * */
-QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAccelerations()
+QVector<std::function<double(std::valarray<double>)>> ModelingModel::createAccelerations()
 {
-    QVector<std::function<float(std::valarray<float>)>> accs;
-    float g = this->modelG;
+    QVector<std::function<double(std::valarray<double>)>> accs;
+    double g = this->modelG;
 
     for(int i = 0; i < matPoints.size(); i++)
     {
-        std::function<float(std::valarray<float>)> xAcceleration = [](std::valarray<float>){return 0;};
-        std::function<float(std::valarray<float>)> yAcceleration = [g](std::valarray<float>){return -g;};
-        std::function<float(std::valarray<float>)> phiAcceleration = [](std::valarray<float>){return 0;};
+        std::function<double(std::valarray<double>)> xAcceleration = [](std::valarray<double>){return 0;};
+        std::function<double(std::valarray<double>)> yAcceleration = [g](std::valarray<double>){return -g;};
+        std::function<double(std::valarray<double>)> phiAcceleration = [](std::valarray<double>){return 0;};
 
         for(int j = 0; j < matPoints[i]->getPointableObjects().size(); j++)
         {
-            QVector<std::function<float(std::valarray<float>)>> accs;
+            QVector<std::function<double(std::valarray<double>)>> accs;
 
             if (matPoints[i]->getPointableObjects()[j]->getType() == SPRING)
             {
@@ -422,26 +419,26 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createAcceler
     return accs;
 }
 
-QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringAccelerations(
-                                                        std::function<float(std::valarray<float>)> xAcc,
-                                                        std::function<float(std::valarray<float>)> yAcc,
-                                                        std::function<float(std::valarray<float>)> phiAcc,
+QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSpringAccelerations(
+                                                        std::function<double(std::valarray<double>)> xAcc,
+                                                        std::function<double(std::valarray<double>)> yAcc,
+                                                        std::function<double(std::valarray<double>)> phiAcc,
                                                         int externalIndex,
                                                         int internalIndex
                                                         )
 {
-    QVector<std::function<float(std::valarray<float>)>> result;
+    QVector<std::function<double(std::valarray<double>)>> result;
 
     Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
 
     spring->setRestingLength(spring->getDefaultLength());
 
-    float k = spring->getRigidity();
-    float m = matPoints[externalIndex]->getWeight();
-    float L0 = this->countSpringDefaultLength(spring); //spring->getRestingLength();//spring->getDefaultLength();
+    double k = spring->getRigidity();
+    double m = matPoints[externalIndex]->getWeight();
+    double L0 = this->countSpringDefaultLength(spring); //spring->getRestingLength();//spring->getDefaultLength();
 
-    std::function<float(std::valarray<float>)> capturingAccelerationX = xAcc;
-    std::function<float(std::valarray<float>)> capturingAccelerationY = yAcc;
+    std::function<double(std::valarray<double>)> capturingAccelerationX = xAcc;
+    std::function<double(std::valarray<double>)> capturingAccelerationY = yAcc;
 
     int x1Index = 0;
     int x2Index = externalIndex;
@@ -460,23 +457,23 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
             qInfo() << "No stationary point found";
             return result;
         }
-        //float L0 = spring->getRestingLength() + matPoints[externalIndex]->getRadius();
-        float x1 = statPoint->getCenter().x;
-        float y1 = statPoint->getCenter().y;
+        //double L0 = spring->getRestingLength() + matPoints[externalIndex]->getRadius();
+        double x1 = statPoint->getCenter().x;
+        double y1 = statPoint->getCenter().y;
         result.push_back(
-                [capturingAccelerationX, k, m, L0, x2Index, x1, y1](std::valarray<float> args)
+                [capturingAccelerationX, k, m, L0, x2Index, x1, y1](std::valarray<double> args)
                     {
-                        float x2 = args[6*x2Index];
-                        float y2 = args[6*x2Index + 2];
-                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        double x2 = args[6*x2Index];
+                        double y2 = args[6*x2Index + 2];
+                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
                         return capturingAccelerationX(args) + (-1.0f) / m * k * (square - L0) * (x2 - x1)  / square;
                     }
                 );
         result.push_back(
-                [capturingAccelerationY, k, m, L0, x2Index, x1, y1](std::valarray<float> args){
-                        float x2 = args[6*x2Index];
-                        float y2 = args[6*x2Index + 2];
-                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                [capturingAccelerationY, k, m, L0, x2Index, x1, y1](std::valarray<double> args){
+                        double x2 = args[6*x2Index];
+                        double y2 = args[6*x2Index + 2];
+                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
                         return capturingAccelerationY(args) + (-1.0f) / m * k * (square - L0) * (y2 - y1) / square;
                     }
                 );
@@ -484,8 +481,8 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     }
     else
     {
-        //float L0 = this->countSpringDefaultLength(spring);
-//        float L0 = spring->getRestingLength() + ((MaterialPoint*)spring->getFirstConnectable())->getRadius() + ((MaterialPoint*)spring->getSecondConnectable())->getRadius();
+        //double L0 = this->countSpringDefaultLength(spring);
+//        double L0 = spring->getRestingLength() + ((MaterialPoint*)spring->getFirstConnectable())->getRadius() + ((MaterialPoint*)spring->getSecondConnectable())->getRadius();
 //        logger.logLengths(L0,
 //                           spring->getFirstConnectable()->getCenter().x,
 //                           spring->getFirstConnectable()->getCenter().y,
@@ -498,23 +495,23 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
             x1Index = index2;
 
         result.push_back(
-                [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<float> args)
+                [capturingAccelerationX, k, m, L0, x2Index, x1Index](std::valarray<double> args)
                     {
-                        float x2 = args[6*x2Index];
-                        float y2 = args[6*x2Index + 2];
-                        float x1 = args[6*x1Index];
-                        float y1 = args[6*x1Index + 2];
-                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                        double x2 = args[6*x2Index];
+                        double y2 = args[6*x2Index + 2];
+                        double x1 = args[6*x1Index];
+                        double y1 = args[6*x1Index + 2];
+                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
                         return capturingAccelerationX(args) + (-1.0f) / m * k * (square - L0) * (x2 - x1)  / square;
                     }
                 );
         result.push_back(
-                [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<float> args){
-                        float x2 = args[6*x2Index];
-                        float y2 = args[6*x2Index + 2];
-                        float x1 = args[6*x1Index];
-                        float y1 = args[6*x1Index + 2];
-                        float square = sqrtf(powf(x2 - x1, 2) + powf(y2 - y1, 2));
+                [capturingAccelerationY, k, m, L0, x2Index, x1Index](std::valarray<double> args){
+                        double x2 = args[6*x2Index];
+                        double y2 = args[6*x2Index + 2];
+                        double x1 = args[6*x1Index];
+                        double y1 = args[6*x1Index + 2];
+                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
                         return capturingAccelerationY(args) + (-1.0f) / m * k * (square - L0) * (y2 - y1) / square;
                     }
                 );
@@ -525,21 +522,21 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     return result;
 }
 
-QVector<std::function<float(std::valarray<float>)>> ModelingModel::createRodAccelerations(
-                                                        std::function<float(std::valarray<float>)> xAcc,
-                                                        std::function<float(std::valarray<float>)> yAcc,
-                                                        std::function<float(std::valarray<float>)> phiAcc,
+QVector<std::function<double(std::valarray<double>)>> ModelingModel::createRodAccelerations(
+                                                        std::function<double(std::valarray<double>)> xAcc,
+                                                        std::function<double(std::valarray<double>)> yAcc,
+                                                        std::function<double(std::valarray<double>)> phiAcc,
                                                         int externalIndex,
                                                         int internalIndex
                                                         )
 {
-    QVector<std::function<float(std::valarray<float>)>> result;
+    QVector<std::function<double(std::valarray<double>)>> result;
 
-    float g = this->modelG;
+    double g = this->modelG;
     Rod *rod = (Rod*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
-    std::function<float(std::valarray<float>)> capturingAccelerationPhi = phiAcc;
+    std::function<double(std::valarray<double>)> capturingAccelerationPhi = phiAcc;
 
-    float l = rod->getDefaultLength() + matPoints[externalIndex]->getRadius();
+    double l = rod->getDefaultLength() + matPoints[externalIndex]->getRadius();
     int phiIndex = findIndexOfDrawableByHash(matPoints[externalIndex]);
 
     if (phiIndex == -1)
@@ -548,30 +545,30 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createRodAcce
     result.push_back(xAcc);
     result.push_back(yAcc);
     result.push_back(
-            [capturingAccelerationPhi, l, g, phiIndex](std::valarray<float> args)
+            [capturingAccelerationPhi, l, g, phiIndex](std::valarray<double> args)
                 {
-                    return capturingAccelerationPhi(args) + (-1.0f) / l * g * sinf(args[6*phiIndex + 4] * M_PI / 180.0f);
+                    return capturingAccelerationPhi(args) + (-1.0f) / l * g * std::sin(args[6*phiIndex + 4] * M_PI / 180.0f);
                 }
              );
     return result;
 }
 
-QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringAndRodAccelerations(
-                                                        std::function<float(std::valarray<float>)> xAcc,
-                                                        std::function<float(std::valarray<float>)> yAcc,
-                                                        std::function<float(std::valarray<float>)> phiAcc,
+QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSpringAndRodAccelerations(
+                                                        std::function<double(std::valarray<double>)> xAcc,
+                                                        std::function<double(std::valarray<double>)> yAcc,
+                                                        std::function<double(std::valarray<double>)> phiAcc,
                                                         int externalIndex,
                                                         int internalIndex
                                                         )
 {
-    QVector<std::function<float(std::valarray<float>)>> result;
+    QVector<std::function<double(std::valarray<double>)>> result;
 
-    std::function<float(std::valarray<float>)> capturingAccelerationPhi = phiAcc;
+    std::function<double(std::valarray<double>)> capturingAccelerationPhi = phiAcc;
 
-    float l = matPoints[externalIndex]->getRod()->getDefaultLength() + matPoints[externalIndex]->getRadius();
+    double l = matPoints[externalIndex]->getRod()->getDefaultLength() + matPoints[externalIndex]->getRadius();
 
-    float x_i0 = 0.0f;
-    float y_i0 = 0.0f;
+    double x_i0 = 0.0f;
+    double y_i0 = 0.0f;
     if (matPoints[externalIndex]->getRod()->getFirstConnectable()->getType() == STATIONARY_POINT)
     {
         x_i0 = matPoints[externalIndex]->getRod()->getFirstConnectable()->getCenter().x;
@@ -587,14 +584,9 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
     spring->setRestingLength(spring->getDefaultLength());
 
-    float m = matPoints[externalIndex]->getWeight();
-    float L0 = spring->getDefaultLength() + matPoints[externalIndex]->getRadius();
-    float k = spring->getRigidity();
-
-    /*if (spring->getFirstConnectable()->getHash() == matPoints[externalIndex]->getHash())
-        m = ((MaterialPoint*) spring->getSecondConnectable())->getWeight();
-    else
-        m = ((MaterialPoint*) spring->getFirstConnectable())->getWeight();*/
+    double m = matPoints[externalIndex]->getWeight();
+    double L0 = spring->getDefaultLength() + matPoints[externalIndex]->getRadius();
+    double k = spring->getRigidity();
 
     int x1Index = 0;
     int x2Index = externalIndex;
@@ -604,8 +596,8 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
     if (index1 == -1 || index2 == -1)
     {
         int iIndex;
-        float x_j;
-        float y_j;
+        double x_j;
+        double y_j;
         StationaryPoint *statPoint;
         if (spring->getFirstConnectable()->getType() == STATIONARY_POINT)
         {
@@ -626,13 +618,13 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
         result.push_back(xAcc);
         result.push_back(yAcc);
         result.push_back(
-            [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, x_j, y_j](std::valarray<float> args){
-                    float phi = args[6 * iIndex + 4] * M_PI / 180;
-                    float square = sqrtf(powf(x_i0 + l * cosf(phi) - x_j, 2) + powf(y_i0 + l * sinf(phi) - y_j, 2));
+            [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, x_j, y_j](std::valarray<double> args){
+                    double phi = args[6 * iIndex + 4] * M_PI / 180;
+                    double square = std::sqrt(std::pow(x_i0 + l * std::cos(phi) - x_j, 2) + std::pow(y_i0 + l * std::sin(phi) - y_j, 2));
                     return capturingAccelerationPhi(args) + (/*-*/ 1.0f) / (l * l * m) //TODO CHECK SIGN HERE
                             * k * (square - L0)
-                            * (2 * (l * cosf(phi) * (l*sinf(phi) + x_i0 - x_j)
-                                    - l * sinf(phi) * (l * cosf(phi) + y_i0 - y_j)))
+                            * (2 * (l * std::cos(phi) * (l*std::sin(phi) + x_i0 - x_j)
+                                    - l * std::sin(phi) * (l * std::cos(phi) + y_i0 - y_j)))
                             / square;
         });
     }
@@ -648,15 +640,15 @@ QVector<std::function<float(std::valarray<float>)>> ModelingModel::createSpringA
         result.push_back(xAcc);
         result.push_back(yAcc);
         result.push_back(
-                [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<float> args){
-                        float phi = args[6 * iIndex + 4] * M_PI / 180;
-                        float x_j = args[6 * jIndex];
-                        float y_j = args[6 * jIndex + 2];
-                        float square = sqrtf(powf(x_i0 + l * cosf(phi) - x_j, 2) + powf(y_i0 + l * sinf(phi) - y_j, 2));
+                [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<double> args){
+                        double phi = args[6 * iIndex + 4] * M_PI / 180;
+                        double x_j = args[6 * jIndex];
+                        double y_j = args[6 * jIndex + 2];
+                        double square = std::sqrt(std::pow(x_i0 + l * std::cos(phi) - x_j, 2) + std::pow(y_i0 + l * std::sin(phi) - y_j, 2));
                         return capturingAccelerationPhi(args) + (/*-*/ 1.0f) / (l * l * m) //TODO CHECK SIGN HERE
                                 * k * (square - L0)
-                                * (2 * (l * cosf(phi) * (l*sinf(phi) + x_i0 - x_j)
-                                        - l * sinf(phi) * (l * cosf(phi) + y_i0 - y_j)))
+                                * (2 * (l * std::cos(phi) * (l*std::sin(phi) + x_i0 - x_j)
+                                        - l * std::sin(phi) * (l * std::cos(phi) + y_i0 - y_j)))
                                 / square;
                     }
                         );
@@ -673,34 +665,13 @@ int ModelingModel::findIndexOfDrawableByHash(DrawableObject *conn)
             return i;
         }
     }
-//    for (int i = 0; i < rods.size(); i++)
-//    {
-//        if (rods[i]->getHash() == conn->getHash())
-//        {
-//            return i;
-//        }
-//    }
     return -1;
 }
 
-std::valarray<float> ModelingModel::getConnectablesPosition()
+std::valarray<double> ModelingModel::getConnectablesPosition()
 {
-//    std::valarray<float> result(matPoints.size() * 4 + rods.size() * 2);
-//    for (size_t i = 0; i < matPoints.size() * 4; i += 4)
-//    {
-//        result[i] = matPoints[i/4]->getCenter().x;
-//        result[i+1] = matPoints[i/4]->getSpeedX();
-//        result[i+2] = matPoints[i/4]->getCenter().y;
-//        result[i+3] = matPoints[i/4]->getSpeedY();
-//    }
-//    for (size_t i = 0; i < rods.size(); i++)
-//    {
-//        result[matPoints.size() * 4 + i * 2] = countPhi(rods[i]);
-//        result[matPoints.size() * 4 + i * 2 + 1] = countPhiSpeed(rods[i]);
-//    }
-//    return result;
-    std::valarray<float> result(matPoints.size() * 6);
-    for (size_t i = 0; i < matPoints.size(); i++)
+    std::valarray<double> result(matPoints.size() * 6);
+    for (int i = 0; i < matPoints.size(); i++)
     {
         result[i * 6] = matPoints[i]->getCenter().x;
         result[i * 6 + 1] = matPoints[i]->getSpeedX();
@@ -711,10 +682,7 @@ std::valarray<float> ModelingModel::getConnectablesPosition()
             result[i * 6 + 4] = countPhi(
                         (Rod*) matPoints[i]->getRod()
                         );
-            result[i * 6 + 5] = matPoints[i]->getAngularSpeed();/*countPhiSpeed(
-                        (Rod*) matPoints[i]->getRod(),
-                        result[i * 6 + 4]
-                        );*/
+            result[i * 6 + 5] = matPoints[i]->getAngularSpeed();
         }else
         {
             result[i * 6 + 4] = 0.0f;
@@ -724,13 +692,13 @@ std::valarray<float> ModelingModel::getConnectablesPosition()
     return result;
 }
 
-float ModelingModel::countPhi(Rod *rod)
+double ModelingModel::countPhi(Rod *rod)
 {
     qInfo() << "phi = " << rod->getAngle();
     return rod->getAngle();
 }
 
-float ModelingModel::countPhiSpeed(Rod *rod, float phi)
+double ModelingModel::countPhiSpeed(Rod *, double)
 {
     qWarning() << "Not implemented";
     return 0.0f;
@@ -746,7 +714,7 @@ void ModelingModel::resetMaterialPointsSpeeds()
     }
 }
 
-void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
+void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<double> arr)
 {
     for (int i = 0; i < matPoints.size(); i++)
     {
@@ -771,10 +739,10 @@ void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<float> arr)
                 matPoint = (MaterialPoint*) rod->getSecondConnectable();
                 statPoint = (StationaryPoint*) rod->getFirstConnectable();
             }
-            float length = rod->getDefaultLength();
-            float x = statPoint->getCenter().x - sinf(arr[i * 6 + 4] * M_PI / 180) * (length + matPoint->getRadius());
-            float y = statPoint->getCenter().y + sinf((arr[i * 6 + 4] - 90) * M_PI / 180) * (length + matPoint->getRadius());
-            float angularSpeed = arr[i * 6 + 5];
+            double length = rod->getDefaultLength();
+            double x = statPoint->getCenter().x - std::sin(arr[i * 6 + 4] * M_PI / 180) * (length + matPoint->getRadius());
+            double y = statPoint->getCenter().y + std::sin((arr[i * 6 + 4] - 90) * M_PI / 180) * (length + matPoint->getRadius());
+            double angularSpeed = arr[i * 6 + 5];
             matPoint->setX(x);
             matPoint->setY(y);
             matPoint->setAngularSpeed(angularSpeed);
@@ -791,12 +759,12 @@ void ModelingModel::updateSpringsAndRods(bool isMovedByUser)
         rods[i]->update(isMovedByUser);
 }
 
-float ModelingModel::countSystemEnergy()
+double ModelingModel::countSystemEnergy()
 {
     return countKineticEnergy() + countPotentialEnergy();
 }
 
-float ModelingModel::countSpringDefaultLength(Spring *spring)
+double ModelingModel::countSpringDefaultLength(Spring *spring)
 {
     StationaryPoint *statPoint = nullptr;
     MaterialPoint *matPoint1 = nullptr;
@@ -819,46 +787,46 @@ float ModelingModel::countSpringDefaultLength(Spring *spring)
 
     if (statPoint == nullptr)
     {
-        float length1 = spring->getRestingLength() + matPoint1->getRadius() + matPoint2->getRadius();
-        float length2 = sqrtf(powf(matPoint1->getCenter().x - matPoint2->getCenter().x, 2.0f) + powf(matPoint1->getCenter().y - matPoint2->getCenter().y, 2.0f));
+        double length1 = spring->getRestingLength() + matPoint1->getRadius() + matPoint2->getRadius();
+        double length2 = std::sqrt(std::pow(matPoint1->getCenter().x - matPoint2->getCenter().x, 2.0f) + std::pow(matPoint1->getCenter().y - matPoint2->getCenter().y, 2.0f));
         qInfo() << "length1" << length1;
         qInfo() << "length2" << length2;
         return length2;
     }else
     {
-        float length1 = spring->getRestingLength() + matPoint1->getRadius();
-        float length2 = sqrtf(powf(matPoint1->getCenter().x - statPoint->getCenter().x, 2.0f) + powf(matPoint1->getCenter().y - statPoint->getCenter().y, 2.0f));
+        double length1 = spring->getRestingLength() + matPoint1->getRadius();
+        double length2 = std::sqrt(std::pow(matPoint1->getCenter().x - statPoint->getCenter().x, 2.0f) + std::pow(matPoint1->getCenter().y - statPoint->getCenter().y, 2.0f));
         qInfo() << "length1" << length1;
         qInfo() << "length2" << length2;
         return length2;
     }
 }
 
-float ModelingModel::countKineticEnergy()
+double ModelingModel::countKineticEnergy()
 {
-    float energy = 0.0f;
+    double energy = 0.0f;
     for (int i = 0; i < matPoints.size(); i++)
     {
         if (matPoints[i]->getRod() == nullptr)
         {
-            float squareV = powf(matPoints[i]->getSpeedX(), 2) + powf(matPoints[i]->getSpeedY(), 2);
+            double squareV = std::pow(matPoints[i]->getSpeedX(), 2) + std::pow(matPoints[i]->getSpeedY(), 2);
             energy += matPoints[i]->getWeight() * squareV / 2;
         }
         else
         {
-            float w = matPoints[i]->getAngularSpeed() * M_PI / 180.0f;
-            energy += matPoints[i]->getWeight() * powf(matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius(), 2) * powf(w, 2) / 2.0f;
+            double w = matPoints[i]->getAngularSpeed() * M_PI / 180.0f;
+            energy += matPoints[i]->getWeight() * std::pow(matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius(), 2) * std::pow(w, 2) / 2.0f;
         }
     }
     return energy;
 }
 
-float ModelingModel::countPotentialEnergy()
+double ModelingModel::countPotentialEnergy()
 {
-    float energy = 0.0f;
+    double energy = 0.0f;
     for (int i = 0; i < springs.size(); i++)
     {
-        energy += springs[i]->getRigidity() * powf(springs[i]->getDefaultLength() - springs[i]->getRestingLength(), 2) / 2;
+        energy += springs[i]->getRigidity() * std::pow(springs[i]->getDefaultLength() - springs[i]->getRestingLength(), 2) / 2;
     }
     for (int i = 0; i < matPoints.size(); i++)
     {
@@ -869,7 +837,7 @@ float ModelingModel::countPotentialEnergy()
         else
         {
             energy += matPoints[i]->getWeight() * this->modelG * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) *
-                    (1.0f - cosf(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180.0f));
+                    (1.0f - std::cos(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180.0f));
         }
     }
     return energy;

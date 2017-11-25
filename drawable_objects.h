@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "drawable_abstract.h"
+
 #include "materialpoint.h"
 #include "spring.h"
 #include "stationarypoint.h"

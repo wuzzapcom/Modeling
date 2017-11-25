@@ -1,4 +1,4 @@
-#include "common.h"
+#include "drawable_objects.h"
 //#include "spring.h"
 
 Spring::Spring(Rectangle rect)
@@ -33,7 +33,7 @@ QVector<Point*> Spring::draw()
 
     for (int i = 2; i < 8; i++){
 
-        float x;
+        double x;
 
         if (i % 2)
             x = this->rectangle.leftTopPoint.x;

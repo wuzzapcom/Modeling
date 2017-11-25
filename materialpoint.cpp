@@ -1,14 +1,14 @@
-#include "common.h"
+#include "drawable_objects.h"
 //#include "materialpoint.h"
 
 //TODO add weight
-MaterialPoint::MaterialPoint(Point c, float r)
+MaterialPoint::MaterialPoint(Point c, double r)
     :ConnectableObject(),
       center(c),
       radius(r),
+      weight(1),
       speedX(0.0f),
       speedY(0.0f),
-      weight(1),
       angularSpeed(0.0f)
 {
 
@@ -20,9 +20,9 @@ MaterialPoint::MaterialPoint()
     :ConnectableObject(),
              center(Point(0.0f, 0.0f)),
              radius(0.0f),
+             weight(1),
              speedX(0.0f),
              speedY(0.0f),
-             weight(1),
              angularSpeed(0.0f)
 {
     this->type = MATERIAL_POINT;
@@ -30,11 +30,10 @@ MaterialPoint::MaterialPoint()
 
 QVector<Point*> MaterialPoint::draw()
 {
-    //qInfo("MaterialPoint::draw()");
     QVector<Point*> points = QVector<Point*>(this->precision + 1);
     Point *point;
-    float angle = 0.0f;
-    float deltaAngle = 2 * M_PI / this->precision;
+    double angle = 0.0f;
+    double deltaAngle = 2 * M_PI / this->precision;
 
     for(int i = 0; i < precision + 1; i++){
 
@@ -50,7 +49,6 @@ QVector<Point*> MaterialPoint::draw()
         angle += deltaAngle;
 
     }
-
     return points;
 }
 
@@ -81,7 +79,7 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
 {
     Point connCenter = connectable->getCenter();
 
-    if(fabs(connCenter.x - this->center.x) < std::numeric_limits<float>::epsilon())
+    if(fabs(connCenter.x - this->center.x) < std::numeric_limits<double>::epsilon())
     {
 
         if (connCenter.y > this->center.y)
@@ -98,7 +96,7 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
                         );
         }
 
-    }else if (fabs(connCenter.y - this->center.y) < std::numeric_limits<float>::epsilon())
+    }else if (fabs(connCenter.y - this->center.y) < std::numeric_limits<double>::epsilon())
     {
 
         if (connCenter.x > this->center.x)
@@ -118,7 +116,7 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
     }else
     {
 
-        float hypo = hypotf(
+        double hypo = hypotf(
                     connCenter.x - this->center.x,
                     connCenter.y - this->center.y
                     );

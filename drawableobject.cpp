@@ -1,4 +1,4 @@
-#include "drawableobject.h"
+#include "drawable_abstract.h"
 
 long DrawableObject::ID_COUNTER = 0;
 

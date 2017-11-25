@@ -1,12 +1,6 @@
 #ifndef SPRING_H
 #define SPRING_H
-//#include "drawableobject.h"
-#include <QMatrix>
-#include <QMatrix4x4>
-#include <math.h>
 #include <QDebug>
-#include <QVector3D>
-#include "drawableinheritor.h"
 
 class MaterialPoint;
 
@@ -25,14 +19,14 @@ public:
     void write(QJsonObject &json);
     void readHash(const QJsonObject &json);
     void read(const QJsonObject &json, QVector<DrawableObject*> objects);
-    float getCurrentLength(){return this->rectangle.height;}
+    double getCurrentLength(){return this->rectangle.height;}
 
-    void setRigidity(float r){rigidity = r;}
-    float getRigidity(){return rigidity;}
+    void setRigidity(double r){rigidity = r;}
+    double getRigidity(){return rigidity;}
 
 private:
 
-    float rigidity;
+    double rigidity;
 
     /*
      * Fields from PointableObject:
@@ -41,7 +35,7 @@ private:
      * ConnectableObject *second;
      * Point rotatedTopPoint;
      * Point rotatedBottomPoint;
-     * float angle;
+     * double angle;
      * Rectangle rectangle;
     */
 

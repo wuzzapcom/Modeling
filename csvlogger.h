@@ -12,10 +12,10 @@ public:
     CsvLogger();
     ~CsvLogger();
 
-    void logLengths(float L0, float x1, float y1, float x2, float y2);
+    void logLengths(double L0, double x1, double y1, double x2, double y2);
 
     void startLogging(int numberOfMatPoints);
-    void log(std::valarray<float> values, float W, float E);
+    void log(std::valarray<double> values, double W, double E);
     void stopLogging();
 
 private:

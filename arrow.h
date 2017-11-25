@@ -1,8 +1,6 @@
 #ifndef ARROW_H
 #define ARROW_H
 
-#include "spring.h"
-
 class Arrow: public DrawableObject
 {
 public:
@@ -17,7 +15,6 @@ public:
     void write(QJsonObject &json);
     void readHash(const QJsonObject &json);
     void read(const QJsonObject &json, QVector<DrawableObject*> objects);
-//    std::function<double(std::valarray<double>)> getXAcceleration(const ModelingModel &model){return nullptr;}
 
     void updateAngle();
     QVector<Point*> rotate(QVector<Point*> points);
@@ -29,13 +26,13 @@ public:
     void setIsVisible(bool v){isVisible = v;}
     bool getIsVisible(){return isVisible;}
 
-    std::valarray<float> updateState(bool isVis, Point curs);
+    std::valarray<double> updateState(bool isVis, Point curs);
 
 private:
     MaterialPoint *connected;
     Point cursor;
     Rectangle rectangle;
-    float angle;
+    double angle;
     bool isVisible;
     Point rotatedTopPoint;
     Point rotatedBottomPoint;

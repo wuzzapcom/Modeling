@@ -8,25 +8,25 @@ class RungeCutta
 {
 public:
     RungeCutta(
-            QVector<std::function<float(std::valarray<float>)>> accs,
-            std::valarray<float> startState
+            QVector<std::function<double(std::valarray<double>)>> accs,
+            std::valarray<double> startState
             );
-    std::valarray<float> getNextState();
+    std::valarray<double> getNextState();
     void resetState(
-            QVector<std::function<float(std::valarray<float>)>> accs,
-            std::valarray<float> startState
+            QVector<std::function<double(std::valarray<double>)>> accs,
+            std::valarray<double> startState
             );
     void updateStates(
-            std::valarray<float> startState
+            std::valarray<double> startState
             );
-    std::valarray<float> rungeCutta();
+    std::valarray<double> rungeCutta();
 private:
 
     QMutex mutex;
-    std::valarray<float> applyPositionsToAccelerations(std::valarray<float> args);
+    std::valarray<double> applyPositionsToAccelerations(std::valarray<double> args);
 
-    QVector<std::valarray<float>> countedModelStates;
-    QVector<std::function<float(std::valarray<float>)>> accelerations;
+    QVector<std::valarray<double>> countedModelStates;
+    QVector<std::function<double(std::valarray<double>)>> accelerations;
 
 };
 

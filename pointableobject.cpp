@@ -1,14 +1,14 @@
-#include "drawableinheritor.h"
+#include "drawable_abstract.h"
 
 PointableObject::PointableObject(Rectangle rect)
     :DrawableObject(),
       first(nullptr),
       second(nullptr),
-      rectangle(rect),
-      angle(0.0f),
       rotatedTopPoint(Point()),
       rotatedBottomPoint(Point()),
-      defaultLength(0.5f)
+      angle(0.0f),
+      defaultLength(0.5f),
+      rectangle(rect)
 {
 
 }
@@ -18,7 +18,7 @@ void PointableObject::updateAngle()
     Point p1 = first->getCenter();
     Point p2 = second->getCenter();
 
-    if(fabs(p1.x - p2.x) < std::numeric_limits<float>::epsilon())
+    if(fabs(p1.x - p2.x) < std::numeric_limits<double>::epsilon())
     {
         if (p1.y > p2.y)
         {
@@ -29,7 +29,7 @@ void PointableObject::updateAngle()
             this->angle = 180.0f;
             return;
         }
-    }else if(fabs(p1.y - p2.y) < std::numeric_limits<float>::epsilon())
+    }else if(fabs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
     {
         if (p1.x > p2.x)
         {
@@ -41,7 +41,7 @@ void PointableObject::updateAngle()
         }
     }else
     {
-        float hypo = hypotf(
+        double hypo = hypotf(
                     p1.x - p2.x,
                     p1.y - p2.y
                     );
@@ -52,29 +52,29 @@ void PointableObject::updateAngle()
 //        qInfo() << defaultLength;
 
 //        if (p1.y > p2.y)
-//            this->angle = asinf((p1.x - p2.x) / hypo) / M_PI * 180;
+//            this->angle = astd::sin((p1.x - p2.x) / hypo) / M_PI * 180;
 //        else
-//            this->angle = 90 + acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+//            this->angle = 90 + astd::cos((p1.x - p2.x) / hypo) / M_PI * 180;
         if (p1.y > p2.y)
         {
             if (p1.x > p2.x)
             {
-                this->angle = 90 - acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+                this->angle = 90 - std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
             }
             else
             {
-                this->angle = 270 + acosf(-(p1.x - p2.x) / hypo) / M_PI * 180;
+                this->angle = 270 + std::acos(-(p1.x - p2.x) / hypo) / M_PI * 180;
             }
         }
         else
         {
             if (p1.x > p2.x)
             {
-                this->angle = 90 + asinf(-(p1.y - p2.y) / hypo) / M_PI * 180;
+                this->angle = 90 + std::asin(-(p1.y - p2.y) / hypo) / M_PI * 180;
             }
             else
             {
-                this->angle = 270 + asinf((p1.y - p2.y) / hypo) / M_PI * 180;
+                this->angle = 270 + std::asin((p1.y - p2.y) / hypo) / M_PI * 180;
             }
         }
 
@@ -118,12 +118,12 @@ void PointableObject::updateLength()
     Point firstContactPoint = this->first->getContactPoint(this->second);
     Point secondContactPoint = this->second->getContactPoint(this->first);
 
-    float hypotenuse = sqrtf(
+    double hypotenuse = std::sqrt(
                pow(firstContactPoint.x - secondContactPoint.x, 2.0) +
                 pow(firstContactPoint.y - secondContactPoint.y, 2.0)
                 );
 
-    if (hypotenuse < std::numeric_limits<float>::epsilon())
+    if (hypotenuse < std::numeric_limits<double>::epsilon())
         return;
 
     this->rectangle.height = hypotenuse;

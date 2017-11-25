@@ -1,5 +1,5 @@
 //#include "stationarypoint.h"
-#include "common.h"
+#include "drawable_objects.h"
 StationaryPoint::StationaryPoint(Rectangle rect)
     :ConnectableObject(),
       rectangle(rect)
@@ -75,7 +75,7 @@ Point StationaryPoint::getCenter()
             );
 }
 
-Point StationaryPoint::getContactPoint(ConnectableObject *connectable)
+Point StationaryPoint::getContactPoint(ConnectableObject *)
 {
     return Point(
             this->rectangle.leftTopPoint.x + this->rectangle.width / 2,

@@ -1,10 +1,10 @@
-#include "common.h"
+#include "drawable_objects.h"
 
 Arrow::Arrow()
     :DrawableObject(),
-    rectangle(Rectangle(Point(), 0.1f, 0.2f)),
-    cursor(Point()),
     connected(nullptr),
+    cursor(Point()),
+    rectangle(Rectangle(Point(), 0.1f, 0.2f)),
     angle(0.0f),
     isVisible(false),
     rotatedTopPoint(Point()),
@@ -50,7 +50,7 @@ void Arrow::moveTo(Point point)
     this->rectangle.moveTo(point);
 }
 
-bool Arrow::checkCursorInObject(Point point)
+bool Arrow::checkCursorInObject(Point)
 {
     qWarning() << "Arrow::checkCurcorInObject(). Method should not be implemented";
     return false;
@@ -62,17 +62,17 @@ bool Arrow::isModelIncompleted()
     return true;
 }
 
-void Arrow::write(QJsonObject &json)
+void Arrow::write(QJsonObject &)
 {
      qWarning() << "Arrow::write(). Method should not be implemented";
 }
 
-void Arrow::readHash(const QJsonObject &json)
+void Arrow::readHash(const QJsonObject &)
 {
       qWarning() << "Arrow::readHash(). Method should not be implemented";
 }
 
-void Arrow::read(const QJsonObject &json, QVector<DrawableObject *> objects)
+void Arrow::read(const QJsonObject &, QVector<DrawableObject *>)
 {
     qWarning() << "Arrow::read(). Method should not be implemented";
 }
@@ -82,7 +82,7 @@ void Arrow::updateAngle()
     Point p1 = connected->getCenter();
     Point p2 = cursor;
 
-    if(fabs(p1.x - p2.x) < std::numeric_limits<float>::epsilon())
+    if(fabs(p1.x - p2.x) < std::numeric_limits<double>::epsilon())
     {
         if (p1.y > p2.y)
         {
@@ -93,7 +93,7 @@ void Arrow::updateAngle()
             this->angle = 180.0f;//M_PI;
             return;
         }
-    }else if(fabs(p1.y - p2.y) < std::numeric_limits<float>::epsilon())
+    }else if(fabs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
     {
         if (p1.x > p2.x)
         {
@@ -105,15 +105,15 @@ void Arrow::updateAngle()
         }
     }else
     {
-        float hypo = hypotf(
+        double hypo = hypotf(
                     p1.x - p2.x,
                     p1.y - p2.y
                     );
 
         if (p1.y > p2.y)
-            this->angle = 90.0f - acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+            this->angle = 90.0f - std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
         else
-            this->angle = 90.0f + acosf((p1.x - p2.x) / hypo) / M_PI * 180;
+            this->angle = 90.0f + std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
     }
 }
 
@@ -150,18 +150,18 @@ void Arrow::updateLength()
     Point firstContactPoint = this->connected->getCenter();
     Point secondContactPoint = cursor;
 
-    float hypotenuse = sqrtf(
+    double hypotenuse = std::sqrt(
                pow(firstContactPoint.x - secondContactPoint.x, 2.0) +
                 pow(firstContactPoint.y - secondContactPoint.y, 2.0)
                 );
 
-    if (hypotenuse < std::numeric_limits<float>::epsilon())
+    if (hypotenuse < std::numeric_limits<double>::epsilon())
         return;
 
     this->rectangle.height = hypotenuse;
 }
 
-std::valarray<float> Arrow::updateState(bool isVis, Point curs)
+std::valarray<double> Arrow::updateState(bool isVis, Point curs)
 {
     this->isVisible = isVis;
     this->cursor = curs;
@@ -177,15 +177,15 @@ std::valarray<float> Arrow::updateState(bool isVis, Point curs)
                 );
 
 //    this->connected->setSpeed(
-//                this->rectangle.height * -sinf(this->angle * M_PI / 180),
-//                this->rectangle.height * -cosf(this->angle * M_PI / 180)
+//                this->rectangle.height * -std::sin(this->angle * M_PI / 180),
+//                this->rectangle.height * -std::cos(this->angle * M_PI / 180)
 //                );
-    qInfo() << this->rectangle.height * -sinf(this->angle * M_PI / 180);
-    qInfo() << this->rectangle.height * -cosf(this->angle * M_PI / 180);
+    qInfo() << this->rectangle.height * -std::sin(this->angle * M_PI / 180);
+    qInfo() << this->rectangle.height * -std::cos(this->angle * M_PI / 180);
 
-    std::valarray<float> speed(2);
-    speed[0] = this->rectangle.height * -sinf(this->angle * M_PI / 180);
-    speed[1] = this->rectangle.height * -cosf(this->angle * M_PI / 180);
+    std::valarray<double> speed(2);
+    speed[0] = this->rectangle.height * -std::sin(this->angle * M_PI / 180);
+    speed[1] = this->rectangle.height * -std::cos(this->angle * M_PI / 180);
     return speed;
 
 }

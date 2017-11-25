@@ -33,34 +33,29 @@ SOURCES += \
     drawableobject.cpp \
     materialpoint.cpp \
     spring.cpp \
-    point.cpp \
-    rectangle.cpp \
     stationarypoint.cpp \
     connectableobject.cpp \
     pointableobject.cpp \
     rod.cpp \
     arrow.cpp \
     rungecutta.cpp \
-    csvlogger.cpp
+    csvlogger.cpp \
+    primitives.cpp
 
 HEADERS += \
         mainwindow.h \
     modelingmodel.h \
     openglwidget.h \
-    drawableobject.h \
     materialpoint.h \
     spring.h \
-    point.h \
-    rectangle.h \
-    common.h \
     stationarypoint.h \
-    connectableobject.h \
-    pointableobject.h \
     rod.h \
-    drawableinheritor.h \
     arrow.h \
     rungecutta.h \
-    csvlogger.h
+    csvlogger.h \
+    drawable_abstract.h \
+    primitives.h \
+    drawable_objects.h
 
 FORMS += \
         mainwindow.ui

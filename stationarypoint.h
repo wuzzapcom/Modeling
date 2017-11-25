@@ -1,8 +1,6 @@
 #ifndef STATIONARYPOINT_H
 #define STATIONARYPOINT_H
 
-#include "arrow.h"
-
 class StationaryPoint: public ConnectableObject
 {
 public:

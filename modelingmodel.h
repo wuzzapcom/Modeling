@@ -1,10 +1,9 @@
 #ifndef MODELINGMODEL_H
 #define MODELINGMODEL_H
-#include "materialpoint.h"
 #include <QDebug>
 #include <QFile>
 #include <QJsonDocument>
-#include <math.h>
+#include "drawable_objects.h"
 #include "csvlogger.h"
 
 class ModelingModel
@@ -13,91 +12,93 @@ public:
     ModelingModel();
     ~ModelingModel();
 
-    void setPlaying(bool playing);
-    bool getIsPlaying();
+    /*
+     * Interface methods
+     * */
+    void save();
+    void load();
     void addMaterialPoint();
     void addSpring();
     void addStationalPoint();
     void addRod();
 
+    /*
+     * Updating model methods
+     * */
     void completeModel();
     bool isModelCompleted();
     bool isModelCorrect();
 
+    bool isObjectSelected(){return selectedObject != nullptr;}
+    void connectObjects(DrawableObject *first, DrawableObject *second);
+    void updateSpringsAndRods(bool isMovedByUser);
+    void removeObjectFromVectors(DrawableObject *drawable);
+
+    /*
+     * Model methods
+     * */
+    int findIndexOfDrawableByHash(DrawableObject *conn);
+    void resetMaterialPointsSpeeds();
+    void applySpeedsAndCoordinatesToModel(std::valarray<double> arr);
+
+    double countPhi(Rod *rod);
+    double countPhiSpeed(Rod *rod, double phi);
+    double countSpringDefaultLength(Spring *spring);
+
+    QVector<std::function<double(std::valarray<double>)>> createAccelerations();
+
+    QVector<std::function<double(std::valarray<double>)>> createSpringAccelerations(
+                                                            std::function<double(std::valarray<double>)> xAccs,
+                                                            std::function<double(std::valarray<double>)> yAccs,
+                                                            std::function<double(std::valarray<double>)> phiAccs,
+                                                            int externalIndex,
+                                                            int internalIndex
+                                                            );
+    QVector<std::function<double(std::valarray<double>)>> createRodAccelerations(
+                                                            std::function<double(std::valarray<double>)> xAccs,
+                                                            std::function<double(std::valarray<double>)> yAccs,
+                                                            std::function<double(std::valarray<double>)> phiAccs,
+                                                            int externalIndex,
+                                                            int internalIndex
+                                                            );
+    QVector<std::function<double(std::valarray<double>)>> createSpringAndRodAccelerations(
+                                                            std::function<double(std::valarray<double>)> xAccs,
+                                                            std::function<double(std::valarray<double>)> yAccs,
+                                                            std::function<double(std::valarray<double>)> phiAccs,
+                                                            int externalIndex,
+                                                            int internalIndex
+                                                            );
+    /*
+     * Model testing
+     * */
+    double countSystemEnergy();
+    double countKineticEnergy();
+    double countPotentialEnergy();
+
+    /*
+     * Getters and setters
+     * */
+    void setPlaying(bool playing);
+    bool getIsPlaying();
     QVector<MaterialPoint*> getMaterialPoints();
     QVector<Spring*> getSprings();
     QVector<StationaryPoint*> getStatPoints();
     QVector<Rod*> getRods();
-
-    QVector<DrawableObject*> getDrawableObjects();
-
-    void setSelectedObject(DrawableObject *obj){selectedObject = obj;}
-    DrawableObject *getSelectedObject(){return selectedObject;}
-
-    bool isObjectSelected(){return selectedObject != nullptr;}
-
-    void setIncompletedObject(DrawableObject *obj){incompletedObject = obj;}
-    DrawableObject *getIncompletedObject(){return incompletedObject;}
-
     void setSpeedVectorArrow(Arrow *a);
     Arrow *getSpeedVectorArrow(){return speedVectorArrow;}
-
-    void connectObjects(DrawableObject *first, DrawableObject *second);
-
-    void updateSpringsAndRods(bool isMovedByUser);
-
-    void removeObjectFromVectors(DrawableObject *drawable);
-
-    QVector<std::function<float(std::valarray<float>)>> createAccelerations();
-    //Order matters! First is x, then y and phi lambdas
-    QVector<std::function<float(std::valarray<float>)>> createSpringAccelerations(
-                                                            std::function<float(std::valarray<float>)> xAccs,
-                                                            std::function<float(std::valarray<float>)> yAccs,
-                                                            std::function<float(std::valarray<float>)> phiAccs,
-                                                            int externalIndex,
-                                                            int internalIndex
-                                                            );
-    QVector<std::function<float(std::valarray<float>)>> createRodAccelerations(
-                                                            std::function<float(std::valarray<float>)> xAccs,
-                                                            std::function<float(std::valarray<float>)> yAccs,
-                                                            std::function<float(std::valarray<float>)> phiAccs,
-                                                            int externalIndex,
-                                                            int internalIndex
-                                                            );
-    QVector<std::function<float(std::valarray<float>)>> createSpringAndRodAccelerations(
-                                                            std::function<float(std::valarray<float>)> xAccs,
-                                                            std::function<float(std::valarray<float>)> yAccs,
-                                                            std::function<float(std::valarray<float>)> phiAccs,
-                                                            int externalIndex,
-                                                            int internalIndex
-                                                            );
-
-    float countSystemEnergy();
-    float countKineticEnergy();
-    float countPotentialEnergy();
-
-    float countSpringDefaultLength(Spring *spring);
-
-    int findIndexOfDrawableByHash(DrawableObject *conn);
-    std::valarray<float> getConnectablesPosition();
-    void resetMaterialPointsSpeeds();
-    void applySpeedsAndCoordinatesToModel(std::valarray<float> arr);
-
-    float countPhi(Rod *rod);
-    float countPhiSpeed(Rod *rod, float phi);
-
-    void save();
-    void load();
-
+    QVector<DrawableObject*> getDrawableObjects();
+    std::valarray<double> getConnectablesPosition();
+    void setSelectedObject(DrawableObject *obj){selectedObject = obj;}
+    DrawableObject *getSelectedObject(){return selectedObject;}
+    void setIncompletedObject(DrawableObject *obj){incompletedObject = obj;}
+    DrawableObject *getIncompletedObject(){return incompletedObject;}
     CsvLogger *getLogger(){return &logger;}
 
 private:
     bool isPlaying;
-    float modelG = 0.0f;//10.0f;
+    double modelG = 0.0f;
 
-//    QVector<std::function<float(std::valarray<float>)>> accelerations;
     QVector<ConnectableObject*> connectables;
-//    std::valarray<float> systemPosition;
 
     QVector<MaterialPoint*> matPoints;
     QVector<Spring*> springs;

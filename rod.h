@@ -1,15 +1,13 @@
 #ifndef ROD_H
 #define ROD_H
 
-#include "stationarypoint.h"
-
 class Rod: public PointableObject
 {
 public:
     Rod(Rectangle rect);
     Rod();
 
-    float getAngle(){return this->angle;}
+    double getAngle(){return this->angle;}
 
     //DrawableObject methods
     QVector<Point*> draw();
@@ -30,7 +28,7 @@ private:
      * ConnectableObject *second;
      * Point rotatedTopPoint;
      * Point rotatedBottomPoint;
-     * float angle;
+     * double angle;
      * Rectangle rectangle;
     */
 

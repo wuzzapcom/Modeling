@@ -1,4 +1,4 @@
-#include "drawableinheritor.h"
+#include "drawable_abstract.h"
 
 ConnectableObject::ConnectableObject()
     :DrawableObject(),
@@ -9,7 +9,5 @@ ConnectableObject::ConnectableObject()
 
 void ConnectableObject::addPointable(PointableObject *p)
 {
-
     this->pointableObjects.append(p);
-
 }

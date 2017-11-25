@@ -1,6 +1,20 @@
-#include "rectangle.h"
+#include "primitives.h"
 
-Rectangle::Rectangle(Point leftTop, float width, float height)
+Point::Point(double new_x, double new_y)
+{
+
+    this->x = new_x;
+    this->y = new_y;
+
+}
+
+Point::Point()
+{
+    this->x = 0.0f;
+    this->y = 0.0f;
+}
+
+Rectangle::Rectangle(Point leftTop, double width, double height)
 {
 
     this->leftTopPoint = leftTop;
@@ -23,8 +37,8 @@ Rectangle::Rectangle()
 void Rectangle::move(Point point)
 {
 
-    this->leftTopPoint.x += point.x;// - this->width / 2;
-    this->leftTopPoint.y += point.y;// + this->height / 2;
+    this->leftTopPoint.x += point.x;
+    this->leftTopPoint.y += point.y;
 
 }
 

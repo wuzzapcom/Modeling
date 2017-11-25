@@ -1,14 +1,11 @@
 #ifndef MATERIALPOINT_H
 #define MATERIALPOINT_H
-#include <math.h>
-#include "rod.h"
 #include <QDebug>
-#include "rod.h"
 
 class MaterialPoint: public ConnectableObject
 {
 public:
-    MaterialPoint(Point c, float r);
+    MaterialPoint(Point c, double r);
     MaterialPoint();
 
     //DrawableObject methods
@@ -24,21 +21,21 @@ public:
     //ConnactableObject methods
     Point getCenter();
     Point getContactPoint(ConnectableObject *connectable);
-    float getSpeedX(){return speedX;}
-    float getSpeedY(){return speedY;}
-    float getRadius(){return radius;}
-    void setSpeedX(float ux){speedX = ux;}
-    void setSpeedY(float uy){speedY = uy;}
-    void setX(float x){center.x = x;}
-    void setY(float y){center.y = y;}
+    double getSpeedX(){return speedX;}
+    double getSpeedY(){return speedY;}
+    double getRadius(){return radius;}
+    void setSpeedX(double ux){speedX = ux;}
+    void setSpeedY(double uy){speedY = uy;}
+    void setX(double x){center.x = x;}
+    void setY(double y){center.y = y;}
 
-    void setRadius(float r){radius = r;}
+    void setRadius(double r){radius = r;}
     void setWeight(int w){weight = w;}
     int getWeight(){return weight;}
-    void setSpeed(float v_x, float v_y){speedX = v_x; speedY = v_y;}
+    void setSpeed(double v_x, double v_y){speedX = v_x; speedY = v_y;}
 
-    float getAngularSpeed(){return angularSpeed;}
-    void setAngularSpeed(float speed){angularSpeed = speed;}
+    double getAngularSpeed(){return angularSpeed;}
+    void setAngularSpeed(double speed){angularSpeed = speed;}
 
     //External logic methods
     bool isConnectedToRods();
@@ -48,12 +45,12 @@ public:
 private:
 
     Point center;
-    float radius;
+    double radius;
     int weight;
 
-    float speedX;
-    float speedY;
-    float angularSpeed;
+    double speedX;
+    double speedY;
+    double angularSpeed;
 
     int precision = 30;
 };

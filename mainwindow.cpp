@@ -221,8 +221,8 @@ void MainWindow::configureTimer()
 
 void MainWindow::initializeRungeCutta()
 {
-    QVector<std::function<float(std::valarray<float>)>> accelerations = this->model->createAccelerations();
-    std::valarray<float> positions = this->model->getConnectablesPosition();
+    QVector<std::function<double(std::valarray<double>)>> accelerations = this->model->createAccelerations();
+    std::valarray<double> positions = this->model->getConnectablesPosition();
     this->rungeCutta = new RungeCutta(accelerations, positions);
 //    RungeCutta *rc = this->rungeCutta;
 }
@@ -290,7 +290,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     }
 
     this->centralWidget()->update();
-//    this->updateRungeCutta();
 
 }
 
@@ -306,7 +305,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
             this->model->getSelectedObject()->getType() == MATERIAL_POINT &&
             this->model->getSpeedVectorArrow() != nullptr)
     {
-        std::valarray<float> speed = this->model->getSpeedVectorArrow()->updateState(true, point);
+        std::valarray<double> speed = this->model->getSpeedVectorArrow()->updateState(true, point);
         ((MaterialPoint*)this->model->getSelectedObject())->setSpeed(speed[0], speed[1]);
         this->centralWidget()->update();
     }
@@ -318,7 +317,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     this->updateRungeCutta();
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+void MainWindow::mouseReleaseEvent(QMouseEvent *)
 {
     qInfo("MainWindow::mouseReleaseEvent");
 
@@ -493,10 +492,8 @@ void MainWindow::updateScene()
         return;
 
     this->rungeCutta->updateStates(this->model->getConnectablesPosition());
-    std::valarray<float> res = this->rungeCutta->rungeCutta();
+    std::valarray<double> res = this->rungeCutta->rungeCutta();
 
-//    std::valarray<float> res = rungeCutta->getNextState();
-//    logRungeCuttaToCSV(res);
     this->model->getLogger()->log(
                 res,
                 this->model->countKineticEnergy(),
@@ -508,26 +505,6 @@ void MainWindow::updateScene()
 
     this->centralWidget()->update();
 }
-
-//void MainWindow::logRungeCuttaToCSV(std::valarray<float> res)
-//{
-//    QFile csv("logs.csv");
-//    csv.open(QFile::Append | QFile::Text);
-//    QTextStream csvStream(&csv);
-
-//    qInfo() << "Runge-Cutta vector";
-
-//    for (int i = 0; i < res.size(); i++)
-//    {
-//        csvStream << res[i] << ",";
-//        qInfo() << res[i];
-//    }
-//    csvStream << this->model->countKineticEnergy() << ",";
-//    csvStream << this->model->countPotentialEnergy() << "\r\n";
-//    qInfo() << "-----------";
-//    csv.close();
-
-//}
 
 void MainWindow::addPropertiesToRightDockBySelectedObject()
 {
@@ -571,7 +548,7 @@ void MainWindow::addMatPointPropertiesToRightDock()
             {
                 return;
             }
-            ((MaterialPoint*)this->model->getSelectedObject())->setRadius(((float)i) / 10);
+            ((MaterialPoint*)this->model->getSelectedObject())->setRadius(((double)i) / 10);
             this->centralWidget()->update();
         }
 
@@ -625,7 +602,7 @@ void MainWindow::addSpringPropertiesToRightDock()
             {
                 return;
             }
-            ((Spring*)this->model->getSelectedObject())->setRigidity((float)i);
+            ((Spring*)this->model->getSelectedObject())->setRigidity((double)i);
             this->centralWidget()->update();
         }
     });
@@ -634,7 +611,7 @@ void MainWindow::addSpringPropertiesToRightDock()
     label2->setVisible(true);
 
     spin2->disconnect();
-    spin2->setValue(0.5f);
+    spin2->setValue(1);
     label2->setText("Default length");
     connect(spin2, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             [=](int i){
@@ -646,7 +623,7 @@ void MainWindow::addSpringPropertiesToRightDock()
             {
                 return;
             }
-            ((Spring*) this->model->getSelectedObject())->setDefaultLength((float)i);
+            ((Spring*) this->model->getSelectedObject())->setDefaultLength((double)i);
             this->centralWidget()->update();
         }
     });
@@ -685,16 +662,14 @@ Point MainWindow::getPointInOpenGLCoordinateFromMouseEvent(QMouseEvent *event)
 
     p = centralWidget()->mapFromGlobal(p);
 
-    return Point((((float)p.x()) / centralWidget()->contentsRect().width() - 0.5) * 2,
-        (0.5 - ((float)p.y()) / centralWidget()->contentsRect().height()) * 2);
+    return Point((((double)p.x()) / centralWidget()->contentsRect().width() - 0.5) * 2,
+        (0.5 - ((double)p.y()) / centralWidget()->contentsRect().height()) * 2);
 
 }
 
 MainWindow::~MainWindow()
 {
-//    this->isCalculationsStopped = true;
     delete model;
     delete rungeCutta;
-//    delete isCalculationsStopped;
     delete ui;
 }

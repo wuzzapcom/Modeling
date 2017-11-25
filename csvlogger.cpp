@@ -26,10 +26,10 @@ void CsvLogger::startLogging(int numberOfMatPoints)
     writeStream << "Kinetic energy, PotentionalEnergy\r\n";
 }
 
-void CsvLogger::log(std::valarray<float> values, float W, float E)
+void CsvLogger::log(std::valarray<double> values, double W, double E)
 {
     QTextStream writeStream(&currentOpenedFile);
-    for (int i = 0; i < values.size(); i++)
+    for (size_t i = 0; i < values.size(); i++)
     {
         writeStream << values[i] << ",";
     }
@@ -39,7 +39,7 @@ void CsvLogger::log(std::valarray<float> values, float W, float E)
 
 void CsvLogger::stopLogging()
 {
-    currentOpenedFile.close();//close();
+    currentOpenedFile.close();
 }
 
 void CsvLogger::close()
@@ -47,7 +47,7 @@ void CsvLogger::close()
     currentOpenedFile.close();
 }
 
-void CsvLogger::logLengths(float L0, float x1, float y1, float x2, float y2)
+void CsvLogger::logLengths(double L0, double x1, double y1, double x2, double y2)
 {
     QFile file("lengths.csv");
     file.open(QFile::Append | QFile::Text);
