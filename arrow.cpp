@@ -82,7 +82,7 @@ void Arrow::updateAngle()
     Point p1 = connected->getCenter();
     Point p2 = cursor;
 
-    if(fabs(p1.x - p2.x) < std::numeric_limits<double>::epsilon())
+    if(std::abs(p1.x - p2.x) < std::numeric_limits<double>::epsilon())
     {
         if (p1.y > p2.y)
         {
@@ -90,30 +90,30 @@ void Arrow::updateAngle()
             return;
         }else
         {
-            this->angle = 180.0;//M_PI;
+            this->angle = 180.0;//PI;
             return;
         }
-    }else if(fabs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
+    }else if(std::abs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
     {
         if (p1.x > p2.x)
         {
-            this->angle = 270.0;//3 * M_PI / 2;
+            this->angle = 270.0;//3 * PI / 2;
             return;
         }else{
-            this->angle = 90.0;//M_PI / 2;
+            this->angle = 90.0;//PI / 2;
             return;
         }
     }else
     {
-        double hypo = hypotf(
+        double hypo = std::hypot(
                     p1.x - p2.x,
                     p1.y - p2.y
                     );
 
         if (p1.y > p2.y)
-            this->angle = 90.0 - std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
+            this->angle = 90.0 - std::acos((p1.x - p2.x) / hypo) / PI * 180;
         else
-            this->angle = 90.0 + std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
+            this->angle = 90.0 + std::acos((p1.x - p2.x) / hypo) / PI * 180;
     }
 }
 
@@ -177,15 +177,15 @@ std::valarray<double> Arrow::updateState(bool isVis, Point curs)
                 );
 
 //    this->connected->setSpeed(
-//                this->rectangle.height * -std::sin(this->angle * M_PI / 180),
-//                this->rectangle.height * -std::cos(this->angle * M_PI / 180)
+//                this->rectangle.height * -std::sin(this->angle * PI / 180),
+//                this->rectangle.height * -std::cos(this->angle * PI / 180)
 //                );
-    qInfo() << this->rectangle.height * -std::sin(this->angle * M_PI / 180);
-    qInfo() << this->rectangle.height * -std::cos(this->angle * M_PI / 180);
+    qInfo() << this->rectangle.height * -std::sin(this->angle * PI / 180);
+    qInfo() << this->rectangle.height * -std::cos(this->angle * PI / 180);
 
     std::valarray<double> speed(2);
-    speed[0] = this->rectangle.height * -std::sin(this->angle * M_PI / 180);
-    speed[1] = this->rectangle.height * -std::cos(this->angle * M_PI / 180);
+    speed[0] = this->rectangle.height * -std::sin(this->angle * PI / 180);
+    speed[1] = this->rectangle.height * -std::cos(this->angle * PI / 180);
     return speed;
 
 }

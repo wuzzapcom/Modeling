@@ -33,7 +33,7 @@ QVector<Point*> MaterialPoint::draw()
     QVector<Point*> points = QVector<Point*>(this->precision + 1);
     Point *point;
     double angle = 0.0;
-    double deltaAngle = 2 * M_PI / this->precision;
+    double deltaAngle = 2 * PI / this->precision;
 
     for(int i = 0; i < precision + 1; i++){
 
@@ -79,7 +79,7 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
 {
     Point connCenter = connectable->getCenter();
 
-    if(fabs(connCenter.x - this->center.x) < std::numeric_limits<double>::epsilon())
+    if(std::abs(connCenter.x - this->center.x) < std::numeric_limits<double>::epsilon())
     {
 
         if (connCenter.y > this->center.y)
@@ -96,7 +96,7 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
                         );
         }
 
-    }else if (fabs(connCenter.y - this->center.y) < std::numeric_limits<double>::epsilon())
+    }else if (std::abs(connCenter.y - this->center.y) < std::numeric_limits<double>::epsilon())
     {
 
         if (connCenter.x > this->center.x)
@@ -116,7 +116,7 @@ Point MaterialPoint::getContactPoint(ConnectableObject *connectable)
     }else
     {
 
-        double hypo = hypotf(
+        double hypo = std::hypot(
                     connCenter.x - this->center.x,
                     connCenter.y - this->center.y
                     );

@@ -7,7 +7,7 @@
 #include "csvlogger.h"
 #include <math.h>
 
-const double ENABLED_GRAVITATION_VALUE = 10.0;
+const double ENABLED_GRAVITATION_VALUE = 1.0;
 const double DISABLED_GRAVITATION_VALUE = 0.0;
 
 class ModelingModel

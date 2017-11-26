@@ -565,8 +565,6 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
 
     std::function<double(std::valarray<double>)> capturingAccelerationPhi = phiAcc;
 
-    double l = matPoints[externalIndex]->getRod()->getDefaultLength() + matPoints[externalIndex]->getRadius();
-
     double x_i0 = 0.0;
     double y_i0 = 0.0;
     if (matPoints[externalIndex]->getRod()->getFirstConnectable()->getType() == STATIONARY_POINT)
@@ -580,6 +578,8 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
     }
     else
         return result;
+
+    double l = std::sqrt(std::pow(matPoints[externalIndex]->getCenter().x - x_i0, 2.0) + std::pow(matPoints[externalIndex]->getCenter().y - y_i0, 2.0));//matPoints[externalIndex]->getRod()->getDefaultLength() + matPoints[externalIndex]->getRadius();
 
     Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
     spring->setRestingLength(spring->getDefaultLength());
@@ -620,7 +620,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
         result.push_back(
             [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, x_j, y_j](std::valarray<double> args){
                     double phi = args[6 * iIndex + 4];
-                    double square = std::sqrt(std::pow(x_i0 + l * std::cos(phi) - x_j, 2) + std::pow(y_i0 + l * std::sin(phi) - y_j, 2));
+                    double square = std::sqrt(std::pow(x_i0 + l * std::sin(phi) - x_j, 2) + std::pow(y_i0 + l * std::cos(phi) - y_j, 2));
                     return capturingAccelerationPhi(args) + (/*-*/ 1.0) / (l * l * m) //TODO CHECK SIGN HERE
                             * k * (square - L0)
                             * (2 * (l * std::cos(phi) * (l*std::sin(phi) + x_i0 - x_j)
@@ -644,7 +644,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                         double phi = args[6 * iIndex + 4];
                         double x_j = args[6 * jIndex];
                         double y_j = args[6 * jIndex + 2];
-                        double square = std::sqrt(std::pow(x_i0 + l * std::cos(phi) - x_j, 2) + std::pow(y_i0 + l * std::sin(phi) - y_j, 2));
+                        double square = std::sqrt(std::pow(x_i0 + l * std::sin(phi) - x_j, 2) + std::pow(y_i0 + l * std::cos(phi) - y_j, 2));
                         return capturingAccelerationPhi(args) + (/*-*/ 1.0) / (l * l * m) //TODO CHECK SIGN HERE
                                 * k * (square - L0)
                                 * (2 * (l * std::cos(phi) * (l*std::sin(phi) + x_i0 - x_j)
@@ -694,8 +694,8 @@ std::valarray<double> ModelingModel::getConnectablesPosition()
 
 double ModelingModel::countPhi(Rod *rod)
 {
-    qInfo() << "phi = " << rod->getAngle() * M_PI / 180.0;
-    return rod->getAngle() * M_PI / 180.0;
+    qInfo() << "phi = " << rod->getAngle() * PI / 180.0;
+    return rod->getAngle() * PI / 180.0;
 }
 
 double ModelingModel::countPhiSpeed(Rod *, double)
@@ -741,7 +741,7 @@ void ModelingModel::applySpeedsAndCoordinatesToModel(std::valarray<double> arr)
             }
             double length = rod->getDefaultLength();
             double x = statPoint->getCenter().x - std::sin(arr[i * 6 + 4]) * (length + matPoint->getRadius());
-            double y = statPoint->getCenter().y + std::sin((arr[i * 6 + 4] - M_PI / 2.0)) * (length + matPoint->getRadius());
+            double y = statPoint->getCenter().y + std::sin((arr[i * 6 + 4] - PI / 2.0)) * (length + matPoint->getRadius());
             double angularSpeed = arr[i * 6 + 5];
             qInfo() << "Angular speed =" << angularSpeed;
             matPoint->setX(x);
@@ -838,7 +838,7 @@ double ModelingModel::countPotentialEnergy()
 //        else
 //        {
 //            energy += matPoints[i]->getWeight() * this->gravitation * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) *
-//                    (1.0 - std::cos(((Rod*)matPoints[i]->getRod())->getAngle() * M_PI / 180.0));
+//                    (1.0 - std::cos(((Rod*)matPoints[i]->getRod())->getAngle() * PI / 180.0));
 //        }
     }
     return energy;

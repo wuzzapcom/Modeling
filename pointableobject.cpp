@@ -18,7 +18,7 @@ void PointableObject::updateAngle()
     Point p1 = first->getCenter();
     Point p2 = second->getCenter();
 
-    if(fabs(p1.x - p2.x) < std::numeric_limits<double>::epsilon())
+    if(std::abs(p1.x - p2.x) < std::numeric_limits<double>::epsilon())
     {
         if (p1.y > p2.y)
         {
@@ -29,7 +29,7 @@ void PointableObject::updateAngle()
             this->angle = 180.0;
             return;
         }
-    }else if(fabs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
+    }else if(std::abs(p1.y - p2.y) < std::numeric_limits<double>::epsilon())
     {
         if (p1.x > p2.x)
         {
@@ -41,7 +41,7 @@ void PointableObject::updateAngle()
         }
     }else
     {
-        double hypo = hypotf(
+        double hypo = std::hypot(
                     p1.x - p2.x,
                     p1.y - p2.y
                     );
@@ -52,29 +52,29 @@ void PointableObject::updateAngle()
 //        qInfo() << defaultLength;
 
 //        if (p1.y > p2.y)
-//            this->angle = astd::sin((p1.x - p2.x) / hypo) / M_PI * 180;
+//            this->angle = astd::sin((p1.x - p2.x) / hypo) / PI * 180;
 //        else
-//            this->angle = 90 + astd::cos((p1.x - p2.x) / hypo) / M_PI * 180;
+//            this->angle = 90 + astd::cos((p1.x - p2.x) / hypo) / PI * 180;
         if (p1.y > p2.y)
         {
             if (p1.x > p2.x)
             {
-                this->angle = 90 - std::acos((p1.x - p2.x) / hypo) / M_PI * 180;
+                this->angle = 90 - std::acos((p1.x - p2.x) / hypo) / PI * 180;
             }
             else
             {
-                this->angle = 270 + std::acos(-(p1.x - p2.x) / hypo) / M_PI * 180;
+                this->angle = 270 + std::acos(-(p1.x - p2.x) / hypo) / PI * 180;
             }
         }
         else
         {
             if (p1.x > p2.x)
             {
-                this->angle = 90 + std::asin(-(p1.y - p2.y) / hypo) / M_PI * 180;
+                this->angle = 90 + std::asin(-(p1.y - p2.y) / hypo) / PI * 180;
             }
             else
             {
-                this->angle = 270 + std::asin((p1.y - p2.y) / hypo) / M_PI * 180;
+                this->angle = 270 + std::asin((p1.y - p2.y) / hypo) / PI * 180;
             }
         }
 
@@ -119,8 +119,8 @@ void PointableObject::updateLength()
     Point secondContactPoint = this->second->getContactPoint(this->first);
 
     double hypotenuse = std::sqrt(
-               pow(firstContactPoint.x - secondContactPoint.x, 2.0) +
-                pow(firstContactPoint.y - secondContactPoint.y, 2.0)
+               std::pow(firstContactPoint.x - secondContactPoint.x, 2.0) +
+                std::pow(firstContactPoint.y - secondContactPoint.y, 2.0)
                 );
 
     if (hypotenuse < std::numeric_limits<double>::epsilon())

@@ -4,7 +4,6 @@ from os.path import basename
 import math
 
 class LogPlotter:
-	# Append yourself
 	
 	__path_to_logs = '/Users/wuzzapcom/Coding/Courceworks/build-Modeling-Desktop_Qt_5_9_1_clang_64bit-Debug/Modeling.app/Contents/MacOS/'
 
@@ -97,4 +96,5 @@ class LogPlotter:
 
 logPlotter = LogPlotter()
 logPlotter.buildEnergiesPlot()
+#logPlotter.buildPlot(4)
 #logPlotter.testLengths()
