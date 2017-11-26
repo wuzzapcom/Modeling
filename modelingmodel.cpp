@@ -579,13 +579,14 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
     else
         return result;
 
-    double l = std::sqrt(std::pow(matPoints[externalIndex]->getCenter().x - x_i0, 2.0) + std::pow(matPoints[externalIndex]->getCenter().y - y_i0, 2.0));//matPoints[externalIndex]->getRod()->getDefaultLength() + matPoints[externalIndex]->getRadius();
-
+    double l = std::hypot(matPoints[externalIndex]->getCenter().x - x_i0, matPoints[externalIndex]->getCenter().y - y_i0); //std::sqrt(std::pow(matPoints[externalIndex]->getCenter().x - x_i0, 2.0) + std::pow(matPoints[externalIndex]->getCenter().y - y_i0, 2.0));//matPoints[externalIndex]->getRod()->getDefaultLength() + matPoints[externalIndex]->getRadius();
+    qInfo() << "l" << l;
     Spring* spring = (Spring*) matPoints[externalIndex]->getPointableObjects()[internalIndex];
     spring->setRestingLength(spring->getDefaultLength());
 
     double m = matPoints[externalIndex]->getWeight();
     double L0 = this->countSpringDefaultLength(spring);//spring->getDefaultLength() + matPoints[externalIndex]->getRadius();
+    qInfo() << "L0" << L0;
     double k = spring->getRigidity();
 
     int x1Index = 0;
@@ -615,16 +616,19 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
         iIndex = x2Index;
         x_j = statPoint->getCenter().x;
         y_j = statPoint->getCenter().y;
+        qInfo() << x_i0 << y_i0 << x_j << y_j;
         result.push_back(xAcc);
         result.push_back(yAcc);
         result.push_back(
             [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, x_j, y_j](std::valarray<double> args){
                     double phi = args[6 * iIndex + 4];
-                    double square = std::sqrt(std::pow(x_i0 + l * std::sin(phi) - x_j, 2) + std::pow(y_i0 + l * std::cos(phi) - y_j, 2));
-                    return capturingAccelerationPhi(args) + (/*-*/ 1.0) / (l * l * m) //TODO CHECK SIGN HERE
+                    /*signs before sinus and cosinus changed, because model supposed another sign of angle (symmetric)
+                     * */
+                    double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
+                    return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m) //TODO CHECK SIGN HERE
                             * k * (square - L0)
-                            * (2 * (l * std::cos(phi) * (l*std::sin(phi) + x_i0 - x_j)
-                                    - l * std::sin(phi) * (l * std::cos(phi) + y_i0 - y_j)))
+                            * (2 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
+                                    + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
                             / square;
         });
     }
@@ -644,11 +648,11 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                         double phi = args[6 * iIndex + 4];
                         double x_j = args[6 * jIndex];
                         double y_j = args[6 * jIndex + 2];
-                        double square = std::sqrt(std::pow(x_i0 + l * std::sin(phi) - x_j, 2) + std::pow(y_i0 + l * std::cos(phi) - y_j, 2));
-                        return capturingAccelerationPhi(args) + (/*-*/ 1.0) / (l * l * m) //TODO CHECK SIGN HERE
+                        double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
+                        return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m) //TODO CHECK SIGN HERE
                                 * k * (square - L0)
-                                * (2 * (l * std::cos(phi) * (l*std::sin(phi) + x_i0 - x_j)
-                                        - l * std::sin(phi) * (l * std::cos(phi) + y_i0 - y_j)))
+                                * (2 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
+                                        + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
                                 / square;
                     }
                         );

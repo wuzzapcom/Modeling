@@ -5,7 +5,6 @@
 #include <QJsonDocument>
 #include "drawable_objects.h"
 #include "csvlogger.h"
-#include <math.h>
 
 const double ENABLED_GRAVITATION_VALUE = 1.0;
 const double DISABLED_GRAVITATION_VALUE = 0.0;

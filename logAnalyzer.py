@@ -96,5 +96,9 @@ class LogPlotter:
 
 logPlotter = LogPlotter()
 logPlotter.buildEnergiesPlot()
-#logPlotter.buildPlot(4)
-#logPlotter.testLengths()
+
+
+
+
+
+
