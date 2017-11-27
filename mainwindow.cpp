@@ -264,6 +264,9 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                                 drawableObjects[i],
                                 this->model->getIncompletedObject()
                                 );
+//                    this->model->setSelectedObject(nullptr);
+//                    this->centralWidget()->update();
+//                    break;
                     qInfo() << "CONNECT OBJECTS";
                 }
 

@@ -219,6 +219,8 @@ void ModelingModel::connectObjects(DrawableObject *first, DrawableObject *second
         pointable->setFirstConnectable(connectable);
     else if (pointable->getSecondConnectable() == nullptr)
         pointable->setSecondConnectable(connectable);
+    else
+        return;
 
     connectable->addPointable(pointable);
 
@@ -353,14 +355,6 @@ void ModelingModel::removeObjectFromVectors(DrawableObject *drawable)
     this->rods.removeOne((Rod*) drawable);
 }
 
-
-/*
- * TODO
- * CHECK WEIGHTS(did captured value from correct matPoint)
- * FIX PROBLEM WITH DEFAULT LENGTH
- * ADDING CONNECTION SPRING TO STAT POINT: two variants of lambda. If connected to statPoint, then capture its position,
- *  else use current lambda.
- * */
 QVector<std::function<double(std::valarray<double>)>> ModelingModel::createAccelerations()
 {
     QVector<std::function<double(std::valarray<double>)>> accs;
@@ -465,7 +459,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                     {
                         double x2 = args[6*x2Index];
                         double y2 = args[6*x2Index + 2];
-                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+                        double square = std::hypot(x2 - x1, y2 - y1);//std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
                         return capturingAccelerationX(args) + (-1.0) / m * k * (square - L0) * (x2 - x1)  / square;
                     }
                 );
@@ -473,7 +467,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                 [capturingAccelerationY, k, m, L0, x2Index, x1, y1](std::valarray<double> args){
                         double x2 = args[6*x2Index];
                         double y2 = args[6*x2Index + 2];
-                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+                        double square = std::hypot(x2 - x1, y2 - y1);//std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
                         return capturingAccelerationY(args) + (-1.0) / m * k * (square - L0) * (y2 - y1) / square;
                     }
                 );
@@ -481,14 +475,6 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
     }
     else
     {
-        //double L0 = this->countSpringDefaultLength(spring);
-//        double L0 = spring->getRestingLength() + ((MaterialPoint*)spring->getFirstConnectable())->getRadius() + ((MaterialPoint*)spring->getSecondConnectable())->getRadius();
-//        logger.logLengths(L0,
-//                           spring->getFirstConnectable()->getCenter().x,
-//                           spring->getFirstConnectable()->getCenter().y,
-//                           spring->getSecondConnectable()->getCenter().x,
-//                           spring->getSecondConnectable()->getCenter().y
-//                           );
         if (index1 != externalIndex)
             x1Index = index1;
         else
@@ -501,7 +487,8 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                         double y2 = args[6*x2Index + 2];
                         double x1 = args[6*x1Index];
                         double y1 = args[6*x1Index + 2];
-                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+                        double square = std::hypot(x2 - x1, y2 - y1);//std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+                        qInfo() << "square" << square << "L0" << L0;
                         return capturingAccelerationX(args) + (-1.0) / m * k * (square - L0) * (x2 - x1)  / square;
                     }
                 );
@@ -511,7 +498,8 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                         double y2 = args[6*x2Index + 2];
                         double x1 = args[6*x1Index];
                         double y1 = args[6*x1Index + 2];
-                        double square = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+                        double square = std::hypot(x2 - x1, y2 - y1);//std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+                        qInfo() << "square" << square << "L0" << L0;
                         return capturingAccelerationY(args) + (-1.0) / m * k * (square - L0) * (y2 - y1) / square;
                     }
                 );
@@ -625,7 +613,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                     /*signs before sinus and cosinus changed, because model supposed another sign of angle (symmetric)
                      * */
                     double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
-                    return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m) //TODO CHECK SIGN HERE
+                    return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
                             * k * (square - L0)
                             * (2 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
                                     + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
@@ -649,7 +637,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                         double x_j = args[6 * jIndex];
                         double y_j = args[6 * jIndex + 2];
                         double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
-                        return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m) //TODO CHECK SIGN HERE
+                        return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
                                 * k * (square - L0)
                                 * (2 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
                                         + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
@@ -793,14 +781,14 @@ double ModelingModel::countSpringDefaultLength(Spring *spring)
     if (statPoint == nullptr)
     {
         double length1 = spring->getRestingLength() + matPoint1->getRadius() + matPoint2->getRadius();
-        double length2 = std::sqrt(std::pow(matPoint1->getCenter().x - matPoint2->getCenter().x, 2.0) + std::pow(matPoint1->getCenter().y - matPoint2->getCenter().y, 2.0));
+        double length2 = std::hypot(matPoint1->getCenter().x - matPoint2->getCenter().x, matPoint1->getCenter().y - matPoint2->getCenter().y);
         qInfo() << "length1" << length1;
         qInfo() << "length2" << length2;
         return length2;
     }else
     {
         double length1 = spring->getRestingLength() + matPoint1->getRadius();
-        double length2 = std::sqrt(std::pow(matPoint1->getCenter().x - statPoint->getCenter().x, 2.0) + std::pow(matPoint1->getCenter().y - statPoint->getCenter().y, 2.0));
+        double length2 = std::hypot(matPoint1->getCenter().x - statPoint->getCenter().x, matPoint1->getCenter().y - statPoint->getCenter().y);
         qInfo() << "length1" << length1;
         qInfo() << "length2" << length2;
         return length2;
