@@ -610,12 +610,12 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
         result.push_back(
             [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, x_j, y_j](std::valarray<double> args){
                     double phi = args[6 * iIndex + 4];
-                    /*signs before sinus and cosinus changed, because model supposed another sign of angle (symmetric)
+                    /*signs before sinus and cosinus changed, because model  supposed another sign of angle (symmetric)
                      * */
                     double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
                     return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
                             * k * (square - L0)
-                            * (2 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
+                            * (1 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
                                     + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
                             / square;
         });
@@ -639,7 +639,7 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                         double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
                         return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
                                 * k * (square - L0)
-                                * (2 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
+                                * (1 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
                                         + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
                                 / square;
                     }
