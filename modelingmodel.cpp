@@ -612,7 +612,8 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
                     double phi = args[6 * iIndex + 4];
                     /*signs before sinus and cosinus changed, because model  supposed another sign of angle (symmetric)
                      * */
-                    double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
+                    double square = std::hypot(x_i0 - l * std::sin(phi) - x_j, y_i0 - l * std::cos(phi) - y_j);//std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
+                    qInfo() << "square" << square << "L0" << L0;
                     return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
                             * k * (square - L0)
                             * (1 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
@@ -626,24 +627,64 @@ QVector<std::function<double(std::valarray<double>)>> ModelingModel::createSprin
             x1Index = index1;
         else
             x1Index = index2;
+
         int iIndex = x2Index;
         int jIndex = x1Index;
 
-        result.push_back(xAcc);
-        result.push_back(yAcc);
-        result.push_back(
-                [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<double> args){
-                        double phi = args[6 * iIndex + 4];
-                        double x_j = args[6 * jIndex];
-                        double y_j = args[6 * jIndex + 2];
-                        double square = std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
-                        return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
-                                * k * (square - L0)
-                                * (1 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
-                                        + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
-                                / square;
-                    }
-                        );
+        if (matPoints[jIndex]->getRod() != nullptr)
+        {
+            double x_j0 = 0.0;
+            double y_j0 = 0.0;
+            if (matPoints[jIndex]->getRod()->getFirstConnectable()->getType() == STATIONARY_POINT)
+            {
+              x_j0 = matPoints[jIndex]->getRod()->getFirstConnectable()->getCenter().x;
+              y_j0 = matPoints[jIndex]->getRod()->getFirstConnectable()->getCenter().y;
+            }else if (matPoints[jIndex]->getRod()->getSecondConnectable()->getType() == STATIONARY_POINT)
+            {
+              x_j0 = matPoints[jIndex]->getRod()->getSecondConnectable()->getCenter().x;
+              y_j0 = matPoints[jIndex]->getRod()->getSecondConnectable()->getCenter().y;
+            }
+            else
+                return result;
+
+            double l_j = std::hypot(matPoints[jIndex]->getCenter().x - x_j0, matPoints[jIndex]->getCenter().y - y_j0);
+            result.push_back(xAcc);
+            result.push_back(yAcc);
+            result.push_back(
+                  [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex, l_j, x_j0, y_j0](std::valarray<double> args){
+                          double phi = args[6 * iIndex + 4];
+                          double x_j = x_j0 - l_j * std::sin(args[6 * jIndex + 4]);//args[6 * jIndex];
+                          double y_j = y_j0 - l_j * std::cos(args[6 * jIndex + 4]);//args[6 * jIndex + 2];
+                          double square = std::hypot(x_i0 - l * std::sin(phi) - x_j, y_i0 - l * std::cos(phi) - y_j);//std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
+                          double old_square = std::hypot(x_i0 - l * std::sin(phi) - args[6*jIndex], y_i0 - l * std::cos(phi) - args[6*jIndex]);
+                          qInfo() << "Phi, square" << square << "old_square" << old_square << "L0" << L0;
+                          return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
+                                  * k * (square - L0)
+                                  * (1 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
+                                          + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
+                                  / square;
+                      }
+                          );
+        }
+        else
+        {
+            result.push_back(xAcc);
+            result.push_back(yAcc);
+            result.push_back(
+                    [capturingAccelerationPhi, m, l, k, x_i0, y_i0, L0, iIndex, jIndex](std::valarray<double> args){
+                            double phi = args[6 * iIndex + 4];
+                            double x_j = args[6 * jIndex];
+                            double y_j = args[6 * jIndex + 2];
+                            double square = std::hypot(x_i0 - l * std::sin(phi) - x_j, y_i0 - l * std::cos(phi) - y_j);//std::sqrt(std::pow(x_i0 - l * std::sin(phi) - x_j, 2) + std::pow(y_i0 - l * std::cos(phi) - y_j, 2));
+                            qInfo() << "X and Y, square" << square << "L0" << L0;
+                            return capturingAccelerationPhi(args) + (- 1.0) / (l * l * m)
+                                    * k * (square - L0)
+                                    * (1 * (-l * std::cos(phi) * (-l*std::sin(phi) + x_i0 - x_j)
+                                            + l * std::sin(phi) * (-l * std::cos(phi) + y_i0 - y_j)))
+                                    / square;
+                        }
+                            );
+        }
     }
     return result;
 }
