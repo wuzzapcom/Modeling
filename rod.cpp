@@ -98,3 +98,41 @@ void Rod::read(const QJsonObject &json, QVector<DrawableObject *> objects)
         }
     }
 }
+
+double Rod::getDefaultLength()
+{
+    StationaryPoint *statPoint = nullptr;
+    MaterialPoint *matPoint1 = nullptr;
+    MaterialPoint *matPoint2 = nullptr;
+    if (this->getFirstConnectable()->getType() == STATIONARY_POINT)
+    {
+        statPoint = (StationaryPoint*) this->getFirstConnectable();
+        matPoint1 = (MaterialPoint*) this->getSecondConnectable();
+    }
+    else if (this->getSecondConnectable()->getType() == STATIONARY_POINT)
+    {
+        statPoint = (StationaryPoint*) this->getSecondConnectable();
+        matPoint1 = (MaterialPoint*) this->getFirstConnectable();
+    }
+    else
+    {
+        matPoint1 = (MaterialPoint*) this->getFirstConnectable();
+        matPoint2 = (MaterialPoint*) this->getSecondConnectable();
+    }
+
+    if (statPoint == nullptr)
+    {
+        double length1 = this->getRestingLength() + matPoint1->getRadius() + matPoint2->getRadius();
+        double length2 = std::hypot(matPoint1->getCenter().x - matPoint2->getCenter().x, matPoint1->getCenter().y - matPoint2->getCenter().y);
+        qInfo() << "length1" << length1;
+        qInfo() << "length2" << length2;
+        return length2;
+    }else
+    {
+        double length1 = this->getRestingLength() + matPoint1->getRadius();
+        double length2 = std::hypot(matPoint1->getCenter().x - statPoint->getCenter().x, matPoint1->getCenter().y - statPoint->getCenter().y);
+        qInfo() << "length1" << length1;
+        qInfo() << "length2" << length2;
+        return length2;
+    }
+}

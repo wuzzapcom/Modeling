@@ -4,8 +4,8 @@
 #include "drawable_abstract.h"
 
 #include "materialpoint.h"
-#include "spring.h"
 #include "stationarypoint.h"
+#include "spring.h"
 #include "rod.h"
 #include "arrow.h"
 

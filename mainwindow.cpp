@@ -632,7 +632,7 @@ void MainWindow::addSpringPropertiesToRightDock()
             {
                 return;
             }
-            ((Spring*) this->model->getSelectedObject())->setDefaultLength((double)i);
+            //((Spring*) this->model->getSelectedObject())->setDefaultLength((double)i);
             this->centralWidget()->update();
         }
     });

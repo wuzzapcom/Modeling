@@ -150,6 +150,7 @@ public:
      * Methods which depends from inheritor
      * */
 
+    virtual double getDefaultLength() = 0;
 
 
     /*
@@ -190,16 +191,14 @@ public:
      * */
     ConnectableObject *getFirstConnectable(){return first;}
     ConnectableObject *getSecondConnectable(){return second;}
+    double getRestingLength(){return restingLength;}
 
     /*
      * Setters
      * */
     void setFirstConnectable(ConnectableObject *f);
     void setSecondConnectable(ConnectableObject *s);
-    void setDefaultLength(double l0){rectangle.height = l0;}//{defaultLength = l0;}
-    double getDefaultLength(){return rectangle.height;}//{return defaultLength;}
     void setRestingLength(double l0){restingLength = l0;}
-    double getRestingLength(){return restingLength;}
 
 protected:
 
@@ -214,7 +213,6 @@ protected:
     Point rotatedBottomPoint;
 
     double angle;
-    double defaultLength;
     double restingLength = 0.0;
 
     Rectangle rectangle;

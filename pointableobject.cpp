@@ -7,7 +7,6 @@ PointableObject::PointableObject(Rectangle rect)
       rotatedTopPoint(Point()),
       rotatedBottomPoint(Point()),
       angle(0.0),
-      defaultLength(0.5),
       rectangle(rect)
 {
 
@@ -170,8 +169,6 @@ void PointableObject::setSecondConnectable(ConnectableObject *s)
         }
     //}
 }
-
-
 
 
 

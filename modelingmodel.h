@@ -47,7 +47,6 @@ public:
 
     double countPhi(Rod *rod);
     double countPhiSpeed(Rod *rod, double phi);
-    double countSpringDefaultLength(Spring *spring);
 
     QVector<std::function<double(std::valarray<double>)>> createAccelerations();
 

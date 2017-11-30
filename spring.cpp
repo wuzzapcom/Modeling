@@ -96,7 +96,6 @@ void Spring::write(QJsonObject &json)
     json["height"] = rectangle.height;
     json["angle"] = angle;
     json["rigidity"] = rigidity;
-    json["defaultLength"] = defaultLength;
     if (first != nullptr)
         json["first"] = QString::number(first->getHash());
     if (second != nullptr)
@@ -121,7 +120,6 @@ void Spring::read(const QJsonObject &json, QVector<DrawableObject *> objects)
     rectangle.height = json["height"].toDouble();
     angle = json["angle"].toDouble();
     rigidity = json["rigidity"].toDouble();
-    defaultLength = json["defaultLength"].toDouble();
 
     qDebug() << "read()";
     qDebug() << "x =" << rectangle.leftTopPoint.x;
@@ -144,6 +142,45 @@ void Spring::read(const QJsonObject &json, QVector<DrawableObject *> objects)
         {
             second = (ConnectableObject*)objects[i];
         }
+    }
+}
+
+
+double Spring::getDefaultLength()
+{
+    StationaryPoint *statPoint = nullptr;
+    MaterialPoint *matPoint1 = nullptr;
+    MaterialPoint *matPoint2 = nullptr;
+    if (this->getFirstConnectable()->getType() == STATIONARY_POINT)
+    {
+        statPoint = (StationaryPoint*) this->getFirstConnectable();
+        matPoint1 = (MaterialPoint*) this->getSecondConnectable();
+    }
+    else if (this->getSecondConnectable()->getType() == STATIONARY_POINT)
+    {
+        statPoint = (StationaryPoint*) this->getSecondConnectable();
+        matPoint1 = (MaterialPoint*) this->getFirstConnectable();
+    }
+    else
+    {
+        matPoint1 = (MaterialPoint*) this->getFirstConnectable();
+        matPoint2 = (MaterialPoint*) this->getSecondConnectable();
+    }
+
+    if (statPoint == nullptr)
+    {
+        double length1 = this->getRestingLength() + matPoint1->getRadius() + matPoint2->getRadius();
+        double length2 = std::hypot(matPoint1->getCenter().x - matPoint2->getCenter().x, matPoint1->getCenter().y - matPoint2->getCenter().y);
+        qInfo() << "length1" << length1;
+        qInfo() << "length2" << length2;
+        return length2;
+    }else
+    {
+        double length1 = this->getRestingLength() + matPoint1->getRadius();
+        double length2 = std::hypot(matPoint1->getCenter().x - statPoint->getCenter().x, matPoint1->getCenter().y - statPoint->getCenter().y);
+        qInfo() << "length1" << length1;
+        qInfo() << "length2" << length2;
+        return length2;
     }
 }
 

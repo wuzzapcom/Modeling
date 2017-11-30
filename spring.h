@@ -20,7 +20,7 @@ public:
     void readHash(const QJsonObject &json);
     void read(const QJsonObject &json, QVector<DrawableObject*> objects);
     double getCurrentLength(){return this->rectangle.height;}
-
+    double getDefaultLength();
     void setRigidity(double r){rigidity = r;}
     double getRigidity(){return rigidity;}
 
