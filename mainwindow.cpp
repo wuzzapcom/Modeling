@@ -401,16 +401,21 @@ void MainWindow::deleteObject()
                   this->model->getSelectedObject()->getType() == ROD)
         {
             PointableObject *pointable = (PointableObject*) this->model->getSelectedObject();
-
-            for (PointableObject *p: pointable->getFirstConnectable()->getPointableObjects())
+            if (pointable->getFirstConnectable() != nullptr)
             {
-                if (p == pointable)
-                    pointable->getFirstConnectable()->removeFromPointableObjects(p);//->getPointableObjects().removeOne(p);
+                for (PointableObject *p: pointable->getFirstConnectable()->getPointableObjects())
+                {
+                    if (p == pointable)
+                        pointable->getFirstConnectable()->removeFromPointableObjects(p);//->getPointableObjects().removeOne(p);
+                }
             }
-            for (PointableObject *p: pointable->getSecondConnectable()->getPointableObjects())
+            if (pointable->getSecondConnectable() != nullptr)
             {
-                if (p == pointable)
-                    pointable->getSecondConnectable()->removeFromPointableObjects(p);//getPointableObjects().removeOne(p);
+                for (PointableObject *p: pointable->getSecondConnectable()->getPointableObjects())
+                {
+                    if (p == pointable)
+                        pointable->getSecondConnectable()->removeFromPointableObjects(p);//getPointableObjects().removeOne(p);
+                }
             }
         }
         this->model->removeObjectFromVectors(this->model->getSelectedObject());
