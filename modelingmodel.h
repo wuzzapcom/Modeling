@@ -6,7 +6,7 @@
 #include "drawable_objects.h"
 #include "csvlogger.h"
 
-const double ENABLED_GRAVITATION_VALUE = 3.0;
+const double ENABLED_GRAVITATION_VALUE = 9.8;
 const double DISABLED_GRAVITATION_VALUE = 0.0;
 
 class ModelingModel

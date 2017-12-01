@@ -7,11 +7,7 @@
 class RungeCutta
 {
 public:
-    RungeCutta(
-            QVector<std::function<double(std::valarray<double>)>> accs,
-            std::valarray<double> startState
-            );
-    std::valarray<double> getNextState();
+    RungeCutta();
     void resetState(
             QVector<std::function<double(std::valarray<double>)>> accs,
             std::valarray<double> startState
@@ -22,10 +18,9 @@ public:
     std::valarray<double> rungeCutta();
 private:
 
-    QMutex mutex;
     std::valarray<double> applyPositionsToAccelerations(std::valarray<double> args);
 
-    QVector<std::valarray<double>> countedModelStates;
+    std::valarray<double> modelState;
     QVector<std::function<double(std::valarray<double>)>> accelerations;
 
 };

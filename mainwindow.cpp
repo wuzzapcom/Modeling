@@ -221,10 +221,7 @@ void MainWindow::configureTimer()
 
 void MainWindow::initializeRungeCutta()
 {
-    QVector<std::function<double(std::valarray<double>)>> accelerations = this->model->createAccelerations();
-    std::valarray<double> positions = this->model->getConnectablesPosition();
-    this->rungeCutta = new RungeCutta(accelerations, positions);
-//    RungeCutta *rc = this->rungeCutta;
+    this->rungeCutta = new RungeCutta();
 }
 
 void MainWindow::updateRungeCutta()
