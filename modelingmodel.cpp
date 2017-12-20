@@ -867,25 +867,24 @@ double ModelingModel::countPotentialEnergy()
     }
     for (int i = 0; i < matPoints.size(); i++)
     {
-//        if (matPoints[i]->getRod() == nullptr)
-//        {
-            energy += matPoints[i]->getWeight() * this->gravitation * matPoints[i]->getCenter().y;
-//        }
-//        else
-//        {
-//            energy += matPoints[i]->getWeight() * this->gravitation * (matPoints[i]->getRod()->getDefaultLength() + matPoints[i]->getRadius()) *
-//                    (1.0 - std::cos(((Rod*)matPoints[i]->getRod())->getAngle() * PI / 180.0));
-//        }
+        energy += matPoints[i]->getWeight() * this->gravitation * matPoints[i]->getCenter().y;
     }
     return energy;
 }
 
-void ModelingModel::switchGravitation()
+bool ModelingModel::switchGravitation()
 {
     if (this->gravitation == ENABLED_GRAVITATION_VALUE)
+    {
         this->gravitation = DISABLED_GRAVITATION_VALUE;
+        return false;
+    }
     else if (this->gravitation == DISABLED_GRAVITATION_VALUE)
+    {
         this->gravitation = ENABLED_GRAVITATION_VALUE;
+        return true;
+    }
+
 }
 
 ModelingModel::~ModelingModel()

@@ -59,6 +59,7 @@ private:
     QAction *pasteAction;
     QAction *helpAction;
     QAction *openAction;
+    QAction *switchGravitationAction;
     QAction *playPauseAction;
     QAction *deleteAction;
 
@@ -128,6 +129,7 @@ private slots:
     void addStationaryPoint();
 
     void changePlayPauseState();
+    void switchGravitation();
 
 
 };

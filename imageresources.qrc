@@ -6,5 +6,7 @@
         <file>pause.png</file>
         <file>pendulum.png</file>
         <file>stationaryPoint.png</file>
+        <file>Gravitation_ON.png</file>
+        <file>Gravitation_OFF.png</file>
     </qresource>
 </RCC>

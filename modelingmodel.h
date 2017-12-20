@@ -24,7 +24,7 @@ public:
     void addSpring();
     void addStationalPoint();
     void addRod();
-    void switchGravitation();
+    bool switchGravitation();
 
     /*
      * Updating model methods

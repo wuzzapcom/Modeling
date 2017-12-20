@@ -73,6 +73,12 @@ void MainWindow::createToolbar()
     addStationaryPoint->setIcon(QIcon(":stationaryPoint"));
     connect(addStationaryPoint, &QAction::triggered, this, &MainWindow::addStationaryPoint);
 
+    switchGravitationAction = new QAction(tr("Switch gravitation"), this);
+    switchGravitationAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
+    switchGravitationAction->setStatusTip("Switch gravitation");
+    switchGravitationAction->setIcon(QIcon(":/Gravitation_OFF.png"));
+    connect(switchGravitationAction, &QAction::triggered, this, &MainWindow::switchGravitation);
+
     playPauseAction = new QAction(tr("Play/Pause"), this);
     playPauseAction->setShortcut(QKeySequence::Open);
     playPauseAction->setStatusTip("Start moving");
@@ -85,6 +91,7 @@ void MainWindow::createToolbar()
     figuresToolbar->addAction(addSpringAction);
     figuresToolbar->addAction(addRod);
     figuresToolbar->addAction(addStationaryPoint);
+    figuresToolbar->addAction(switchGravitationAction);
     figuresToolbar->addAction(playPauseAction);
     figuresToolbar->setMovable(false);
     this->addToolBar(Qt::LeftToolBarArea, figuresToolbar);
@@ -261,9 +268,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
                                 drawableObjects[i],
                                 this->model->getIncompletedObject()
                                 );
-//                    this->model->setSelectedObject(nullptr);
-//                    this->centralWidget()->update();
-//                    break;
                     qInfo() << "CONNECT OBJECTS";
                 }
 
@@ -343,12 +347,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         qInfo("MainWindow::keyPressEvent(). C pressed");
         this->model->resetMaterialPointsSpeeds();
-    }
-    else if (event->key() == Qt::Key_G)
-    {
-        qInfo("MainWindow::keyPressEvent(). G pressed");
-        this->model->switchGravitation();
-        this->updateRungeCutta();
     }
 }
 
@@ -493,6 +491,20 @@ void MainWindow::changePlayPauseState()
         }
 
     }
+}
+
+void MainWindow::switchGravitation()
+{
+    bool isEnabled = this->model->switchGravitation();
+    if (isEnabled)
+    {
+        switchGravitationAction->setIcon(QIcon(":/Gravitation_ON.png"));
+    }
+    else
+    {
+        switchGravitationAction->setIcon(QIcon(":/Gravitation_OFF.png"));
+    }
+    this->updateRungeCutta();
 }
 
 void MainWindow::updateScene()
