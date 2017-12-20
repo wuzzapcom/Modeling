@@ -42,6 +42,8 @@ public:
     //Assume that there is just one rod, so return first;
     PointableObject *getRod();
 
+    ~MaterialPoint();
+
 private:
 
     Point center;

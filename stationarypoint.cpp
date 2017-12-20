@@ -139,5 +139,8 @@ void StationaryPoint::read(const QJsonObject &json, QVector<DrawableObject *> ob
 }
 
 
+StationaryPoint::~StationaryPoint()
+{
 
+}
 

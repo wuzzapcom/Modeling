@@ -75,6 +75,8 @@ public:
      * */
     virtual void read(const QJsonObject &json, QVector<DrawableObject*> objects) = 0;
 
+    virtual ~DrawableObject(){}
+
     void setSelected(bool selected){isSelected = selected;}
     bool getSelected(){return isSelected;}
 
@@ -129,6 +131,8 @@ public:
      * Common methods for every inheritor
      * */
 
+    virtual ~ConnectableObject(){}
+
     void addPointable(PointableObject *p);
 
     QVector<PointableObject*> getPointableObjects(){return pointableObjects;}
@@ -151,6 +155,8 @@ public:
      * */
 
     virtual double getDefaultLength() = 0;
+
+    virtual ~PointableObject(){}
 
 
     /*

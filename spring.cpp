@@ -184,3 +184,7 @@ double Spring::getDefaultLength()
     }
 }
 
+Spring::~Spring()
+{
+
+}

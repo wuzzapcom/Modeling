@@ -189,3 +189,8 @@ std::valarray<double> Arrow::updateState(bool isVis, Point curs)
     return speed;
 
 }
+
+Arrow::~Arrow()
+{
+    delete connected;
+}

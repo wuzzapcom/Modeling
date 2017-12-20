@@ -28,6 +28,8 @@ public:
 
     std::valarray<double> updateState(bool isVis, Point curs);
 
+    ~Arrow();
+
 private:
     MaterialPoint *connected;
     Point cursor;

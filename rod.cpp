@@ -136,3 +136,8 @@ double Rod::getDefaultLength()
         return length2;
     }
 }
+
+Rod::~Rod()
+{
+
+}

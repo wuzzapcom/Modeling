@@ -885,6 +885,8 @@ bool ModelingModel::switchGravitation()
         return true;
     }
 
+    return false;
+
 }
 
 ModelingModel::~ModelingModel()

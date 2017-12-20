@@ -24,6 +24,8 @@ public:
     void setRigidity(double r){rigidity = r;}
     double getRigidity(){return rigidity;}
 
+    ~Spring();
+
 private:
 
     double rigidity;

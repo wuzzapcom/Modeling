@@ -224,6 +224,11 @@ PointableObject *MaterialPoint::getRod()
     return nullptr;
 }
 
+MaterialPoint::~MaterialPoint()
+{
+
+}
+
 
 
 

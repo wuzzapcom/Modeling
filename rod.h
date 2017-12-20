@@ -19,6 +19,7 @@ public:
     void readHash(const QJsonObject &json);
     void read(const QJsonObject &json, QVector<DrawableObject*> objects);
     double getDefaultLength();
+    ~Rod();
 
 private:
 

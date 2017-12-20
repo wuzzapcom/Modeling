@@ -21,6 +21,8 @@ public:
     Point getCenter();
     Point getContactPoint(ConnectableObject *connectable);
 
+    ~StationaryPoint();
+
 private:
 
     Rectangle rectangle;
