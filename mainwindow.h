@@ -131,6 +131,7 @@ private slots:
     void changePlayPauseState();
     void switchGravitation();
     void clearSpeeds();
+    void resetSystem();
 
 
 };

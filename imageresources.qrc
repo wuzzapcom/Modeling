@@ -9,5 +9,6 @@
         <file>Gravitation_ON.png</file>
         <file>Gravitation_OFF.png</file>
         <file>Speed.png</file>
+        <file>Reset.png</file>
     </qresource>
 </RCC>

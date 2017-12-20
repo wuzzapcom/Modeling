@@ -78,6 +78,11 @@ void MainWindow::createToolbar()
     clearSpeedsAction->setIcon(QIcon(":/Speed.png"));
     connect(clearSpeedsAction, &QAction::triggered, this, &MainWindow::clearSpeeds);
 
+    QAction *resetSystemAction = new QAction(tr("Reset system"), this);
+    resetSystemAction->setStatusTip("Deletes all user input");
+    resetSystemAction->setIcon(QIcon(":/Reset.png"));
+    connect(resetSystemAction, &QAction::triggered, this, &MainWindow::resetSystem);
+
     switchGravitationAction = new QAction(tr("Switch gravitation"), this);
     switchGravitationAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     switchGravitationAction->setStatusTip("Switch gravitation");
@@ -97,6 +102,7 @@ void MainWindow::createToolbar()
     figuresToolbar->addAction(addRod);
     figuresToolbar->addAction(addStationaryPoint);
     figuresToolbar->addAction(clearSpeedsAction);
+    figuresToolbar->addAction(resetSystemAction);
     figuresToolbar->addAction(switchGravitationAction);
     figuresToolbar->addAction(playPauseAction);
     figuresToolbar->setMovable(false);
@@ -512,6 +518,18 @@ void MainWindow::switchGravitation()
 void MainWindow::clearSpeeds()
 {
     this->model->resetMaterialPointsSpeeds();
+}
+
+void MainWindow::resetSystem()
+{
+    delete this->model;
+    delete this->rungeCutta;
+    this->model = new ModelingModel();
+    this->rungeCutta = new RungeCutta();
+    delete this->centralWidget();
+    this->createCentralWidget();
+    switchGravitationAction->setIcon(QIcon(":/Gravitation_OFF.png"));
+    this->centralWidget()->update();
 }
 
 void MainWindow::updateScene()
