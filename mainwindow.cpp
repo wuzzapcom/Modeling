@@ -73,6 +73,11 @@ void MainWindow::createToolbar()
     addStationaryPoint->setIcon(QIcon(":stationaryPoint"));
     connect(addStationaryPoint, &QAction::triggered, this, &MainWindow::addStationaryPoint);
 
+    QAction *clearSpeedsAction = new QAction(tr("Clear speeds"), this);
+    clearSpeedsAction->setStatusTip("Clear material point`s speeds");
+    clearSpeedsAction->setIcon(QIcon(":/Speed.png"));
+    connect(clearSpeedsAction, &QAction::triggered, this, &MainWindow::clearSpeeds);
+
     switchGravitationAction = new QAction(tr("Switch gravitation"), this);
     switchGravitationAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     switchGravitationAction->setStatusTip("Switch gravitation");
@@ -91,6 +96,7 @@ void MainWindow::createToolbar()
     figuresToolbar->addAction(addSpringAction);
     figuresToolbar->addAction(addRod);
     figuresToolbar->addAction(addStationaryPoint);
+    figuresToolbar->addAction(clearSpeedsAction);
     figuresToolbar->addAction(switchGravitationAction);
     figuresToolbar->addAction(playPauseAction);
     figuresToolbar->setMovable(false);
@@ -294,6 +300,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     }
 
     this->centralWidget()->update();
+    this->updateRungeCutta();
 
 }
 
@@ -342,11 +349,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         arrow->setConnected((MaterialPoint*) this->model->getSelectedObject());
 
         this->model->setSpeedVectorArrow(arrow);
-    }
-    else if (event->key() == Qt::Key_C)
-    {
-        qInfo("MainWindow::keyPressEvent(). C pressed");
-        this->model->resetMaterialPointsSpeeds();
     }
 }
 
@@ -505,6 +507,11 @@ void MainWindow::switchGravitation()
         switchGravitationAction->setIcon(QIcon(":/Gravitation_OFF.png"));
     }
     this->updateRungeCutta();
+}
+
+void MainWindow::clearSpeeds()
+{
+    this->model->resetMaterialPointsSpeeds();
 }
 
 void MainWindow::updateScene()
