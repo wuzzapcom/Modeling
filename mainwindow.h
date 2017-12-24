@@ -55,9 +55,6 @@ private:
 
     //Actions
     QAction *saveAction;
-    QAction *copyAction;
-    QAction *pasteAction;
-    QAction *helpAction;
     QAction *openAction;
     QAction *switchGravitationAction;
     QAction *playPauseAction;

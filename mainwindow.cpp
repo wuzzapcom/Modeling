@@ -28,8 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu menu(this);
-    menu.addAction(copyAction);
-    menu.addAction(pasteAction);
 
     menu.exec(event->globalPos());
 }
@@ -114,7 +112,7 @@ void MainWindow::createCentralWidget(){
 
     QWidget *centralWidget = new OpenGLWidget(this, model);
     centralWidget->setObjectName(QStringLiteral("centralWidget"));
-    centralWidget->setMouseTracking(true);//qwidget::mapfromglobal
+    centralWidget->setMouseTracking(true);
     setCentralWidget(centralWidget);
 
 }
@@ -138,15 +136,7 @@ void MainWindow::createMenus()
 
     editMenu = menuBar->addMenu(tr("&Edit"));
 
-    editMenu->addAction(copyAction);
-    editMenu->addAction(pasteAction);
     editMenu->addAction(deleteAction);
-
-    helpMenu = menuBar->addMenu(tr("&Help"));
-
-    helpMenu->addAction(helpAction);
-
-
 }
 
 void MainWindow::createActions(){
@@ -165,22 +155,6 @@ void MainWindow::createActions(){
     deleteAction->setShortcut(QKeySequence::Delete);
     deleteAction->setStatusTip(tr("Deletes selected object"));
     connect(deleteAction, &QAction::triggered, this, &MainWindow::deleteObject);
-
-    helpAction = new QAction(tr("&Help"), this);
-    helpAction->setShortcut(QKeySequence::HelpContents);
-    helpAction->setStatusTip(tr("Show help"));
-    connect(helpAction, &QAction::triggered, this, &MainWindow::help);
-
-    copyAction = new QAction(tr("&Copy"), this);
-    copyAction->setShortcut(QKeySequence::Copy);
-    copyAction->setStatusTip("Copy selected objects");
-    connect(copyAction, &QAction::triggered, this, &MainWindow::copy);
-
-    pasteAction = new QAction(tr("&Paste"), this);
-    pasteAction->setShortcut(QKeySequence::Paste);
-    pasteAction->setStatusTip("Paste objects");
-    connect(copyAction, &QAction::triggered, this, &MainWindow::paste);
-
 
 }
 
