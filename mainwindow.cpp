@@ -90,7 +90,7 @@ void MainWindow::createToolbar()
     playPauseAction = new QAction(tr("Play/Pause"), this);
     playPauseAction->setShortcut(QKeySequence::Open);
     playPauseAction->setStatusTip("Start moving");
-    playPauseAction->setIcon(QIcon(":/play.png"));
+    playPauseAction->setIcon(QIcon(":/pause.png"));
     connect(playPauseAction, &QAction::triggered, this, &MainWindow::changePlayPauseState);
 
     figuresToolbar = new QToolBar(this);
@@ -411,6 +411,10 @@ void MainWindow::paste(){}
 
 void MainWindow::addMatPoint()
 {
+    if (this->model->getIsPlaying()){
+        this->changePlayPauseState();
+        return;
+    }
     qInfo("MainWindow::addMatPoint");
 
     this->model->addMaterialPoint();
@@ -423,6 +427,10 @@ void MainWindow::addMatPoint()
 
 void MainWindow::addSpring()
 {
+    if (this->model->getIsPlaying()){
+        this->changePlayPauseState();
+        return;
+    }
     qInfo("MainWindow::addSpring");
 
     this->model->addSpring();
@@ -434,6 +442,10 @@ void MainWindow::addSpring()
 
 void MainWindow::addRod()
 {
+    if (this->model->getIsPlaying()){
+        this->changePlayPauseState();
+        return;
+    }
     qInfo("MainWindow::addRod");
 
     this->model->addRod();
@@ -443,6 +455,10 @@ void MainWindow::addRod()
 
 void MainWindow::addStationaryPoint()
 {
+    if (this->model->getIsPlaying()){
+        this->changePlayPauseState();
+        return;
+    }
     qInfo("MainWindow::addStationaryPoint");
 
     this->model->addStationalPoint();
@@ -461,6 +477,7 @@ void MainWindow::changePlayPauseState()
     else{
         if (this->model->isModelCorrect())
         {
+            this->updateRungeCutta();
             model->setPlaying(true);
             playPauseAction->setIcon(QIcon(":/play.png"));
             playPauseAction->setStatusTip("Start moving");
@@ -477,6 +494,10 @@ void MainWindow::changePlayPauseState()
 
 void MainWindow::switchGravitation()
 {
+    if (this->model->getIsPlaying()){
+        this->changePlayPauseState();
+        return;
+    }
     bool isEnabled = this->model->switchGravitation();
     if (isEnabled)
     {
@@ -491,11 +512,19 @@ void MainWindow::switchGravitation()
 
 void MainWindow::clearSpeeds()
 {
+    if (this->model->getIsPlaying()){
+        this->changePlayPauseState();
+        return;
+    }
     this->model->resetMaterialPointsSpeeds();
 }
 
 void MainWindow::resetSystem()
 {
+    if (this->model->getIsPlaying()){
+        this->changePlayPauseState();
+        return;
+    }
     delete this->model;
     delete this->rungeCutta;
     this->model = new ModelingModel();
@@ -565,6 +594,10 @@ void MainWindow::addMatPointPropertiesToRightDock()
         if (i > 5) spin1->setValue(5);
         else if (i < 1) spin1->setValue(1);
         else{
+            if (this->model->getIsPlaying()){
+                this->changePlayPauseState();
+                return;
+            }
             if (this->model->getSelectedObject() == nullptr ||
                     this->model->getSelectedObject()->getType() != MATERIAL_POINT)
             {
@@ -584,6 +617,10 @@ void MainWindow::addMatPointPropertiesToRightDock()
         if (i > 10) spin1->setValue(10);
         else if (i < 1) spin1->setValue(1);
         else{
+            if (this->model->getIsPlaying()){
+                this->changePlayPauseState();
+                return;
+            }
             if (this->model->getSelectedObject() == nullptr ||
                     this->model->getSelectedObject()->getType() != MATERIAL_POINT)
             {
@@ -606,7 +643,7 @@ void MainWindow::addMatPointPropertiesToRightDock()
 void MainWindow::addSpringPropertiesToRightDock()
 {
     this->showRightDock();
-    propertiesDock->setFixedSize(80, 120);
+    propertiesDock->setFixedSize(80, 70/*120*/);
 
     spin1->setVisible(true);
     label1->setVisible(true);
@@ -619,6 +656,10 @@ void MainWindow::addSpringPropertiesToRightDock()
         if (i > 100) spin1->setValue(100);
         else if (i < 1) spin1->setValue(1);
         else{
+            if (this->model->getIsPlaying()){
+                this->changePlayPauseState();
+                return;
+            }
             if (this->model->getSelectedObject() == nullptr ||
                     this->model->getSelectedObject()->getType() != SPRING)
             {
@@ -629,6 +670,10 @@ void MainWindow::addSpringPropertiesToRightDock()
         }
     });
 
+    spin2->setVisible(false);
+    label2->setVisible(false);
+
+    /*
     spin2->setVisible(true);
     label2->setVisible(true);
 
@@ -649,6 +694,7 @@ void MainWindow::addSpringPropertiesToRightDock()
             this->centralWidget()->update();
         }
     });
+    */
 
     spin3->setVisible(false);
     label3->setVisible(false);
